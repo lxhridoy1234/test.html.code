@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Open AI Earning</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Telegram SDK -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+  <!-- Ad SDK -->
+  <script src='//libtl.com/sdk.js' data-zone='9450911' data-sdk='show_9450911'></script>
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #f8f8ff, #eef2ff);
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    h2 { color: #4b2db2; margin-bottom: 20px; font-weight: bold; }
+    .card {
+      background: white;
+      border-radius: 20px;
+      padding: 25px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+    .btn {
+      background-color: #6a1b9a;
+      color: white;
+      padding: 12px 22px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      margin: 10px 5px;
+    }
+    .btn:hover { background-color: #8e24aa; }
+    #countdown {
+      color: #d32f2f;
+      font-weight: bold;
+      margin-top: 12px;
+      animation: pulse 1s infinite;
+    }
+    input, select {
+      padding: 10px;
+      margin: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      width: 80%;
+      font-size: 15px;
+    }
+    .hidden { display: none; }
+    .back-btn { background-color: #444; }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Open AI Earning</h2>
+  <p>Earn <strong><span id="coinRate">50</span></strong> coins for watching each ad</p>
+
+  <div class="card" id="profile">
+    <p><strong>User:</strong> <span id="user-name">Loading...</span></p>
+    <p><strong>Balance:</strong> <span id="balance">0</span> coins</p>
+    <p><strong>Ads Watched:</strong> <span id="views">0</span></p>
+  </div>
+
+  <div class="card" id="ad-section">
+    <button class="btn" onclick="watchAd()">🎬 Watch Ad</button>
+    <p id="countdown"></p>
+  </div>
+
+  <div class="card" id="auto-ad-controls">
+    <button class="btn" onclick="startAutoAds()">▶️ Start Auto Ads</button>
+    <button class="btn back-btn" onclick="stopAutoAds()">⏹️ Stop</button>
+  </div>
+
+  <div class="card">
+    <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
+    <button class="btn" onclick="showReferral()">🤝 Refer</button>
+  </div>
+
+  <!-- Withdraw Section -->
+  <div class="card hidden" id="withdraw-section">
+    <h3>Withdraw Coins</h3>
+    <select id="method">
+      <option value="bkash">Bkash</option>
+      <option value="nagad">Nagad</option>
+    </select><br>
+    <input type="number" id="coinAmount" placeholder="Enter Coin Amount" oninput="calculateBDT()">
+    <p id="bdtValue">You will get: 0 BDT</p>
+    <input type="text" id="accountNumber" placeholder="Enter your account number">
+    <button class="btn" onclick="submitWithdraw()">Submit</button>
+    <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+  </div>
+
+  <!-- Referral Section -->
+  <div class="card hidden" id="referral-section">
+    <h3>Your Referral Link</h3>
+    <p id="refLink">https://t.me/Open_AI2468_Earn_Bot?start=ref</p>
+    <button class="btn" onclick="copyReferral()">☕ Copy</button>
+    <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+  </div>
+
+  <script>
+    // Configurable Variables
+    const COINS_PER_AD = 50;
+    const MIN_WITHDRAW = 100000;
+    const REFERRAL_BONUS = 500;
+
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+
+    document.getElementById("coinRate").innerText = COINS_PER_AD;
+
+    const userName = tg.initDataUnsafe?.user?.first_name || "Unknown";
+    const userId = tg.initDataUnsafe?.user?.id || "Unknown";
+    document.getElementById("user-name").innerText = userName;
+
+    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let views = parseInt(localStorage.getItem("views")) || 0;
+    let autoAdInterval = null;
+
+    function updateUI() {
+      document.getElementById("balance").innerText = coins;
+      document.getElementById("views").innerText = views;
+    }
+
+    function saveData() {
+      localStorage.setItem("coins", coins);
+      localStorage.setItem("views", views);
+    }
+
+    function watchAd() {
+      document.querySelector("#countdown").innerText = "⏳ Please wait 10 seconds...";
+      if (typeof show_9450911 === "function") {
+        show_9450911();
+      }
+
+      let countdown = 10;
+      const interval = setInterval(() => {
+        countdown--;
+        document.querySelector("#countdown").innerText = `⏳ Please wait ${countdown} seconds...`;
+        if (countdown <= 0) {
+          clearInterval(interval);
+          coins += COINS_PER_AD;
+          views++;
+          saveData();
+          updateUI();
+          document.querySelector("#countdown").innerText = `✅ You earned ${COINS_PER_AD} coins!`;
+        }
+      }, 1000);
+    }
+
+    function startAutoAds() {
+      if (autoAdInterval) return;
+      watchAd();
+      autoAdInterval = setInterval(() => {
+        watchAd();
+      }, 10000);
+    }
+
+    function stopAutoAds() {
+      clearInterval(autoAdInterval);
+      autoAdInterval = null;
+      document.querySelector("#countdown").innerText = "⏹️ Auto Ads Stopped";
+    }
+
+    function showWithdraw() {
+      document.getElementById("withdraw-section").classList.remove("hidden");
+      document.getElementById("ad-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.add("hidden");
+    }
+
+    function calculateBDT() {
+      const amount = parseInt(document.getElementById("coinAmount").value) || 0;
+      const bdt = (amount * 0.0098).toFixed(2);
+      document.getElementById("bdtValue").innerText = `You will get: ${bdt} BDT`;
+    }
+
+    function submitWithdraw() {
+      const method = document.getElementById("method").value;
+      const amount = parseInt(document.getElementById("coinAmount").value);
+      const account = document.getElementById("accountNumber").value.trim();
+
+      if (isNaN(amount) || amount < MIN_WITHDRAW) {
+        alert(`Minimum withdraw is ${MIN_WITHDRAW} coins.`);
+        return;
+      }
+
+      if (!account || account.length < 6) {
+        alert("Please enter a valid account number.");
+        return;
+      }
+
+      if (amount > coins) {
+        alert("You don't have enough coins.");
+        return;
+      }
+
+      coins -= amount;
+      saveData();
+      updateUI();
+
+      document.getElementById("withdraw-section").innerHTML = `
+        <h3>⏳ Submitting Withdraw Request...</h3>
+        <div style="margin: 20px 0;">
+          <img src="https://i.gifer.com/ZZ5H.gif" width="60" />
+        </div>
+      `;
+
+      const message = `
+🔔 New Withdraw Request!
+👤 User: ${userName} (ID: ${userId})
+💰 Amount: ${amount} coins
+💳 Method: ${method.toUpperCase()}
+📱 Account: ${account}
+      `;
+
+      fetch(`https://api.telegram.org/bot8088507666:AAGxnWx0-i6aKT1pWHXskK5VSmDkYqPLYis/sendMessage`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          chat_id: "6593402184",
+          text: message
+        })
+      }).then(() => {
+        setTimeout(() => {
+          document.getElementById("withdraw-section").innerHTML = `
+            <h3>✅ Withdraw request submitted!</h3>
+            <p>Method: ${method.toUpperCase()}</p>
+            <p>Amount: ${amount} coins</p>
+            <p>Account Number: ${account}</p>
+            <p>We will process your request soon.</p>
+            <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+          `;
+        }, 1500);
+      });
+    }
+
+    function showReferral() {
+      document.getElementById("referral-section").classList.remove("hidden");
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("ad-section").classList.add("hidden");
+    }
+
+    function copyReferral() {
+      const ref = document.getElementById("refLink").innerText;
+      navigator.clipboard.writeText(ref);
+      alert("Referral link copied!");
+    }
+
+    function goBack() {
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.add("hidden");
+      document.getElementById("ad-section").classList.remove("hidden");
+      updateUI();
+    }
+
+    updateUI();
+  </script>
+</body>
+</html>
