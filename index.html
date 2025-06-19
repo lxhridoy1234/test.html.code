@@ -188,7 +188,7 @@
       const amount = parseFloat(document.getElementById("amount").value);
       const account = document.getElementById("account").value.trim();
 
-      if (amount < 200 || isNaN(amount)) {
+      if (amount < 1 || isNaN(amount)) {
         alert("Minimum withdraw is ৳200.");
         return;
       }
