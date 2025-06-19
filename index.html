@@ -2,102 +2,118 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Daily Earn Money</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daily Earn Money</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="//libtl.com/sdk.js" data-zone="9468999" data-sdk="show_9468999"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(to right, #f8f8ff, #eef2ff);
+      background: linear-gradient(to right, #f3f4f6, #e0e7ff);
       padding: 20px;
-      text-align: center;
-      animation: fadeIn 0.5s ease-in-out;
+      color: #333;
     }
-    h2 { color: #4b2db2; margin-bottom: 20px; font-weight: bold; }
-    .card {
-      background: white;
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+    h2 {
+      text-align: center;
+      color: #4b0082;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+    .balance-circle {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: #ffffff;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #4b0082;
+    }
+    .box-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
       margin-bottom: 20px;
     }
+    .box {
+      background: #fff;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.07);
+      text-align: center;
+      font-weight: bold;
+    }
     .btn {
+      display: block;
+      width: 100%;
       background-color: #6a1b9a;
       color: white;
-      padding: 12px 22px;
+      padding: 14px;
+      margin-top: 10px;
       border: none;
       border-radius: 10px;
       font-size: 16px;
       cursor: pointer;
-      margin: 10px 5px;
+      transition: background 0.3s ease;
     }
     .btn:hover { background-color: #8e24aa; }
-    #countdown {
-      color: #d32f2f;
-      font-weight: bold;
-      margin-top: 12px;
-      animation: pulse 1s infinite;
-    }
+    .hidden { display: none; }
+    #countdown { color: #d32f2f; font-weight: bold; text-align: center; margin-top: 10px; }
     input, select {
-      padding: 10px;
-      margin: 10px;
-      border-radius: 8px;
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
       border: 1px solid #ccc;
-      width: 80%;
+      border-radius: 8px;
       font-size: 15px;
     }
-    .hidden { display: none; }
-    .back-btn { background-color: #444; }
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+    .card {
+      background: white;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.06);
+      margin-bottom: 20px;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
+    .back-btn { background: #555; }
   </style>
 </head>
 <body>
-
   <h2>Daily Earn Money</h2>
-  <p>Earn ৳0.08 after every ad</p>
-
-  <div class="card" id="profile">
-    <p><strong>User:</strong> <span id="user-name">Loading...</span></p>
-    <p><strong>Balance:</strong> <span id="balance">0</span> Taka</p>
-    <p><strong>Ads Watched:</strong> <span id="views">0</span></p>
+  <div class="balance-circle">
+    ৳ <span id="balance">0.00</span>
   </div>
 
-  <div class="card" id="ad-section">
-    <button class="btn" onclick="watchAd()">🎬 Start Ad</button>
+  <div class="box-grid">
+    <div class="box">Ads Watched<br><span id="views">0</span></div>
+    <div class="box">Today’s Earn<br>৳ <span id="todayEarn">0.00</span></div>
+  </div>
+
+  <div class="card" id="main-section">
+    <button class="btn" onclick="watchAd()">🎬 Start Earn</button>
     <p id="countdown"></p>
-  </div>
-
-  <div class="card">
     <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
-    <button class="btn" onclick="showReferral()">🤝 Refer</button>
+    <button class="btn" onclick="showReferral()">🤝 Invite Friend</button>
   </div>
 
-  <!-- Withdraw Section -->
   <div class="card hidden" id="withdraw-section">
-    <h3>Withdraw Money</h3>
+    <h3>Withdraw</h3>
     <select id="method">
       <option value="bkash">Bkash</option>
       <option value="nagad">Nagad</option>
-    </select><br>
-    <input type="number" id="amount" placeholder="Enter Amount in Taka">
-    <input type="text" id="accountNumber" placeholder="Enter your account number">
+    </select>
+    <input type="number" id="amount" placeholder="Enter amount (min ৳200)">
+    <input type="text" id="account" placeholder="Account Number">
     <button class="btn" onclick="submitWithdraw()">Withdraw Now</button>
     <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
   </div>
 
-  <!-- Referral Section -->
   <div class="card hidden" id="referral-section">
-    <h3>Your Referral Link</h3>
+    <h3>Referral Link</h3>
     <p id="refLink">https://t.me/daily_earn_money2468_bot?start=ref</p>
     <button class="btn" onclick="copyReferral()">📋 Copy</button>
     <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
@@ -106,68 +122,84 @@
   <script>
     const tg = window.Telegram.WebApp;
     tg.expand();
-
-    const userName = tg.initDataUnsafe?.user?.first_name || "Unknown";
-    const userId = tg.initDataUnsafe?.user?.id || "Unknown";
-    document.getElementById("user-name").innerText = userName;
+    const userName = tg.initDataUnsafe?.user?.first_name || "User";
+    const userId = tg.initDataUnsafe?.user?.id || "0000";
 
     let balance = parseFloat(localStorage.getItem("balance")) || 0;
     let views = parseInt(localStorage.getItem("views")) || 0;
+    let todayEarn = 0;
 
     function updateUI() {
       document.getElementById("balance").innerText = balance.toFixed(2);
       document.getElementById("views").innerText = views;
+      document.getElementById("todayEarn").innerText = todayEarn.toFixed(2);
     }
 
     function saveData() {
-      localStorage.setItem("balance", balance.toFixed(2));
+      localStorage.setItem("balance", balance);
       localStorage.setItem("views", views);
     }
 
     function watchAd() {
       document.getElementById("countdown").innerText = "⏳ Please wait 10 seconds...";
-      if (typeof show_9468999 === "function") {
-        show_9468999();
-      }
+      if (typeof show_9468999 === "function") show_9468999();
 
-      let countdown = 10;
+      let time = 10;
       const interval = setInterval(() => {
-        countdown--;
-        document.getElementById("countdown").innerText = `⏳ Please wait ${countdown} seconds...`;
-        if (countdown <= 0) {
+        time--;
+        document.getElementById("countdown").innerText = `⏳ Wait ${time} sec...`;
+        if (time <= 0) {
           clearInterval(interval);
           balance += 0.08;
+          todayEarn += 0.08;
           views++;
           saveData();
           updateUI();
-          document.getElementById("countdown").innerText = "✅ ৳0.08 added to your balance!";
+          document.getElementById("countdown").innerText = "🎉 ৳0.08 Added to your balance!";
         }
       }, 1000);
     }
 
     function showWithdraw() {
-      document.getElementById("withdraw-section").classList.remove("hidden");
-      document.getElementById("ad-section").classList.add("hidden");
+      document.getElementById("main-section").classList.add("hidden");
       document.getElementById("referral-section").classList.add("hidden");
+      document.getElementById("withdraw-section").classList.remove("hidden");
+    }
+
+    function showReferral() {
+      document.getElementById("main-section").classList.add("hidden");
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.remove("hidden");
+    }
+
+    function goBack() {
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.add("hidden");
+      document.getElementById("main-section").classList.remove("hidden");
+    }
+
+    function copyReferral() {
+      navigator.clipboard.writeText(document.getElementById("refLink").innerText);
+      alert("Referral link copied!");
     }
 
     function submitWithdraw() {
       const method = document.getElementById("method").value;
       const amount = parseFloat(document.getElementById("amount").value);
-      const account = document.getElementById("accountNumber").value.trim();
+      const account = document.getElementById("account").value.trim();
 
-      if (isNaN(amount) || amount < 200) {
-        alert("Minimum withdraw is 200 Taka.");
+      if (amount < 200 || isNaN(amount)) {
+        alert("Minimum withdraw is ৳200.");
         return;
       }
 
       if (!account || account.length < 6) {
-        alert("Please enter a valid account number.");
+        alert("Enter a valid account number.");
         return;
       }
 
       if (amount > balance) {
-        alert("You don't have enough balance.");
+        alert("Insufficient balance.");
         return;
       }
 
@@ -175,13 +207,7 @@
       saveData();
       updateUI();
 
-      const message = `
-🔔 New Withdraw Request!
-👤 User: ${userName} (ID: ${userId})
-💸 Amount: ৳${amount}
-📱 Method: ${method.toUpperCase()}
-🔢 Account: ${account}
-      `;
+      const message = `\n🔔 New Withdraw Request!\n👤 User: ${userName} (ID: ${userId})\n💰 Amount: ৳${amount}\n💳 Method: ${method}\n📱 Account: ${account}`;
 
       fetch(`https://api.telegram.org/bot7793871724:AAGnUhPo6YVzP0euhSXONh3Rx6Vp7rj68FA/sendMessage`, {
         method: "POST",
@@ -193,32 +219,13 @@
       });
 
       document.getElementById("withdraw-section").innerHTML = `
-        <h3>✅ Withdraw request submitted!</h3>
-        <p>Method: ${method.toUpperCase()}</p>
+        <h3>✅ Withdraw Request Submitted</h3>
         <p>Amount: ৳${amount}</p>
+        <p>Method: ${method}</p>
         <p>Account: ${account}</p>
-        <p>We will process your request soon.</p>
+        <p>We will process it shortly.</p>
         <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
       `;
-    }
-
-    function showReferral() {
-      document.getElementById("referral-section").classList.remove("hidden");
-      document.getElementById("withdraw-section").classList.add("hidden");
-      document.getElementById("ad-section").classList.add("hidden");
-    }
-
-    function copyReferral() {
-      const ref = document.getElementById("refLink").innerText;
-      navigator.clipboard.writeText(ref);
-      alert("Referral link copied!");
-    }
-
-    function goBack() {
-      document.getElementById("withdraw-section").classList.add("hidden");
-      document.getElementById("referral-section").classList.add("hidden");
-      document.getElementById("ad-section").classList.remove("hidden");
-      updateUI();
     }
 
     updateUI();
