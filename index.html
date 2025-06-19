@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Open AI Earning</title>
+  <title>Daily Earn Money</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="//libtl.com/sdk.js" data-zone="9450911" data-sdk="show_9450911"></script>
-
+  <script src="//libtl.com/sdk.js" data-zone="9468999" data-sdk="show_9468999"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -64,18 +63,17 @@
 </head>
 <body>
 
-  <h2>Open AI Earning</h2>
-  <p>Earn 50 coins after ad + claim</p>
+  <h2>Daily Earn Money</h2>
+  <p>Earn ৳0.08 after every ad</p>
 
   <div class="card" id="profile">
     <p><strong>User:</strong> <span id="user-name">Loading...</span></p>
-    <p><strong>Balance:</strong> <span id="balance">0</span> coins</p>
+    <p><strong>Balance:</strong> <span id="balance">0</span> Taka</p>
     <p><strong>Ads Watched:</strong> <span id="views">0</span></p>
   </div>
 
   <div class="card" id="ad-section">
-    <button class="btn" onclick="watchAd()">🎬 Watch Ad</button>
-    <button class="btn hidden" id="claimBtn" onclick="claimCoins()">🎁 Claim Coin</button>
+    <button class="btn" onclick="watchAd()">🎬 Start Ad</button>
     <p id="countdown"></p>
   </div>
 
@@ -86,23 +84,22 @@
 
   <!-- Withdraw Section -->
   <div class="card hidden" id="withdraw-section">
-    <h3>Withdraw Coins</h3>
+    <h3>Withdraw Money</h3>
     <select id="method">
       <option value="bkash">Bkash</option>
       <option value="nagad">Nagad</option>
     </select><br>
-    <input type="number" id="coinAmount" placeholder="Enter Coin Amount" oninput="calculateBDT()">
-    <p id="bdtValue">You will get: 0 BDT</p>
+    <input type="number" id="amount" placeholder="Enter Amount in Taka">
     <input type="text" id="accountNumber" placeholder="Enter your account number">
-    <button class="btn" onclick="submitWithdraw()">Submit</button>
+    <button class="btn" onclick="submitWithdraw()">Withdraw Now</button>
     <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
   </div>
 
   <!-- Referral Section -->
   <div class="card hidden" id="referral-section">
     <h3>Your Referral Link</h3>
-    <p id="refLink">https://t.me/Open_AI2468_Earn_Bot?start=ref</p>
-    <button class="btn" onclick="copyReferral()">☕ Copy</button>
+    <p id="refLink">https://t.me/daily_earn_money2468_bot?start=ref</p>
+    <button class="btn" onclick="copyReferral()">📋 Copy</button>
     <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
   </div>
 
@@ -114,24 +111,23 @@
     const userId = tg.initDataUnsafe?.user?.id || "Unknown";
     document.getElementById("user-name").innerText = userName;
 
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
+    let balance = parseFloat(localStorage.getItem("balance")) || 0;
     let views = parseInt(localStorage.getItem("views")) || 0;
 
     function updateUI() {
-      document.getElementById("balance").innerText = coins;
+      document.getElementById("balance").innerText = balance.toFixed(2);
       document.getElementById("views").innerText = views;
     }
 
     function saveData() {
-      localStorage.setItem("coins", coins);
+      localStorage.setItem("balance", balance.toFixed(2));
       localStorage.setItem("views", views);
     }
 
     function watchAd() {
-      document.getElementById("claimBtn").classList.add("hidden");
       document.getElementById("countdown").innerText = "⏳ Please wait 10 seconds...";
-      if (typeof show_9450911 === "function") {
-        show_9450911();
+      if (typeof show_9468999 === "function") {
+        show_9468999();
       }
 
       let countdown = 10;
@@ -140,31 +136,11 @@
         document.getElementById("countdown").innerText = `⏳ Please wait ${countdown} seconds...`;
         if (countdown <= 0) {
           clearInterval(interval);
-          document.getElementById("countdown").innerText = "✅ Ad watched. Now claim your coin!";
-          document.getElementById("claimBtn").classList.remove("hidden");
-        }
-      }, 1000);
-    }
-
-    function claimCoins() {
-      document.getElementById("claimBtn").classList.add("hidden");
-      document.getElementById("countdown").innerText = "⏳ Verifying your claim...";
-
-      if (typeof show_9450911 === "function") {
-        show_9450911();
-      }
-
-      let countdown = 10;
-      const interval = setInterval(() => {
-        countdown--;
-        document.getElementById("countdown").innerText = `⏳ Claiming in ${countdown} seconds...`;
-        if (countdown <= 0) {
-          clearInterval(interval);
-          coins += 50;
+          balance += 0.08;
           views++;
           saveData();
           updateUI();
-          document.getElementById("countdown").innerText = "🎉 You earned 50 coins!";
+          document.getElementById("countdown").innerText = "✅ ৳0.08 added to your balance!";
         }
       }, 1000);
     }
@@ -175,19 +151,13 @@
       document.getElementById("referral-section").classList.add("hidden");
     }
 
-    function calculateBDT() {
-      const amount = parseInt(document.getElementById("coinAmount").value) || 0;
-      const bdt = (amount * 0.0038).toFixed(2);
-      document.getElementById("bdtValue").innerText = `You will get: ${bdt} BDT`;
-    }
-
     function submitWithdraw() {
       const method = document.getElementById("method").value;
-      const amount = parseInt(document.getElementById("coinAmount").value);
+      const amount = parseFloat(document.getElementById("amount").value);
       const account = document.getElementById("accountNumber").value.trim();
 
-      if (isNaN(amount) || amount < 100000) {
-        alert("Minimum withdraw is 100000 coins.");
+      if (isNaN(amount) || amount < 200) {
+        alert("Minimum withdraw is 200 Taka.");
         return;
       }
 
@@ -196,28 +166,26 @@
         return;
       }
 
-      if (amount > coins) {
-        alert("You don't have enough coins.");
+      if (amount > balance) {
+        alert("You don't have enough balance.");
         return;
       }
 
-      coins -= amount;
+      balance -= amount;
       saveData();
       updateUI();
 
       const message = `
 🔔 New Withdraw Request!
 👤 User: ${userName} (ID: ${userId})
-💰 Amount: ${amount} coins
-💳 Method: ${method.toUpperCase()}
-📱 Account: ${account}
+💸 Amount: ৳${amount}
+📱 Method: ${method.toUpperCase()}
+🔢 Account: ${account}
       `;
 
-      fetch(`https://api.telegram.org/bot8088507666:AAGxnWx0-i6aKT1pWHXskK5VSmDkYqPLYis/sendMessage`, {
+      fetch(`https://api.telegram.org/bot7793871724:AAGnUhPo6YVzP0euhSXONh3Rx6Vp7rj68FA/sendMessage`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           chat_id: "6593402184",
           text: message
@@ -227,8 +195,8 @@
       document.getElementById("withdraw-section").innerHTML = `
         <h3>✅ Withdraw request submitted!</h3>
         <p>Method: ${method.toUpperCase()}</p>
-        <p>Amount: ${amount} coins</p>
-        <p>Account Number: ${account}</p>
+        <p>Amount: ৳${amount}</p>
+        <p>Account: ${account}</p>
         <p>We will process your request soon.</p>
         <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
       `;
