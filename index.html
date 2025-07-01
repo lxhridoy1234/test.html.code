@@ -1,31 +1,110 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>ইফতার কল লিস্ট চেক করুন</title>
+  <title>BD71.CYBER TEAM</title>
   <style>
-    body { font-family: Arial; text-align: center; margin-top: 50px; }
-    input, button { padding: 10px; font-size: 16px; margin: 10px; }
-    #result { margin-top: 20px; white-space: pre-wrap; }
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', Courier, monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .title {
+      font-size: 2em;
+      font-weight: bold;
+      margin-bottom: 20px;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+      }
+      to {
+        text-shadow: 0 0 20px #0f0, 0 0 30px #0f0;
+      }
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+      border: none;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #0c0;
+    }
+
+    .result {
+      margin-top: 20px;
+      width: 80%;
+      max-height: 300px;
+      overflow-y: auto;
+      background: #111;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px #0f0;
+    }
+
+    .loader {
+      display: none;
+      margin-top: 15px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
-  <h2>ইফতার কল লিস্ট চেক করুন</h2>
-  <input type="text" id="number" placeholder="নাম্বার লিখুন">
-  <button onclick="checkList()">চেক করুন</button>
-  <div id="result"></div>
+  <div class="title">BD71.CYBER TEAM</div>
+  
+  <input type="text" id="numberInput" placeholder="Target Number">
+  <button onclick="checkCallList()">Check Call List</button>
+  <div class="loader" id="loader">Searching...</div>
+  <div class="result" id="resultBox"></div>
 
   <script>
-    function checkList() {
-      const number = document.getElementById("number").value.trim();
-      document.getElementById("result").innerText = "লোড হচ্ছে...";
-      fetch("api.php?number=" + encodeURIComponent(number))
+    function checkCallList() {
+      const number = document.getElementById("numberInput").value.trim();
+      const resultBox = document.getElementById("resultBox");
+      const loader = document.getElementById("loader");
+
+      if (!number) {
+        alert("Please enter a number.");
+        return;
+      }
+
+      loader.style.display = "block";
+      resultBox.innerHTML = "";
+
+      fetch(`https://badolhzbd.serv00.net/call-list.php?number=${number}`)
         .then(res => res.text())
         .then(data => {
-          document.getElementById("result").innerText = data;
+          loader.style.display = "none";
+          resultBox.innerHTML = `<pre>${data}</pre>`;
         })
-        .catch(err => {
-          document.getElementById("result").innerText = "এরর: ডেটা লোড হয়নি।";
+        .catch(error => {
+          loader.style.display = "none";
+          resultBox.innerHTML = `<span style="color: red;">Error fetching data</span>`;
         });
     }
   </script>
