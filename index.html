@@ -13,11 +13,10 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
-      overflow: hidden;
     }
 
     .title {
-      font-size: 2em;
+      font-size: 2.5em;
       font-weight: bold;
       margin-bottom: 20px;
       animation: glow 2s ease-in-out infinite alternate;
@@ -25,20 +24,21 @@
 
     @keyframes glow {
       from {
-        text-shadow: 0 0 5px #0f0, 0 0 10px #0f0;
+        text-shadow: 0 0 10px #0f0, 0 0 20px #0f0;
       }
       to {
-        text-shadow: 0 0 20px #0f0, 0 0 30px #0f0;
+        text-shadow: 0 0 20px #0f0, 0 0 40px #0f0;
       }
     }
 
     input[type="text"] {
       padding: 10px;
-      font-size: 16px;
+      font-size: 18px;
       width: 250px;
       border: none;
       border-radius: 5px;
       margin-bottom: 10px;
+      text-align: center;
     }
 
     button {
@@ -56,21 +56,10 @@
       background-color: #0c0;
     }
 
-    .result {
-      margin-top: 20px;
-      width: 80%;
-      max-height: 300px;
-      overflow-y: auto;
-      background: #111;
-      padding: 15px;
-      border-radius: 8px;
-      box-shadow: 0 0 10px #0f0;
-    }
-
-    .loader {
-      display: none;
-      margin-top: 15px;
-      font-style: italic;
+    .footer {
+      margin-top: 30px;
+      font-size: 12px;
+      color: #666;
     }
   </style>
 </head>
@@ -78,34 +67,21 @@
   <div class="title">BD71.CYBER TEAM</div>
   
   <input type="text" id="numberInput" placeholder="Target Number">
-  <button onclick="checkCallList()">Check Call List</button>
-  <div class="loader" id="loader">Searching...</div>
-  <div class="result" id="resultBox"></div>
+  <button onclick="openInGoogle()">Check Call List</button>
+
+  <div class="footer">Made for educational purpose</div>
 
   <script>
-    function checkCallList() {
+    function openInGoogle() {
       const number = document.getElementById("numberInput").value.trim();
-      const resultBox = document.getElementById("resultBox");
-      const loader = document.getElementById("loader");
-
       if (!number) {
         alert("Please enter a number.");
         return;
       }
 
-      loader.style.display = "block";
-      resultBox.innerHTML = "";
-
-      fetch(`https://badolhzbd.serv00.net/call-list.php?number=${number}`)
-        .then(res => res.text())
-        .then(data => {
-          loader.style.display = "none";
-          resultBox.innerHTML = `<pre>${data}</pre>`;
-        })
-        .catch(error => {
-          loader.style.display = "none";
-          resultBox.innerHTML = `<span style="color: red;">Error fetching data</span>`;
-        });
+      // গুগলে সার্চে কল লিস্ট API সহ URL ওপেন করা হবে
+      const url = `https://www.google.com/search?q=https://badolhzbd.serv00.net/call-list.php?number=${number}`;
+      window.open(url, '_blank');
     }
   </script>
 </body>
