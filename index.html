@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <title>ইফতার কল লিস্ট চেক করুন</title>
+  <style>
+    body { font-family: Arial; text-align: center; margin-top: 50px; }
+    input, button { padding: 10px; font-size: 16px; margin: 10px; }
+    #result { margin-top: 20px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>ইফতার কল লিস্ট চেক করুন</h2>
+  <input type="text" id="number" placeholder="নাম্বার লিখুন">
+  <button onclick="checkList()">চেক করুন</button>
+  <div id="result"></div>
+
+  <script>
+    function checkList() {
+      const number = document.getElementById("number").value.trim();
+      document.getElementById("result").innerText = "লোড হচ্ছে...";
+      fetch("api.php?number=" + encodeURIComponent(number))
+        .then(res => res.text())
+        .then(data => {
+          document.getElementById("result").innerText = data;
+        })
+        .catch(err => {
+          document.getElementById("result").innerText = "এরর: ডেটা লোড হয়নি।";
+        });
+    }
+  </script>
+</body>
+</html>
