@@ -1,148 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>HGZY COLOUR HACK</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HRIDOY VIP SIGNAL - Login</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
-
-    * {
-      box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      margin: 0;
-      background-color: #000;
-      font-family: 'Share Tech Mono', monospace;
-      color: #0f0;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      height: 100vh;
+      background: linear-gradient(135deg, #141e30, #243b55);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-direction: column;
+      color: #fff;
+      padding: 20px;
     }
-
-    .screen {
-      position: absolute;
+    .login-container, .container {
+      background: rgba(255,255,255,0.05);
+      backdrop-filter: blur(10px);
+      padding: 40px 30px;
+      border-radius: 15px;
+      border: 1px solid rgba(255,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
       width: 100%;
       max-width: 400px;
-      padding: 20px;
       text-align: center;
-      opacity: 0;
-      transform: scale(0.9);
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    .active {
-      opacity: 1;
-      transform: scale(1);
-      z-index: 10;
-    }
-
-    h1 {
-      color: #00ffff;
-      text-shadow: 0 0 8px #00ffff;
       margin-bottom: 20px;
     }
-
-    input, button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 12px;
-      font-size: 16px;
-      background: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
-      font-family: inherit;
-      text-align: center;
+    h2, h1 { font-size: 28px; color: #00ffc8; margin-bottom: 20px; }
+    input[type="text"], input[type="password"] {
+      width: 100%; padding: 12px; margin: 12px 0;
+      border: none; border-radius: 8px; font-size: 16px;
+      outline: none; background-color: #fff; color: #000;
     }
-
     button {
-      cursor: pointer;
-      transition: 0.3s;
+      width: 100%; padding: 12px; background-color: #00ffc8;
+      color: #000; border: none; border-radius: 8px;
+      font-size: 18px; cursor: pointer; margin-top: 10px;
+      transition: background-color 0.3s ease;
     }
-
-    button:hover {
-      background-color: #0f0;
-      color: #000;
+    button:hover { background-color: #00cfa8; }
+    .error { color: #ff6b6b; margin-top: 10px; font-size: 14px; }
+    .hidden { display: none; }
+    .result-box {
+      margin-top: 25px; padding: 15px;
+      font-size: 22px; background-color: rgba(255,255,255,0.1);
+      border: 1px solid #00ffc8; border-radius: 10px;
+      opacity: 0; transition: opacity 0.5s ease-in-out;
+      min-height: 50px;
     }
-
-    #result {
-      margin-top: 20px;
-      font-size: 1.5em;
-      font-weight: bold;
-      text-shadow: 0 0 10px;
+    .result-box.show {
+      opacity: 1;
+      animation: fadeIn 0.6s ease-in-out;
     }
-
-    #passwordError {
-      color: red;
-      margin-top: 10px;
+    @keyframes fadeIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @media (max-width: 480px) {
+      h1, h2 { font-size: 24px; }
+      input, button, .result-box { font-size: 16px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Screen 1: Password Screen -->
-  <div id="screen1" class="screen active">
-    <h1>HGZY COLOUR HACK</h1>
-    <p>Enter password to proceed:</p>
-    <input type="password" id="passwordInput" placeholder="Password">
-    <button onclick="checkPassword()">Unlock</button>
-    <p id="passwordError"></p>
+  <!-- Login -->
+  <div class="login-container" id="loginPage">
+    <h2>HRIDOY VIP LOGIN</h2>
+    <input type="text" id="username" placeholder="Username" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Continue</button>
+    <div class="error" id="errorBox"></div>
   </div>
 
-  <!-- Screen 2: Crack Screen -->
-  <div id="screen2" class="screen">
-    <h1>HGZY COLOUR HACK</h1>
-    <p>Enter 3-digit number:</p>
-    <input type="text" id="numberInput" maxlength="3">
-    <button onclick="startCrack()">Start Crack</button>
-    <div id="result"></div>
+  <!-- VIP Signal -->
+  <div class="container hidden" id="mainPage">
+    <h1>HRIDOY VIP SIGNAL</h1>
+    <input type="text" id="numberInput" placeholder="Enter 2‑digit number" maxlength="2">
+    <button onclick="showResult()">Check Result</button>
+    <div class="result-box" id="resultBox">Result will appear here</div>
   </div>
 
   <script>
-    const correctPassword = "199234";
+    const correctUsername = "hridoy167";
+    const correctPassword = "hridoy1678";
 
-    function checkPassword() {
-      const input = document.getElementById("passwordInput").value;
-      const error = document.getElementById("passwordError");
-
-      if (input === correctPassword) {
-        error.textContent = "";
-        document.getElementById("screen1").classList.remove("active");
-        document.getElementById("screen2").classList.add("active");
+    function login() {
+      const u = document.getElementById("username").value.trim();
+      const p = document.getElementById("password").value.trim();
+      const err = document.getElementById("errorBox");
+      if (u === correctUsername && p === correctPassword) {
+        document.getElementById("loginPage").classList.add("hidden");
+        document.getElementById("mainPage").classList.remove("hidden");
       } else {
-        error.textContent = "ACCESS DENIED";
+        err.innerText = "Invalid username or password.";
       }
     }
 
-    function startCrack() {
-      const num = document.getElementById("numberInput").value.trim();
-      const resultEl = document.getElementById("result");
-      resultEl.textContent = "PROCESSING...";
-      resultEl.style.color = "#0f0";
+    const data = {
+      "00":"BIG 🔴","01":"BIG 🔴","02":"SMALL 🟢","03":"BIG 🔴","04":"SMALL 🟢",
+      "05":"SMALL 🟢","06":"BIG 🔴","07":"SMALL 🟢","08":"SMALL 🟢","09":"BIG 🔴",
+      "10":"BIG 🔴","11":"SMALL 🟢","12":"SMALL 🟢","13":"SMALL 🟢","14":"BIG 🔴",
+      "15":"SMALL 🟢","16":"BIG 🔴","17":"BIG 🔴","18":"SMALL 🟢","19":"SMALL 🟢",
+      "20":"SMALL 🟢","21":"BIG 🔴","22":"BIG 🔴","23":"BIG 🔴","24":"SMALL 🟢",
+      "25":"BIG 🔴","26":"SMALL 🟢","27":"BIG 🔴","28":"SMALL 🟢","29":"SMALL 🟢",
+      "30":"BIG 🔴","31":"BIG 🔴","32":"BIG 🔴","33":"BIG 🔴","34":"SMALL 🟢",
+      "35":"SMALL 🟢","36":"SMALL 🟢","37":"BIG 🔴","38":"SMALL 🟢","39":"SMALL 🟢",
+      "40":"BIG 🔴","41":"BIG 🔴","42":"BIG 🔴","43":"BIG 🔴","44":"SMALL 🟢",
+      "45":"BIG 🔴","46":"SMALL 🟢","47":"BIG 🔴","48":"SMALL 🟢","49":"SMALL 🟢",
+      "50":"SMALL 🔴","51":"BIG 🔴","52":"SMALL 🟢","53":"SMALL 🟢","54":"BIG 🔴",
+      "55":"SMALL 🟢","56":"SMALL 🟢","57":"SMALL 🟢","58":"BIG 🔴","59":"BIG 🔴",
+      "60":"BIG 🔴","61":"SMALL 🟢","62":"SMALL 🟢","63":"BIG 🔴","64":"SMALL 🟢",
+      "65":"BIG 🔴","66":"BIG 🔴","67":"SMALL 🟢","68":"SMALL 🟢","69":"SMALL 🟢",
+      "70":"BIG 🔴","71":"BIG 🔴","72":"BIG 🔴","73":"SMALL 🟢","74":"SMALL 🟢",
+      "75":"BIG 🔴","76":"BIG 🔴","77":"BIG 🔴","78":"SMALL 🟢","79":"SMALL 🟢",
+      "80":"SMALL 🟢","81":"SMALL 🟢","82":"BIG 🔴","83":"BIG 🔴","84":"BIG 🔴",
+      "85":"BIG 🔴","86":"SMALL 🟢","87":"BIG 🔴","88":"BIG 🔴","89":"SMALL 🟢",
+      "90":"SMALL 🟢","91":"SMALL 🟢","92":"SMALL 🟢","93":"BIG 🔴","94":"BIG 🔴",
+      "95":"BIG 🔴","96":"BIG 🔴","97":"SMALL 🟢","98":"BIG 🔴","99":"SMALL 🟢"
+    };
 
+    function showResult() {
+      const inp = document.getElementById("numberInput").value.trim();
+      const box = document.getElementById("resultBox");
+      box.classList.remove("show");
+      if (inp === "" || isNaN(inp) || inp.length > 2) {
+        box.innerText = "Please enter a valid 2‑digit number";
+        box.classList.add("show");
+        return;
+      }
+      const key = inp.padStart(2, "0");
+      box.innerText = "Processing... ⏳";
       setTimeout(() => {
-        if (!/^\d{3}$/.test(num)) {
-          resultEl.textContent = "INVALID INPUT";
-          resultEl.style.color = "orange";
-          return;
-        }
-
-        const a = parseInt(num.charAt(0));
-        const b = parseInt(num.charAt(1));
-        const c = parseInt(num.charAt(2));
-        const output = (a - b) + c;
-
-        if (output % 2 === 0) {
-          resultEl.textContent = "🔴 RED";
-          resultEl.style.color = "red";
-        } else {
-          resultEl.textContent = "🟢 GREEN";
-          resultEl.style.color = "lime";
-        }
-      }, 2000);
+        box.innerText = data[key] || "No data found ❌";
+        box.classList.add("show");
+      }, 500);
     }
   </script>
 
 </body>
 </html>
+
