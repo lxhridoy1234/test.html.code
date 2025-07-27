@@ -1,102 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>HRIDOY VIP SIGNAL - Login</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HDA HACK</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box;
+      font-family: 'Outfit', sans-serif;
+    }
     body {
-      height: 100vh;
-      background: linear-gradient(135deg, #141e30, #243b55);
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      display: flex;
+      background: linear-gradient(135deg, #1f1c2c, #928dab);
+      color: #fff;
+      display: flex; flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
-      color: #fff;
       padding: 20px;
+      min-height: 100vh;
     }
-    .login-container, .container {
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-      padding: 40px 30px;
-      border-radius: 15px;
-      border: 1px solid rgba(255,255,255,0.15);
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+    .security-container, .main-wrapper {
       width: 100%;
       max-width: 400px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      border-radius: 20px;
+      padding: 30px;
       text-align: center;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    h1 {
+      color: #00ffc8;
       margin-bottom: 20px;
     }
-    h2, h1 { font-size: 28px; color: #00ffc8; margin-bottom: 20px; }
-    input[type="text"], input[type="password"] {
-      width: 100%; padding: 12px; margin: 12px 0;
-      border: none; border-radius: 8px; font-size: 16px;
-      outline: none; background-color: #fff; color: #000;
+    input[type="text"] {
+      width: 100%;
+      padding: 14px;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      font-size: 18px;
+      margin-bottom: 15px;
+      background: #f5f5f5;
+      color: #333;
     }
     button {
-      width: 100%; padding: 12px; background-color: #00ffc8;
-      color: #000; border: none; border-radius: 8px;
-      font-size: 18px; cursor: pointer; margin-top: 10px;
-      transition: background-color 0.3s ease;
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      background: #00ffc8;
+      color: #000;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s ease;
     }
-    button:hover { background-color: #00cfa8; }
-    .error { color: #ff6b6b; margin-top: 10px; font-size: 14px; }
-    .hidden { display: none; }
+    button:hover {
+      background: #00d6aa;
+    }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+    }
+    .main-wrapper {
+      display: none;
+    }
+    .top-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .top-buttons a {
+      flex: 1;
+      text-decoration: none;
+      background: #00ffc8;
+      color: #000;
+      font-weight: 600;
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+      transition: background 0.3s ease;
+    }
+    .top-buttons a:hover {
+      background: #00d6aa;
+    }
     .result-box {
-      margin-top: 25px; padding: 15px;
-      font-size: 22px; background-color: rgba(255,255,255,0.1);
-      border: 1px solid #00ffc8; border-radius: 10px;
-      opacity: 0; transition: opacity 0.5s ease-in-out;
+      margin-top: 20px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      font-size: 20px;
+      border: 1px solid #00ffc8;
+      opacity: 0;
+      transition: opacity 0.5s ease;
       min-height: 50px;
     }
     .result-box.show {
       opacity: 1;
-      animation: fadeIn 0.6s ease-in-out;
     }
-    @keyframes fadeIn {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+    .history-box {
+      margin-top: 20px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(0, 255, 200, 0.5);
+      border-radius: 12px;
+      padding: 15px;
+      font-size: 16px;
+      color: #ccc;
+      max-height: 200px;
+      overflow-y: auto;
+      text-align: left;
+      user-select: none;
+      word-wrap: break-word;
+    }
+    .history-entry {
+      margin-bottom: 10px;
+      border-bottom: 1px solid #00ffc8;
+      padding-bottom: 8px;
+    }
+    .history-entry span {
+      display: inline-block;
+      min-width: 70px;
+      font-weight: 600;
+    }
+    #activeUsers {
+      margin-bottom: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #00ffc8;
+      user-select: none;
     }
     @media (max-width: 480px) {
-      h1, h2 { font-size: 24px; }
-      input, button, .result-box { font-size: 16px; }
+      input, button, .top-buttons a, .result-box, .history-box {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Login -->
-  <div class="login-container" id="loginPage">
-    <h2>HRIDOY VIP LOGIN</h2>
-    <input type="text" id="username" placeholder="Username" />
-    <input type="password" id="password" placeholder="Password" />
-    <button onclick="login()">Continue</button>
-    <div class="error" id="errorBox"></div>
+  <!-- Security Screen -->
+  <div class="security-container" id="securityScreen">
+    <h1>HDA HACK</h1>
+    <input type="text" id="uidInput" placeholder="Enter your UID" />
+    <button onclick="checkUID()">Unlock</button>
+    <div class="error-message" id="errorMessage"></div>
   </div>
 
-  <!-- VIP Signal -->
-  <div class="container hidden" id="mainPage">
-    <h1>HRIDOY VIP SIGNAL</h1>
-    <input type="text" id="numberInput" placeholder="Enter 2‑digit number" maxlength="2">
-    <button onclick="showResult()">Check Result</button>
-    <div class="result-box" id="resultBox">Result will appear here</div>
+  <!-- Main Content -->
+  <div class="main-wrapper" id="mainPage">
+    <div id="activeUsers">Active Users: 0</div>
+
+    <div class="top-buttons">
+      <a href="https://t.me/HRIDOY_CYBER_ZONE/" target="_blank" rel="noopener noreferrer">Telegram</a>
+      <a href="https://dkwin9.com/#/register?invitationCode=12822303969" target="_blank" rel="noopener noreferrer">Game</a>
+    </div>
+
+    <div class="container">
+      <h1>HRIDOY VIP SIGNAL</h1>
+      <input type="text" id="numberInput" placeholder="Enter 2-digit number" maxlength="2" />
+      <button onclick="showResult()">Check Result</button>
+      <div class="result-box" id="resultBox"></div>
+      <div class="history-box" id="historyBox">
+        <strong>History:</strong>
+        <div id="historyEntries"></div>
+      </div>
+    </div>
   </div>
 
   <script>
-    const correctUsername = "hridoy167";
-    const correctPassword = "hridoy1678";
+    const allowedUIDs = ["303969", "322883", "550643", "570548", "616258", "007", "660475", "895596", "017602"];
 
-    function login() {
-      const u = document.getElementById("username").value.trim();
-      const p = document.getElementById("password").value.trim();
-      const err = document.getElementById("errorBox");
-      if (u === correctUsername && p === correctPassword) {
-        document.getElementById("loginPage").classList.add("hidden");
-        document.getElementById("mainPage").classList.remove("hidden");
+    function checkUID() {
+      const uid = document.getElementById("uidInput").value.trim();
+      const errorBox = document.getElementById("errorMessage");
+      const securityScreen = document.getElementById("securityScreen");
+      const mainPage = document.getElementById("mainPage");
+
+      if (allowedUIDs.includes(uid)) {
+        errorBox.textContent = "";
+        securityScreen.style.display = "none";
+        mainPage.style.display = "block";
+        startActiveUsersSimulation();
       } else {
-        err.innerText = "Invalid username or password.";
+        errorBox.textContent = "Invalid UID ❌";
       }
     }
 
@@ -120,27 +208,72 @@
       "80":"SMALL 🟢","81":"SMALL 🟢","82":"BIG 🔴","83":"BIG 🔴","84":"BIG 🔴",
       "85":"BIG 🔴","86":"SMALL 🟢","87":"BIG 🔴","88":"BIG 🔴","89":"SMALL 🟢",
       "90":"SMALL 🟢","91":"SMALL 🟢","92":"SMALL 🟢","93":"BIG 🔴","94":"BIG 🔴",
-      "95":"BIG 🔴","96":"BIG 🔴","97":"SMALL 🟢","98":"BIG 🔴","99":"SMALL 🟢"
+      "95":"BIG 🔴","96":"SMALL 🟢","97":"SMALL 🟢","98":"BIG 🔴","99":"SMALL 🟢"
     };
+
+    // History array - unlimited length
+    let history = [];
 
     function showResult() {
       const inp = document.getElementById("numberInput").value.trim();
       const box = document.getElementById("resultBox");
+      const historyEntries = document.getElementById("historyEntries");
       box.classList.remove("show");
+
       if (inp === "" || isNaN(inp) || inp.length > 2) {
-        box.innerText = "Please enter a valid 2‑digit number";
+        box.innerText = "Please enter a valid 2-digit number";
         box.classList.add("show");
         return;
       }
+
       const key = inp.padStart(2, "0");
       box.innerText = "Processing... ⏳";
+
       setTimeout(() => {
-        box.innerText = data[key] || "No data found ❌";
+        const result = data[key] || "No data found ❌";
+        box.innerText = result;
         box.classList.add("show");
+
+        // Add to history without limit
+        const [numberStr, signal] = [key, result];
+        history.unshift({ number: numberStr, signal });
+
+        // Render history with unlimited items
+        renderHistory();
       }, 500);
+    }
+
+    function renderHistory() {
+      const historyEntries = document.getElementById("historyEntries");
+      historyEntries.innerHTML = "";
+
+      history.forEach(entry => {
+        const div = document.createElement("div");
+        div.classList.add("history-entry");
+        div.innerHTML = `<span>${entry.number}</span> - <span>${entry.signal}</span>`;
+        historyEntries.appendChild(div);
+      });
+    }
+
+    // Fake active user count simulation
+    let activeUsers = 0;
+    let activeUsersInterval;
+
+    function startActiveUsersSimulation() {
+      const activeUsersDisplay = document.getElementById("activeUsers");
+      activeUsers = Math.floor(Math.random() * 20) + 30; // শুরুতে 30-50 এর মধ্যে
+
+      activeUsersDisplay.textContent = `Active Users: ${activeUsers}`;
+
+      activeUsersInterval = setInterval(() => {
+        const change = Math.floor(Math.random() * 5) - 2; // -2 থেকে +2 রেঞ্জে পরিবর্তন
+        activeUsers += change;
+        if (activeUsers < 5) activeUsers = 5; // নীচের সীমানা
+        if (activeUsers > 100) activeUsers = 100; // উপরের সীমানা
+        activeUsersDisplay.textContent = `Active Users: ${activeUsers}`;
+      }, 3000);
     }
   </script>
 
 </body>
 </html>
-
