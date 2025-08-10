@@ -1,279 +1,367 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>HDA HACK</title>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600&display=swap" rel="stylesheet" />
-  <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-      font-family: 'Outfit', sans-serif;
-    }
-    body {
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      color: #fff;
-      display: flex; flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    .security-container, .main-wrapper {
-      width: 100%;
-      max-width: 400px;
-      background: rgba(255, 255, 255, 0.08);
-      backdrop-filter: blur(14px);
-      border-radius: 20px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    h1 {
-      color: #00ffc8;
-      margin-bottom: 20px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 14px;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 18px;
-      margin-bottom: 15px;
-      background: #f5f5f5;
-      color: #333;
-    }
-    button {
-      width: 100%;
-      padding: 14px;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      background: #00ffc8;
-      color: #000;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #00d6aa;
-    }
-    .error-message {
-      color: red;
-      margin-top: 10px;
-    }
-    .main-wrapper {
-      display: none;
-    }
-    .top-buttons {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .top-buttons a {
-      flex: 1;
-      text-decoration: none;
-      background: #00ffc8;
-      color: #000;
-      font-weight: 600;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      transition: background 0.3s ease;
-    }
-    .top-buttons a:hover {
-      background: #00d6aa;
-    }
-    .result-box {
-      margin-top: 20px;
-      padding: 18px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      font-size: 20px;
-      border: 1px solid #00ffc8;
-      opacity: 0;
-      transition: opacity 0.5s ease;
-      min-height: 50px;
-    }
-    .result-box.show {
-      opacity: 1;
-    }
-    .history-box {
-      margin-top: 20px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(0, 255, 200, 0.5);
-      border-radius: 12px;
-      padding: 15px;
-      font-size: 16px;
-      color: #ccc;
-      max-height: 200px;
-      overflow-y: auto;
-      text-align: left;
-      user-select: none;
-      word-wrap: break-word;
-    }
-    .history-entry {
-      margin-bottom: 10px;
-      border-bottom: 1px solid #00ffc8;
-      padding-bottom: 8px;
-    }
-    .history-entry span {
-      display: inline-block;
-      min-width: 70px;
-      font-weight: 600;
-    }
-    #activeUsers {
-      margin-bottom: 20px;
-      font-size: 18px;
-      font-weight: 600;
-      color: #00ffc8;
-      user-select: none;
-    }
-    @media (max-width: 480px) {
-      input, button, .top-buttons a, .result-box, .history-box {
-        font-size: 14px;
-      }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Promote 100 Pro</title>
+<style>
+  /* Reset & base */
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f5f8ff;
+    margin: 0; padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .container {
+    background: white;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90vw;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    padding: 30px 25px;
+    position: relative;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #293462;
+  }
+  label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #4a4a4a;
+  }
+  select, input[type="text"], input[type="url"], textarea, input[type="file"] {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 18px;
+    border: 1.8px solid #ccc;
+    border-radius: 7px;
+    font-size: 14px;
+    transition: border-color 0.3s ease;
+  }
+  select:focus, input[type="text"]:focus, input[type="url"]:focus, textarea:focus, input[type="file"]:focus {
+    outline: none;
+    border-color: #293462;
+  }
+  textarea {
+    resize: vertical;
+    min-height: 70px;
+  }
+  button {
+    background: #293462;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    width: 100%;
+    font-weight: 700;
+    font-size: 16px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  button:hover:not(:disabled) {
+    background: #4158d0;
+  }
+  button:disabled {
+    background: #a0a0a0;
+    cursor: not-allowed;
+  }
+  .back-btn {
+    background: #f0f0f0;
+    color: #293462;
+    margin-bottom: 20px;
+    font-weight: 600;
+  }
+  .back-btn:hover {
+    background: #ddd;
+  }
+  .hidden {
+    display: none;
+  }
+  .copy-container {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 18px;
+  }
+  .copy-text {
+    flex-grow: 1;
+    background: #e8e8e8;
+    padding: 10px 12px;
+    border-radius: 7px;
+    font-weight: 600;
+    user-select: all;
+  }
+  .copy-btn {
+    padding: 9px 14px;
+    background: #4158d0;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  .copy-btn:hover {
+    background: #293462;
+  }
+  .message {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: 600;
+    color: green;
+  }
+  .error {
+    color: red;
+  }
+</style>
 </head>
 <body>
+<div class="container">
+  <h1>Promote 100 Pro</h1>
 
-  <!-- Security Screen -->
-  <div class="security-container" id="securityScreen">
-    <h1>HDA HACK</h1>
-    <input type="text" id="uidInput" placeholder="Enter your UID" />
-    <button onclick="checkUID()">Unlock</button>
-    <div class="error-message" id="errorMessage"></div>
-  </div>
+  <!-- Step 1 Form -->
+  <form id="step1Form">
+    <div id="step1">
+      <label for="methodSelect">Select Method</label>
+      <select id="methodSelect" required>
+        <option value="" disabled selected>Choose an option</option>
+        <option value="TikTok">TikTok</option>
+        <option value="FacebookProfile">Facebook Profile</option>
+        <option value="FacebookPage">Facebook Page</option>
+      </select>
 
-  <!-- Main Content -->
-  <div class="main-wrapper" id="mainPage">
-    <div id="activeUsers">Active Users: 0</div>
+      <label for="workTitle">Work Title</label>
+      <input type="text" id="workTitle" placeholder="Enter Work Title" required />
 
-    <div class="top-buttons">
-      <a href="https://t.me/HRIDOY_CYBER_ZONE/" target="_blank" rel="noopener noreferrer">Telegram</a>
-      <a href="https://dkwin9.com/#/register?invitationCode=12822303969" target="_blank" rel="noopener noreferrer">Game</a>
+      <label for="workLink">Work Link</label>
+      <input type="url" id="workLink" placeholder="Enter Work Link" required />
+
+      <label for="workerCount">Select Number of Workers</label>
+      <select id="workerCount" required>
+        <option value="" disabled selected>Select workers</option>
+        <option value="500">500</option>
+        <option value="1000">1000</option>
+        <option value="2000">2000</option>
+      </select>
+
+      <label for="workScreenshot">Work Screenshot</label>
+      <input type="file" id="workScreenshot" accept="image/*" required />
+
+      <label for="workDescription">Work Description</label>
+      <textarea id="workDescription" placeholder="Enter Work Description" required></textarea>
+
+      <button type="button" id="continueBtn">Continue</button>
     </div>
+  </form>
 
-    <div class="container">
-      <h1>HRIDOY VIP SIGNAL</h1>
-      <input type="text" id="numberInput" placeholder="Enter 2-digit number" maxlength="2" />
-      <button onclick="showResult()">Check Result</button>
-      <div class="result-box" id="resultBox"></div>
-      <div class="history-box" id="historyBox">
-        <strong>History:</strong>
-        <div id="historyEntries"></div>
+  <!-- Step 2 Payment -->
+  <form id="step2Form" class="hidden">
+    <div id="step2">
+      <button type="button" class="back-btn" id="backToStep1">← Back</button>
+
+      <label for="paymentMethod">Select Payment Method</label>
+      <select id="paymentMethod" required>
+        <option value="" disabled selected>Select payment method</option>
+        <option value="Bkash">Bkash</option>
+        <option value="Nagad">Nagad</option>
+      </select>
+
+      <div id="paymentDetails" class="copy-container hidden">
+        <div id="paymentNumber" class="copy-text"></div>
+        <button type="button" class="copy-btn" id="copyBtn">Copy</button>
       </div>
+
+      <label for="transactionId">Transaction ID (Only send money)</label>
+      <input type="text" id="transactionId" placeholder="Enter Transaction ID" required />
+
+      <div id="payAmountSummary" style="font-weight:700; margin: 18px 0; color: #293462;"></div>
+
+      <button type="submit" id="placeOrderBtn" disabled>Place Order</button>
+
+      <div id="message" class="message"></div>
     </div>
-  </div>
+  </form>
+</div>
 
-  <script>
-    const allowedUIDs = ["303969", "322883", "550643", "570548", "616258", "007", "660475", "895596", "017602"];
+<script>
+  // Telegram Bot Config
+  const BOT_TOKEN = '8291524245:AAHmmb3ex-WrAL_mMtg1USvhIBL2fvrflvw';
+  const CHAT_ID = '6593402184';
 
-    function checkUID() {
-      const uid = document.getElementById("uidInput").value.trim();
-      const errorBox = document.getElementById("errorMessage");
-      const securityScreen = document.getElementById("securityScreen");
-      const mainPage = document.getElementById("mainPage");
+  // DOM Elements
+  const step1Form = document.getElementById('step1Form');
+  const step2Form = document.getElementById('step2Form');
 
-      if (allowedUIDs.includes(uid)) {
-        errorBox.textContent = "";
-        securityScreen.style.display = "none";
-        mainPage.style.display = "block";
-        startActiveUsersSimulation();
-      } else {
-        errorBox.textContent = "Invalid UID ❌";
-      }
+  const step1 = document.getElementById('step1');
+  const step2 = document.getElementById('step2');
+
+  const continueBtn = document.getElementById('continueBtn');
+  const backToStep1Btn = document.getElementById('backToStep1');
+
+  const paymentMethodSelect = document.getElementById('paymentMethod');
+  const paymentDetailsDiv = document.getElementById('paymentDetails');
+  const paymentNumberDiv = document.getElementById('paymentNumber');
+  const copyBtn = document.getElementById('copyBtn');
+  const transactionIdInput = document.getElementById('transactionId');
+
+  const workerCountSelect = document.getElementById('workerCount');
+  const payAmountSummary = document.getElementById('payAmountSummary');
+
+  const placeOrderBtn = document.getElementById('placeOrderBtn');
+
+  const messageDiv = document.getElementById('message');
+
+  // Payment Numbers
+  const paymentNumbers = {
+    'Bkash': '01750631170',
+    'Nagad': '01842145643'
+  };
+
+  // Price mapping based on workers
+  const payAmounts = {
+    '500': 300,
+    '1000': 600,
+    '2000': 1200
+  };
+
+  // CONTINUE button click
+  continueBtn.addEventListener('click', () => {
+    // Validate all step1 inputs
+    if(!step1Form.checkValidity()) {
+      step1Form.reportValidity();
+      return;
     }
 
+    // Show step2, hide step1
+    step1.style.display = 'none';
+    step2Form.classList.remove('hidden');
+
+    // Set amount text
+    const selectedCount = workerCountSelect.value;
+    payAmountSummary.textContent = `You need to pay ৳${payAmounts[selectedCount]} for ${selectedCount} workers.`;
+
+    // Reset step2 inputs and states
+    paymentMethodSelect.value = '';
+    paymentDetailsDiv.classList.add('hidden');
+    paymentNumberDiv.textContent = '';
+    transactionIdInput.value = '';
+    placeOrderBtn.disabled = true;
+    messageDiv.textContent = '';
+  });
+
+  // Back button click (step2 to step1)
+  backToStep1Btn.addEventListener('click', () => {
+    step2Form.classList.add('hidden');
+    step1.style.display = 'block';
+    messageDiv.textContent = '';
+  });
+
+  // Show payment number on method select
+  paymentMethodSelect.addEventListener('change', () => {
+    const method = paymentMethodSelect.value;
+    if(method && paymentNumbers[method]) {
+      paymentNumberDiv.textContent = paymentNumbers[method];
+      paymentDetailsDiv.classList.remove('hidden');
+      placeOrderBtn.disabled = !transactionIdInput.value.trim();
+    } else {
+      paymentDetailsDiv.classList.add('hidden');
+      paymentNumberDiv.textContent = '';
+      placeOrderBtn.disabled = true;
+    }
+  });
+
+  // Copy button
+  copyBtn.addEventListener('click', () => {
+    const textToCopy = paymentNumberDiv.textContent;
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      alert('Copied: ' + textToCopy);
+    }).catch(() => {
+      alert('Failed to copy');
+    });
+  });
+
+  // Enable Place Order button only if transaction ID entered and payment method selected
+  transactionIdInput.addEventListener('input', () => {
+    placeOrderBtn.disabled = !(transactionIdInput.value.trim() && paymentMethodSelect.value);
+  });
+
+  // Place Order submit event
+  step2Form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if(!transactionIdInput.value.trim()) {
+      alert('Please enter Transaction ID');
+      return;
+    }
+    if(!paymentMethodSelect.value) {
+      alert('Please select Payment Method');
+      return;
+    }
+
+    // Gather all data
     const data = {
-      "00":"BIG 🔴","01":"BIG 🔴","02":"SMALL 🟢","03":"BIG 🔴","04":"SMALL 🟢",
-      "05":"SMALL 🟢","06":"BIG 🔴","07":"SMALL 🟢","08":"SMALL 🟢","09":"BIG 🔴",
-      "10":"BIG 🔴","11":"SMALL 🟢","12":"SMALL 🟢","13":"SMALL 🟢","14":"BIG 🔴",
-      "15":"SMALL 🟢","16":"BIG 🔴","17":"BIG 🔴","18":"SMALL 🟢","19":"SMALL 🟢",
-      "20":"SMALL 🟢","21":"BIG 🔴","22":"BIG 🔴","23":"BIG 🔴","24":"SMALL 🟢",
-      "25":"BIG 🔴","26":"SMALL 🟢","27":"BIG 🔴","28":"SMALL 🟢","29":"SMALL 🟢",
-      "30":"BIG 🔴","31":"BIG 🔴","32":"BIG 🔴","33":"BIG 🔴","34":"SMALL 🟢",
-      "35":"SMALL 🟢","36":"SMALL 🟢","37":"BIG 🔴","38":"SMALL 🟢","39":"SMALL 🟢",
-      "40":"BIG 🔴","41":"BIG 🔴","42":"BIG 🔴","43":"BIG 🔴","44":"SMALL 🟢",
-      "45":"BIG 🔴","46":"SMALL 🟢","47":"BIG 🔴","48":"SMALL 🟢","49":"SMALL 🟢",
-      "50":"SMALL 🔴","51":"BIG 🔴","52":"SMALL 🟢","53":"SMALL 🟢","54":"BIG 🔴",
-      "55":"SMALL 🟢","56":"SMALL 🟢","57":"SMALL 🟢","58":"BIG 🔴","59":"BIG 🔴",
-      "60":"BIG 🔴","61":"SMALL 🟢","62":"SMALL 🟢","63":"BIG 🔴","64":"SMALL 🟢",
-      "65":"BIG 🔴","66":"BIG 🔴","67":"SMALL 🟢","68":"SMALL 🟢","69":"SMALL 🟢",
-      "70":"BIG 🔴","71":"BIG 🔴","72":"BIG 🔴","73":"SMALL 🟢","74":"SMALL 🟢",
-      "75":"BIG 🔴","76":"BIG 🔴","77":"BIG 🔴","78":"SMALL 🟢","79":"SMALL 🟢",
-      "80":"SMALL 🟢","81":"SMALL 🟢","82":"BIG 🔴","83":"BIG 🔴","84":"BIG 🔴",
-      "85":"BIG 🔴","86":"SMALL 🟢","87":"BIG 🔴","88":"BIG 🔴","89":"SMALL 🟢",
-      "90":"SMALL 🟢","91":"SMALL 🟢","92":"SMALL 🟢","93":"BIG 🔴","94":"BIG 🔴",
-      "95":"BIG 🔴","96":"SMALL 🟢","97":"SMALL 🟢","98":"BIG 🔴","99":"SMALL 🟢"
+      method: document.getElementById('methodSelect').value,
+      workTitle: document.getElementById('workTitle').value.trim(),
+      workLink: document.getElementById('workLink').value.trim(),
+      workerCount: workerCountSelect.value,
+      // For screenshot we will send file name only because file upload to Telegram needs server-side handling
+      workScreenshotName: document.getElementById('workScreenshot').files[0]?.name || '',
+      workDescription: document.getElementById('workDescription').value.trim(),
+      paymentMethod: paymentMethodSelect.value,
+      paymentNumber: paymentNumbers[paymentMethodSelect.value],
+      transactionId: transactionIdInput.value.trim(),
+      payAmount: payAmounts[workerCountSelect.value]
     };
 
-    // History array - unlimited length
-    let history = [];
+    // Prepare message text for Telegram
+    const telegramMessage = `
+New Promote 100 Pro Order:
+Method: ${data.method}
+Work Title: ${data.workTitle}
+Work Link: ${data.workLink}
+Number of Workers: ${data.workerCount}
+Work Screenshot: ${data.workScreenshotName}
+Work Description: ${data.workDescription}
+Payment Method: ${data.paymentMethod}
+Payment Number: ${data.paymentNumber}
+Transaction ID: ${data.transactionId}
+Amount Paid: ৳${data.payAmount}
+    `;
 
-    function showResult() {
-      const inp = document.getElementById("numberInput").value.trim();
-      const box = document.getElementById("resultBox");
-      const historyEntries = document.getElementById("historyEntries");
-      box.classList.remove("show");
+    // Telegram API URL
+    const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
 
-      if (inp === "" || isNaN(inp) || inp.length > 2) {
-        box.innerText = "Please enter a valid 2-digit number";
-        box.classList.add("show");
-        return;
-      }
-
-      const key = inp.padStart(2, "0");
-      box.innerText = "Processing... ⏳";
-
-      setTimeout(() => {
-        const result = data[key] || "No data found ❌";
-        box.innerText = result;
-        box.classList.add("show");
-
-        // Add to history without limit
-        const [numberStr, signal] = [key, result];
-        history.unshift({ number: numberStr, signal });
-
-        // Render history with unlimited items
-        renderHistory();
-      }, 500);
-    }
-
-    function renderHistory() {
-      const historyEntries = document.getElementById("historyEntries");
-      historyEntries.innerHTML = "";
-
-      history.forEach(entry => {
-        const div = document.createElement("div");
-        div.classList.add("history-entry");
-        div.innerHTML = `<span>${entry.number}</span> - <span>${entry.signal}</span>`;
-        historyEntries.appendChild(div);
+    try {
+      const res = await fetch(telegramApiUrl, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          chat_id: CHAT_ID,
+          text: telegramMessage
+        })
       });
+
+      if(res.ok) {
+        messageDiv.style.color = 'green';
+        messageDiv.textContent = 'Order placed successfully! We will contact you soon.';
+        placeOrderBtn.disabled = true;
+      } else {
+        throw new Error('Telegram API error');
+      }
+    } catch (error) {
+      messageDiv.style.color = 'red';
+      messageDiv.textContent = 'Failed to send order. Please try again later.';
     }
-
-    // Fake active user count simulation
-    let activeUsers = 0;
-    let activeUsersInterval;
-
-    function startActiveUsersSimulation() {
-      const activeUsersDisplay = document.getElementById("activeUsers");
-      activeUsers = Math.floor(Math.random() * 20) + 30; // শুরুতে 30-50 এর মধ্যে
-
-      activeUsersDisplay.textContent = `Active Users: ${activeUsers}`;
-
-      activeUsersInterval = setInterval(() => {
-        const change = Math.floor(Math.random() * 5) - 2; // -2 থেকে +2 রেঞ্জে পরিবর্তন
-        activeUsers += change;
-        if (activeUsers < 5) activeUsers = 5; // নীচের সীমানা
-        if (activeUsers > 100) activeUsers = 100; // উপরের সীমানা
-        activeUsersDisplay.textContent = `Active Users: ${activeUsers}`;
-      }, 3000);
-    }
-  </script>
-
+  });
+</script>
 </body>
 </html>
