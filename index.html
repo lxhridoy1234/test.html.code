@@ -2,366 +2,298 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Promote 100 Pro</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+<title>Developer Hridoy</title>
 <style>
-  /* Reset & base */
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+  /* Reset & Base */
   * {
     box-sizing: border-box;
   }
   body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #f5f8ff;
-    margin: 0; padding: 0;
+    margin: 0;
+    background: linear-gradient(135deg, #5a1ea1, #9f5de2);
+    font-family: 'Poppins', sans-serif;
+    color: #f5f5f7;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
+    padding: 30px 20px;
   }
+
+  /* Container */
   .container {
-    background: white;
-    border-radius: 12px;
-    width: 400px;
-    max-width: 90vw;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    background: rgba(255,255,255,0.08);
+    max-width: 420px;
+    width: 100%;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
     padding: 30px 25px;
-    position: relative;
-  }
-  h1 {
-    text-align: center;
-    margin-bottom: 25px;
-    color: #293462;
-  }
-  label {
-    font-weight: 600;
-    display: block;
-    margin-bottom: 6px;
-    color: #4a4a4a;
-  }
-  select, input[type="text"], input[type="url"], textarea, input[type="file"] {
-    width: 100%;
-    padding: 10px 12px;
-    margin-bottom: 18px;
-    border: 1.8px solid #ccc;
-    border-radius: 7px;
-    font-size: 14px;
-    transition: border-color 0.3s ease;
-  }
-  select:focus, input[type="text"]:focus, input[type="url"]:focus, textarea:focus, input[type="file"]:focus {
-    outline: none;
-    border-color: #293462;
-  }
-  textarea {
-    resize: vertical;
-    min-height: 70px;
-  }
-  button {
-    background: #293462;
-    color: white;
-    border: none;
-    padding: 12px 0;
-    width: 100%;
-    font-weight: 700;
-    font-size: 16px;
-    border-radius: 7px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  button:hover:not(:disabled) {
-    background: #4158d0;
-  }
-  button:disabled {
-    background: #a0a0a0;
-    cursor: not-allowed;
-  }
-  .back-btn {
-    background: #f0f0f0;
-    color: #293462;
-    margin-bottom: 20px;
-    font-weight: 600;
-  }
-  .back-btn:hover {
-    background: #ddd;
-  }
-  .hidden {
-    display: none;
-  }
-  .copy-container {
     display: flex;
-    gap: 10px;
-    align-items: center;
-    margin-bottom: 18px;
+    flex-direction: column;
+    animation: slideIn 0.7s ease forwards;
   }
-  .copy-text {
-    flex-grow: 1;
-    background: #e8e8e8;
-    padding: 10px 12px;
-    border-radius: 7px;
-    font-weight: 600;
-    user-select: all;
+
+  @keyframes slideIn {
+    from {opacity: 0; transform: translateY(40px);}
+    to {opacity: 1; transform: translateY(0);}
   }
-  .copy-btn {
-    padding: 9px 14px;
-    background: #4158d0;
-    color: white;
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: background-color 0.3s ease;
-  }
-  .copy-btn:hover {
-    background: #293462;
-  }
-  .message {
+
+  /* Title */
+  h1 {
+    font-weight: 700;
+    font-size: 1.8rem;
+    margin: 0 0 18px 0;
     text-align: center;
-    margin-top: 15px;
-    font-weight: 600;
-    color: green;
+    letter-spacing: 1.2px;
+    color: #fffcfc;
+    text-shadow: 0 0 8px rgba(255,255,255,0.6);
   }
-  .error {
-    color: red;
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    max-height: 240px;
+    resize: vertical;
+    border-radius: 15px;
+    border: none;
+    padding: 15px 20px;
+    font-size: 17px;
+    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
+    color: #222;
+    background: #fff;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.1);
+    transition: box-shadow 0.3s ease;
+    outline-offset: 4px;
+  }
+  textarea:focus {
+    box-shadow: inset 0 3px 15px #7c3aed;
+  }
+
+  /* Buttons container */
+  .btn-group {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Buttons */
+  button {
+    flex: 1 1 120px;
+    background: linear-gradient(135deg, #7c3aed, #c084fc);
+    border: none;
+    color: white;
+    font-weight: 600;
+    font-size: 16px;
+    padding: 14px 0;
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgba(124,58,237,0.5);
+    transition: background 0.3s ease, transform 0.2s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #9d4edd, #d8b4fe);
+    transform: scale(1.05);
+  }
+  button:active {
+    transform: scale(0.95);
+  }
+
+  /* Saved Texts container */
+  #savedTexts {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  /* Each text tag */
+  .text-item {
+    background: #7c3aed;
+    color: white;
+    font-weight: 600;
+    padding: 10px 16px;
+    border-radius: 25px;
+    box-shadow: 0 6px 15px rgba(124,58,237,0.4);
+    user-select: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 50px;
+    max-width: 100%;
+    animation: popIn 0.3s ease forwards;
+  }
+  @keyframes popIn {
+    from {opacity: 0; transform: scale(0.7);}
+    to {opacity: 1; transform: scale(1);}
+  }
+
+  /* Delete button for each tag */
+  .text-item button {
+    background: rgba(255,255,255,0.3);
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-weight: 900;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.25s ease;
+  }
+  .text-item button:hover {
+    background: #ef4444;
+  }
+
+  /* Copy notification */
+  #copyMsg {
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #9333ea;
+    color: white;
+    padding: 12px 25px;
+    font-weight: 600;
+    border-radius: 30px;
+    box-shadow: 0 8px 25px rgba(147,51,234,0.6);
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+    transition: opacity 0.3s ease;
+    z-index: 9999;
+  }
+  #copyMsg.show {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  /* Responsive */
+  @media (max-width: 440px) {
+    .btn-group {
+      flex-direction: column;
+      gap: 12px;
+    }
+    button {
+      flex: 1 1 100%;
+    }
   }
 </style>
 </head>
 <body>
+
 <div class="container">
-  <h1>Promote 100 Pro</h1>
-
-  <!-- Step 1 Form -->
-  <form id="step1Form">
-    <div id="step1">
-      <label for="methodSelect">Select Method</label>
-      <select id="methodSelect" required>
-        <option value="" disabled selected>Choose an option</option>
-        <option value="TikTok">TikTok</option>
-        <option value="FacebookProfile">Facebook Profile</option>
-        <option value="FacebookPage">Facebook Page</option>
-      </select>
-
-      <label for="workTitle">Work Title</label>
-      <input type="text" id="workTitle" placeholder="Enter Work Title" required />
-
-      <label for="workLink">Work Link</label>
-      <input type="url" id="workLink" placeholder="Enter Work Link" required />
-
-      <label for="workerCount">Select Number of Workers</label>
-      <select id="workerCount" required>
-        <option value="" disabled selected>Select workers</option>
-        <option value="500">500</option>
-        <option value="1000">1000</option>
-        <option value="2000">2000</option>
-      </select>
-
-      <label for="workScreenshot">Work Screenshot</label>
-      <input type="file" id="workScreenshot" accept="image/*" required />
-
-      <label for="workDescription">Work Description</label>
-      <textarea id="workDescription" placeholder="Enter Work Description" required></textarea>
-
-      <button type="button" id="continueBtn">Continue</button>
-    </div>
-  </form>
-
-  <!-- Step 2 Payment -->
-  <form id="step2Form" class="hidden">
-    <div id="step2">
-      <button type="button" class="back-btn" id="backToStep1">← Back</button>
-
-      <label for="paymentMethod">Select Payment Method</label>
-      <select id="paymentMethod" required>
-        <option value="" disabled selected>Select payment method</option>
-        <option value="Bkash">Bkash</option>
-        <option value="Nagad">Nagad</option>
-      </select>
-
-      <div id="paymentDetails" class="copy-container hidden">
-        <div id="paymentNumber" class="copy-text"></div>
-        <button type="button" class="copy-btn" id="copyBtn">Copy</button>
-      </div>
-
-      <label for="transactionId">Transaction ID (Only send money)</label>
-      <input type="text" id="transactionId" placeholder="Enter Transaction ID" required />
-
-      <div id="payAmountSummary" style="font-weight:700; margin: 18px 0; color: #293462;"></div>
-
-      <button type="submit" id="placeOrderBtn" disabled>Place Order</button>
-
-      <div id="message" class="message"></div>
-    </div>
-  </form>
+  <h1>Developer Hridoy</h1>
+  <textarea id="textInput" placeholder="Type your English text here..."></textarea>
+  <div class="btn-group">
+    <button id="addBtn">➕ Add Text</button>
+    <button id="speakBtn">🔊 Speak All</button>
+    <button id="copyBtn">📋 Copy All</button>
+    <button id="clearBtn">🗑 Clear All</button>
+  </div>
+  <div id="savedTexts"></div>
 </div>
 
+<div id="copyMsg">Copied to clipboard!</div>
+
 <script>
-  // Telegram Bot Config
-  const BOT_TOKEN = '8291524245:AAHmmb3ex-WrAL_mMtg1USvhIBL2fvrflvw';
-  const CHAT_ID = '6593402184';
+  const textInput = document.getElementById('textInput');
+  const savedTextsDiv = document.getElementById('savedTexts');
+  const copyMsg = document.getElementById('copyMsg');
 
-  // DOM Elements
-  const step1Form = document.getElementById('step1Form');
-  const step2Form = document.getElementById('step2Form');
+  let savedTexts = [];
 
-  const step1 = document.getElementById('step1');
-  const step2 = document.getElementById('step2');
+  // Render saved texts as tags
+  function renderTexts() {
+    savedTextsDiv.innerHTML = '';
+    savedTexts.forEach((text, idx) => {
+      const div = document.createElement('div');
+      div.className = 'text-item';
+      div.textContent = text;
 
-  const continueBtn = document.getElementById('continueBtn');
-  const backToStep1Btn = document.getElementById('backToStep1');
+      const delBtn = document.createElement('button');
+      delBtn.textContent = '×';
+      delBtn.title = 'Delete';
+      delBtn.onclick = () => {
+        savedTexts.splice(idx, 1);
+        renderTexts();
+      };
 
-  const paymentMethodSelect = document.getElementById('paymentMethod');
-  const paymentDetailsDiv = document.getElementById('paymentDetails');
-  const paymentNumberDiv = document.getElementById('paymentNumber');
-  const copyBtn = document.getElementById('copyBtn');
-  const transactionIdInput = document.getElementById('transactionId');
-
-  const workerCountSelect = document.getElementById('workerCount');
-  const payAmountSummary = document.getElementById('payAmountSummary');
-
-  const placeOrderBtn = document.getElementById('placeOrderBtn');
-
-  const messageDiv = document.getElementById('message');
-
-  // Payment Numbers
-  const paymentNumbers = {
-    'Bkash': '01750631170',
-    'Nagad': '01842145643'
-  };
-
-  // Price mapping based on workers
-  const payAmounts = {
-    '500': 300,
-    '1000': 600,
-    '2000': 1200
-  };
-
-  // CONTINUE button click
-  continueBtn.addEventListener('click', () => {
-    // Validate all step1 inputs
-    if(!step1Form.checkValidity()) {
-      step1Form.reportValidity();
-      return;
-    }
-
-    // Show step2, hide step1
-    step1.style.display = 'none';
-    step2Form.classList.remove('hidden');
-
-    // Set amount text
-    const selectedCount = workerCountSelect.value;
-    payAmountSummary.textContent = `You need to pay ৳${payAmounts[selectedCount]} for ${selectedCount} workers.`;
-
-    // Reset step2 inputs and states
-    paymentMethodSelect.value = '';
-    paymentDetailsDiv.classList.add('hidden');
-    paymentNumberDiv.textContent = '';
-    transactionIdInput.value = '';
-    placeOrderBtn.disabled = true;
-    messageDiv.textContent = '';
-  });
-
-  // Back button click (step2 to step1)
-  backToStep1Btn.addEventListener('click', () => {
-    step2Form.classList.add('hidden');
-    step1.style.display = 'block';
-    messageDiv.textContent = '';
-  });
-
-  // Show payment number on method select
-  paymentMethodSelect.addEventListener('change', () => {
-    const method = paymentMethodSelect.value;
-    if(method && paymentNumbers[method]) {
-      paymentNumberDiv.textContent = paymentNumbers[method];
-      paymentDetailsDiv.classList.remove('hidden');
-      placeOrderBtn.disabled = !transactionIdInput.value.trim();
-    } else {
-      paymentDetailsDiv.classList.add('hidden');
-      paymentNumberDiv.textContent = '';
-      placeOrderBtn.disabled = true;
-    }
-  });
-
-  // Copy button
-  copyBtn.addEventListener('click', () => {
-    const textToCopy = paymentNumberDiv.textContent;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-      alert('Copied: ' + textToCopy);
-    }).catch(() => {
-      alert('Failed to copy');
+      div.appendChild(delBtn);
+      savedTextsDiv.appendChild(div);
     });
-  });
+  }
 
-  // Enable Place Order button only if transaction ID entered and payment method selected
-  transactionIdInput.addEventListener('input', () => {
-    placeOrderBtn.disabled = !(transactionIdInput.value.trim() && paymentMethodSelect.value);
-  });
-
-  // Place Order submit event
-  step2Form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-
-    if(!transactionIdInput.value.trim()) {
-      alert('Please enter Transaction ID');
+  // Add text from textarea
+  function addText() {
+    const val = textInput.value.trim();
+    if (val === '') {
+      alert('Please type something!');
       return;
     }
-    if(!paymentMethodSelect.value) {
-      alert('Please select Payment Method');
+    savedTexts.push(val);
+    textInput.value = '';
+    renderTexts();
+  }
+
+  // Speak all saved texts
+  function speakAll() {
+    if (savedTexts.length === 0) {
+      alert('No texts to speak!');
       return;
     }
+    const utterance = new SpeechSynthesisUtterance(savedTexts.join('. '));
+    utterance.lang = 'en-US';
+    window.speechSynthesis.cancel(); // stop any ongoing
+    window.speechSynthesis.speak(utterance);
+  }
 
-    // Gather all data
-    const data = {
-      method: document.getElementById('methodSelect').value,
-      workTitle: document.getElementById('workTitle').value.trim(),
-      workLink: document.getElementById('workLink').value.trim(),
-      workerCount: workerCountSelect.value,
-      // For screenshot we will send file name only because file upload to Telegram needs server-side handling
-      workScreenshotName: document.getElementById('workScreenshot').files[0]?.name || '',
-      workDescription: document.getElementById('workDescription').value.trim(),
-      paymentMethod: paymentMethodSelect.value,
-      paymentNumber: paymentNumbers[paymentMethodSelect.value],
-      transactionId: transactionIdInput.value.trim(),
-      payAmount: payAmounts[workerCountSelect.value]
-    };
+  // Copy all saved texts to clipboard
+  function copyAll() {
+    if (savedTexts.length === 0) {
+      alert('No texts to copy!');
+      return;
+    }
+    navigator.clipboard.writeText(savedTexts.join('\n')).then(() => {
+      copyMsg.classList.add('show');
+      setTimeout(() => copyMsg.classList.remove('show'), 1500);
+    });
+  }
 
-    // Prepare message text for Telegram
-    const telegramMessage = `
-New Promote 100 Pro Order:
-Method: ${data.method}
-Work Title: ${data.workTitle}
-Work Link: ${data.workLink}
-Number of Workers: ${data.workerCount}
-Work Screenshot: ${data.workScreenshotName}
-Work Description: ${data.workDescription}
-Payment Method: ${data.paymentMethod}
-Payment Number: ${data.paymentNumber}
-Transaction ID: ${data.transactionId}
-Amount Paid: ৳${data.payAmount}
-    `;
+  // Clear all saved texts
+  function clearAll() {
+    if (savedTexts.length === 0) {
+      alert('Nothing to clear!');
+      return;
+    }
+    if (confirm('Are you sure you want to clear all texts?')) {
+      savedTexts = [];
+      renderTexts();
+    }
+  }
 
-    // Telegram API URL
-    const telegramApiUrl = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+  // Button events
+  document.getElementById('addBtn').addEventListener('click', addText);
+  document.getElementById('speakBtn').addEventListener('click', speakAll);
+  document.getElementById('copyBtn').addEventListener('click', copyAll);
+  document.getElementById('clearBtn').addEventListener('click', clearAll);
 
-    try {
-      const res = await fetch(telegramApiUrl, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({
-          chat_id: CHAT_ID,
-          text: telegramMessage
-        })
-      });
-
-      if(res.ok) {
-        messageDiv.style.color = 'green';
-        messageDiv.textContent = 'Order placed successfully! We will contact you soon.';
-        placeOrderBtn.disabled = true;
-      } else {
-        throw new Error('Telegram API error');
-      }
-    } catch (error) {
-      messageDiv.style.color = 'red';
-      messageDiv.textContent = 'Failed to send order. Please try again later.';
+  // Optional: Press Enter inside textarea to add text (Shift+Enter for newline)
+  textInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      addText();
     }
   });
 </script>
+
 </body>
 </html>
