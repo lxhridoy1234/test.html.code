@@ -1,94 +1,301 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>পিরিয়ড নাম্বার থেকে Big/Small সিগন্যাল</title>
-<style>
-  body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    color: white;
-    margin: 0;
-  }
-  .box {
-    background: rgba(255,255,255,0.15);
-    padding: 30px 40px;
-    border-radius: 15px;
-    text-align: center;
-    width: 320px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-  }
-  input[type="text"] {
-    width: 100%;
-    padding: 12px 15px;
-    font-size: 1.2rem;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    margin-bottom: 20px;
-  }
-  button {
-    width: 100%;
-    padding: 14px;
-    font-size: 1.2rem;
-    border: none;
-    border-radius: 12px;
-    background: #a78bfa;
-    color: white;
-    cursor: pointer;
-    font-weight: 700;
-    transition: background 0.3s ease;
-  }
-  button:hover {
-    background: #5a3ea1;
-  }
-  #result {
-    margin-top: 25px;
-    font-size: 1.4rem;
-    font-weight: 700;
-    min-height: 50px;
-    letter-spacing: 1px;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Hridoy Signal Tools</title>
+  <style>
+    /* Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1f2c41, #32475b);
+      color: #eee;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 30px;
+    }
+    /* Container Card */
+    .card {
+      background: #2a3a55;
+      border-radius: 20px;
+      padding: 30px 40px;
+      box-shadow:
+        0 4px 15px rgba(0,255,136,0.3),
+        0 0 30px rgba(0,255,136,0.15);
+      width: 100%;
+      max-width: 420px;
+      text-align: center;
+      user-select: none;
+    }
+    /* Title */
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #00ff88;
+      margin-bottom: 30px;
+      letter-spacing: 3px;
+      text-shadow:
+        0 0 8px #00ff88,
+        0 0 20px #00ff88cc;
+      animation: glowTitle 3s ease-in-out infinite alternate;
+    }
+    @keyframes glowTitle {
+      0% { text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88cc; }
+      100% { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88cc; }
+    }
+    /* Input & Button */
+    .input-container {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    input[type="text"] {
+      flex: 1 1 170px;
+      padding: 15px 20px;
+      font-size: 1.2rem;
+      border-radius: 12px;
+      border: none;
+      outline: none;
+      background: #1f2c41;
+      color: #cce8dd;
+      box-shadow: inset 0 0 12px #00ff8844;
+      text-align: center;
+      transition: box-shadow 0.3s ease;
+    }
+    input[type="text"]:focus {
+      box-shadow: inset 0 0 18px #00ff88aa;
+    }
+    button {
+      background: #00ff88;
+      color: #121212;
+      font-weight: 700;
+      font-size: 1.2rem;
+      padding: 15px 30px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 0 18px #00ff88aa;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      user-select: none;
+      min-width: 130px;
+    }
+    button:hover {
+      background-color: #00cc6a;
+      transform: scale(1.05);
+    }
+    /* Result card */
+    #resultWrapper {
+      margin-top: 20px;
+      background: #1f2c41;
+      border-radius: 15px;
+      padding: 25px 30px;
+      box-shadow: 0 0 25px #00ff8844;
+      opacity: 0;
+      transform: scale(0.9);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      align-items: center;
+      user-select: none;
+      min-height: 130px;
+    }
+    #resultWrapper.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    /* Result texts container */
+    .result-row {
+      display: flex;
+      gap: 30px;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    /* Size & Color boxes */
+    .result-box {
+      background: #2a3a55;
+      border-radius: 15px;
+      padding: 18px 30px;
+      min-width: 120px;
+      box-shadow: inset 0 0 12px #00ff8833;
+      user-select: none;
+      transition: box-shadow 0.3s ease;
+    }
+    .result-box:hover {
+      box-shadow: inset 0 0 25px #00ff8866;
+    }
+    .result-title {
+      font-weight: 600;
+      font-size: 1.15rem;
+      color: #99ffcc;
+      letter-spacing: 1.2px;
+      margin-bottom: 10px;
+      user-select: none;
+    }
+    /* Animated size text */
+    .size-text {
+      font-weight: 900;
+      font-size: 2.5rem;
+      color: #ccc;
+      letter-spacing: 3px;
+      animation: pulseSize 3s ease-in-out infinite alternate;
+    }
+    @keyframes pulseSize {
+      0% { color: #ccc; text-shadow: none; }
+      50% { color: #00ff88; text-shadow: 0 0 15px #00ff88bb; }
+      100% { color: #ccc; text-shadow: none; }
+    }
+    /* Animated color text */
+    .color-text {
+      font-weight: 900;
+      font-size: 2.5rem;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      animation: pulseColor 2s ease-in-out infinite alternate;
+      user-select: none;
+    }
+    .color-red {
+      color: #ff4d4d;
+      text-shadow: 0 0 15px #ff4d4dbb;
+    }
+    .color-green {
+      color: #00ff88;
+      text-shadow: 0 0 15px #00ff88bb;
+    }
+    @keyframes pulseColor {
+      0%, 100% { text-shadow: 0 0 10px; }
+      50% { text-shadow: 0 0 25px; }
+    }
+    /* Spinner */
+    .spinner {
+      border: 5px solid rgba(255, 255, 255, 0.15);
+      border-top: 5px solid #00ff88;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+    /* Responsive */
+    @media (max-width: 440px) {
+      .input-container {
+        flex-direction: column;
+      }
+      input[type="text"], button {
+        width: 100%;
+        min-width: auto;
+      }
+      .result-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+      .result-box {
+        min-width: auto;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="card" role="main" aria-label="Hridoy Signal Tools Calculator">
+    <h1>Hridoy Signal Tools</h1>
+    <div class="input-container">
+      <input
+        id="periodInput"
+        type="text"
+        maxlength="3"
+        aria-label="Enter three digit number"
+        placeholder="Enter 3-digit number"
+        autocomplete="off"
+        pattern="\d{3}"
+        inputmode="numeric"
+      />
+      <button onclick="processPeriod()" aria-label="Process input and show signals">Process</button>
+    </div>
 
-<div class="box">
-  <h2>পিরিয়ড নাম্বার দিয়ে Big/Small সিগন্যাল</h2>
-  <input type="text" id="periodInput" maxlength="3" placeholder="শেষ ৩ সংখ্যা লিখুন (যেমন: 123)" />
-  <button onclick="predictSignal()">সিগন্যাল দেখুন</button>
-  <div id="result"></div>
-</div>
+    <div id="resultWrapper" aria-live="polite" aria-atomic="true">
+      <div id="resultBox"></div>
+    </div>
+  </div>
 
-<script>
-function predictSignal() {
-  const input = document.getElementById('periodInput').value.trim();
-  const resultDiv = document.getElementById('result');
+  <script>
+    function processPeriod() {
+      const inputField = document.getElementById("periodInput");
+      const input = inputField.value.trim();
+      const resultWrapper = document.getElementById("resultWrapper");
+      const resultBox = document.getElementById("resultBox");
 
-  if(!/^\d{3}$/.test(input)) {
-    resultDiv.textContent = 'দয়া করে সঠিক ৩ সংখ্যার শেষ অংশ লিখুন।';
-    return;
-  }
+      // Validate input
+      if (!/^\d{3}$/.test(input)) {
+        alert("Please enter a valid 3-digit number.");
+        inputField.focus();
+        return;
+      }
 
-  // যোগফল বের করা
-  let sum = 0;
-  for(let ch of input) {
-    sum += parseInt(ch);
-  }
+      // Parse digits
+      const a = parseInt(input[0], 10);
+      const b = parseInt(input[1], 10);
+      const c = parseInt(input[2], 10);
 
-  // যোগফল জোড় হলে Big, বিজোড় হলে Small
-  if(sum % 2 === 0) {
-    resultDiv.textContent = '📈 সিগন্যাল: Big আসবে!';
-  } else {
-    resultDiv.textContent = '📉 সিগন্যাল: Small আসবে!';
-  }
-}
-</script>
+      // Calculate result = (a + b) - c
+      const result = (a + b) - c;
 
+      // Color logic based on parity of result
+      let colorClass = "";
+      let colorText = "";
+      if (result % 2 === 0) {
+        colorClass = "color-red";
+        colorText = "RED";
+      } else {
+        colorClass = "color-green";
+        colorText = "GREEN";
+      }
+
+      // Size logic based on last digit c
+      let sizeText = "";
+      if (c >= 0 && c <= 4) {
+        sizeText = "SMALL";
+      } else {
+        sizeText = "BIG";
+      }
+
+      // Show loading spinner first
+      resultBox.innerHTML = `
+        <div class="spinner" role="img" aria-label="Loading"></div>
+        <div style="font-weight:600; font-size:1.1rem; color:#aaa; user-select:none;">Processing...</div>
+      `;
+      resultWrapper.classList.add("show");
+
+      setTimeout(() => {
+        resultBox.innerHTML = `
+          <div class="result-row" role="group" aria-label="Size and Color result">
+            <div class="result-box" aria-live="polite" aria-atomic="true">
+              <div class="result-title">Size</div>
+              <div class="size-text">${sizeText}</div>
+            </div>
+            <div class="result-box" aria-live="polite" aria-atomic="true">
+              <div class="result-title">Color</div>
+              <div class="color-text ${colorClass}">${colorText}</div>
+            </div>
+          </div>
+        `;
+      }, 900);
+    }
+  </script>
 </body>
 </html>
