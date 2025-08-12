@@ -3,218 +3,90 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Prediction Game Analyzer - Professional</title>
+<title>পিরিয়ড নাম্বার থেকে Big/Small সিগন্যাল</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
-
-  * {
-    box-sizing: border-box;
-  }
-
   body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Poppins', sans-serif;
     background: linear-gradient(135deg, #667eea, #764ba2);
-    min-height: 100vh;
     display: flex;
-    align-items: center;
     justify-content: center;
-    color: #fff;
-    padding: 20px;
+    align-items: center;
+    height: 100vh;
+    color: white;
+    margin: 0;
   }
-
-  .container {
-    background: rgba(255,255,255,0.1);
-    max-width: 450px;
-    width: 100%;
+  .box {
+    background: rgba(255,255,255,0.15);
     padding: 30px 40px;
     border-radius: 15px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
-    backdrop-filter: blur(10px);
-  }
-
-  h1 {
     text-align: center;
-    margin-bottom: 25px;
-    font-weight: 700;
-    font-size: 1.8rem;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    width: 320px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   }
-
-  label {
-    font-weight: 600;
-    font-size: 1rem;
-    display: block;
-    margin-bottom: 10px;
-  }
-
-  input[type="number"] {
+  input[type="text"] {
     width: 100%;
     padding: 12px 15px;
-    font-size: 1.1rem;
-    border: none;
+    font-size: 1.2rem;
     border-radius: 10px;
+    border: none;
     outline: none;
-    transition: box-shadow 0.3s ease;
+    margin-bottom: 20px;
   }
-  input[type="number"]:focus {
-    box-shadow: 0 0 8px 3px #a78bfa;
-    background: rgba(255,255,255,0.15);
-    color: #fff;
-  }
-
   button {
-    margin-top: 20px;
     width: 100%;
     padding: 14px;
-    font-size: 1.1rem;
-    background: #a78bfa;
+    font-size: 1.2rem;
     border: none;
     border-radius: 12px;
-    color: #fff;
-    font-weight: 700;
+    background: #a78bfa;
+    color: white;
     cursor: pointer;
-    box-shadow: 0 5px 15px rgba(167,139,250,0.6);
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    font-weight: 700;
+    transition: background 0.3s ease;
   }
-
   button:hover {
-    background: #764ba2;
-    box-shadow: 0 8px 25px rgba(118,75,162,0.8);
+    background: #5a3ea1;
   }
-
   #result {
     margin-top: 25px;
-    background: rgba(255, 255, 255, 0.12);
-    padding: 20px 25px;
-    border-radius: 15px;
-    box-shadow: inset 0 0 10px rgba(255,255,255,0.2);
-    font-size: 1.2rem;
-    font-weight: 600;
-    line-height: 1.5;
-    min-height: 80px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    position: relative;
-  }
-
-  /* Loading spinner */
-  .spinner {
-    border: 4px solid rgba(255, 255, 255, 0.3);
-    border-top: 4px solid #a78bfa;
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    animation: spin 1s linear infinite;
-    position: absolute;
-    left: 10px;
-    top: 50%;
-    transform: translateY(-50%);
-  }
-
-  @keyframes spin {
-    0% { transform: translateY(-50%) rotate(0deg);}
-    100% { transform: translateY(-50%) rotate(360deg);}
-  }
-
-  /* Responsive */
-  @media (max-width: 480px) {
-    .container {
-      padding: 25px 20px;
-    }
-    h1 {
-      font-size: 1.5rem;
-    }
-    button, input[type="number"] {
-      font-size: 1rem;
-      padding: 12px;
-    }
+    font-size: 1.4rem;
+    font-weight: 700;
+    min-height: 50px;
+    letter-spacing: 1px;
   }
 </style>
 </head>
 <body>
 
-<div class="container">
-  <h1>Prediction Game Analyzer</h1>
-  <label for="serialInput">সিরিয়াল নাম্বার লিখুন</label>
-  <input type="number" id="serialInput" placeholder="উদাহরণ: 3" />
-  <button onclick="analyzeSignal()">এনালাইজ করুন</button>
+<div class="box">
+  <h2>পিরিয়ড নাম্বার দিয়ে Big/Small সিগন্যাল</h2>
+  <input type="text" id="periodInput" maxlength="3" placeholder="শেষ ৩ সংখ্যা লিখুন (যেমন: 123)" />
+  <button onclick="predictSignal()">সিগন্যাল দেখুন</button>
   <div id="result"></div>
 </div>
 
 <script>
-// Sample Data (আপনার আসল ডাটা এখানে বসাবেন)
-const data = [
-  { serial: 1, bigsmall: 'big' },
-  { serial: 2, bigsmall: 'small' },
-  { serial: 3, bigsmall: 'big' },
-  { serial: 4, bigsmall: 'big' },
-  { serial: 5, bigsmall: 'small' },
-  { serial: 6, bigsmall: 'small' },
-  { serial: 7, bigsmall: 'big' },
-  { serial: 8, bigsmall: 'big' },
-  { serial: 9, bigsmall: 'small' },
-  { serial: 10, bigsmall: 'big' },
-  // আরো ডাটা এখানে যোগ করুন
-];
-
-function analyzeSignal() {
-  const serialInput = parseInt(document.getElementById('serialInput').value);
+function predictSignal() {
+  const input = document.getElementById('periodInput').value.trim();
   const resultDiv = document.getElementById('result');
-  resultDiv.innerHTML = ''; // ক্লিয়ার
 
-  if (isNaN(serialInput)) {
-    resultDiv.textContent = 'দয়া করে একটি সঠিক সিরিয়াল নাম্বার দিন।';
+  if(!/^\d{3}$/.test(input)) {
+    resultDiv.textContent = 'দয়া করে সঠিক ৩ সংখ্যার শেষ অংশ লিখুন।';
     return;
   }
 
-  // লোডিং স্পিনার দেখানো
-  const spinner = document.createElement('div');
-  spinner.classList.add('spinner');
-  resultDiv.appendChild(spinner);
-  resultDiv.appendChild(document.createTextNode('অ্যানালাইজ করা হচ্ছে...'));
+  // যোগফল বের করা
+  let sum = 0;
+  for(let ch of input) {
+    sum += parseInt(ch);
+  }
 
-  // একটু দেরি দেওয়া হলো, যেন লোডিং স্পিনার দেখা যায় (সিমুলেশন)
-  setTimeout(() => {
-    const index = data.findIndex(item => item.serial === serialInput);
-    if (index === -1) {
-      resultDiv.textContent = 'এই সিরিয়াল নাম্বার পাওয়া যায়নি।';
-      return;
-    }
-
-    // পরবর্তী ৫টি ডাটা নিয়ে বিশ্লেষণ
-    const nextData = data.slice(index + 1, index + 6);
-    if (nextData.length === 0) {
-      resultDiv.textContent = 'এই সিরিয়াল নাম্বারের পরে ডাটা নেই বিশ্লেষণের জন্য।';
-      return;
-    }
-
-    let bigCount = 0;
-    let smallCount = 0;
-    nextData.forEach(item => {
-      if (item.bigsmall === 'big') bigCount++;
-      else if (item.bigsmall === 'small') smallCount++;
-    });
-
-    let signal = '';
-    if (bigCount > smallCount) {
-      signal = '📈 Big signal আসছে!';
-    } else if (smallCount > bigCount) {
-      signal = '📉 Small signal আসছে!';
-    } else {
-      signal = '🔄 Big এবং Small সমান, স্পষ্ট সিগন্যাল নেই।';
-    }
-
-    resultDiv.innerHTML = `
-      পরবর্তী ৫টি ডাটার মধ্যে:<br>
-      Big = <strong>${bigCount}</strong> বার, Small = <strong>${smallCount}</strong> বার।<br><br>
-      <span style="font-size:1.4rem;">${signal}</span>
-    `;
-  }, 1200);
+  // যোগফল জোড় হলে Big, বিজোড় হলে Small
+  if(sum % 2 === 0) {
+    resultDiv.textContent = '📈 সিগন্যাল: Big আসবে!';
+  } else {
+    resultDiv.textContent = '📉 সিগন্যাল: Small আসবে!';
+  }
 }
 </script>
 
