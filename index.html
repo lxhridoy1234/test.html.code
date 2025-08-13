@@ -1,300 +1,229 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amar Club</title>
-<style>
-  /* Base */
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: #000;
-    color: #0f0;
-    font-family: monospace;
-    overflow: hidden;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Balance Crack</title>
+  <style>
+    :root{ --bg:#0b0f14; --panel:#0f1520; --neon:#27f18a; --neon-dim:#1aa763; --text:#d7ffe6; --accent:#00ffd0; --danger:#ff4d6d; --nagad:#ff6a00; --bkash:#e2136e }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; background: radial-gradient(1000px 600px at 20% -10%, #112233 0%, #0b0f14 50%, #06080c 100%); color:var(--text); overflow-x:hidden}
+    .scan{position:fixed; inset:0; pointer-events:none; opacity:.06; background: repeating-linear-gradient( to bottom, transparent 0 2px, #000 3px 3px ); mix-blend-mode: overlay; z-index:0}
+    .grid{position:fixed; inset:-2rem; pointer-events:none; z-index:0; opacity:.2; background-image: linear-gradient(transparent 0 23px, rgba(39,241,138,.12) 24px), linear-gradient(90deg, transparent 0 23px, rgba(39,241,138,.12) 24px); background-size: 24px 24px; filter: drop-shadow(0 0 12px var(--neon)); animation: drift 18s linear infinite}
+    @keyframes drift{from{transform: translate3d(0,0,0)} to{transform: translate3d(24px,24px,0)}}
 
-  /* Background hacking code canvas */
-  canvas {
-    position: fixed;
-    inset: 0;
-    width: 100%; height: 100%;
-    z-index: -1;
-  }
+    .container{position:relative; z-index:1; max-width:980px; margin:16px auto 40px; padding:16px}
+    .appbar{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px; border:1px solid rgba(39,241,138,.2); border-radius:18px; background:linear-gradient(180deg, rgba(15,21,32,.85), rgba(10,14,22,.85)); box-shadow: 0 0 0 2px rgba(39,241,138,.06), 0 10px 30px rgba(0,0,0,.45)}
+    .brand{font-size:clamp(22px,5vw,36px); letter-spacing:.08em; text-transform:uppercase; color:var(--text); text-shadow:0 0 8px var(--neon), 0 0 18px var(--neon-dim)}
+    .brand::after{content:"_"; animation: caret 1.4s steps(1) infinite; color:var(--accent); margin-left:6px}
+    @keyframes caret{50%{opacity:0}}
 
-  /* Scan lines */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: repeating-linear-gradient(
-      rgba(0,255,0,0.03) 0px,
-      rgba(0,255,0,0.03) 1px,
-      transparent 2px
-    );
-    animation: scan 5s linear infinite;
-    pointer-events: none;
-    z-index: 0;
-  }
-  @keyframes scan {
-    0% { background-position: 0 0; }
-    100% { background-position: 0 100%; }
-  }
+    .split{margin-top:16px; display:grid; grid-template-columns: 1fr 1fr; gap:16px}
+    @media (max-width:760px){ .split{ grid-template-columns:1fr; } }
 
-  /* Container */
-  .panel {
-    position: relative;
-    z-index: 1;
-    width: 92vw;
-    max-width: 420px;
-    background: rgba(0,0,0,0.7);
-    border: 1px solid rgba(0,255,0,0.35);
-    box-shadow: 0 0 24px rgba(0,255,0,0.25);
-    border-radius: 16px;
-    padding: 20px 16px 24px;
-    backdrop-filter: blur(6px);
-  }
+    .card{background: linear-gradient(180deg, rgba(18,24,36,.95), rgba(10,14,22,.95)); border:1px dashed rgba(39,241,138,.35); border-radius:18px; padding:20px; position:relative; overflow:hidden; isolation:isolate}
+    .card::before{content:""; position:absolute; inset:-40%; background: conic-gradient(from 0deg, transparent, rgba(39,241,138,.08), transparent 30%); animation: spin 10s linear infinite; z-index:-1; filter: blur(16px)}
+    @keyframes spin{to{transform: rotate(1turn)}}
 
-  .heading {
-    text-align: center;
-    font-weight: 800;
-    letter-spacing: 2px;
-    color: #9cff9c;
-    text-shadow: 0 0 10px #0f0, 0 0 18px #0f0;
-    margin-bottom: 16px;
-    font-size: 24px;
-  }
+    .option{display:flex; align-items:center; justify-content:center; gap:14px; padding:14px 18px; border-radius:14px; border:1px solid rgba(255,255,255,.08); background: rgba(255,255,255,.03); cursor:pointer; user-select:none; transition: transform .12s ease, box-shadow .2s ease, border-color .2s}
+    .option:hover{ transform: translateY(-2px); border-color: rgba(39,241,138,.45); box-shadow: 0 10px 20px rgba(0,0,0,.35) }
+    .option .tag{ font-size:12px; opacity:.85; padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.12) }
+    .option .label{ font-size:20px; letter-spacing:.04em }
+    .nagad .tag{ border-color: rgba(255,106,0,.45)}
+    .bkash .tag{ border-color: rgba(226,19,110,.45)}
+    .nagad .dot, .bkash .dot{ width:10px;height:10px;border-radius:50% }
+    .nagad .dot{ background:var(--nagad) }
+    .bkash .dot{ background:var(--bkash) }
 
-  /* Input group with over-title */
-  .input-wrap {
-    position: relative;
-    margin-top: 24px;
-  }
-  .title-over-input {
-    position: absolute;
-    left: 50%;
-    transform: translate(-50%, -60%);
-    top: 0;
-    padding: 6px 14px;
-    background: #000;
-    border: 1px solid rgba(0,255,0,0.6);
-    border-radius: 999px;
-    font-weight: 800;
-    font-size: 13px;
-    letter-spacing: 1.5px;
-    color: #b5ffb5;
-    text-shadow: 0 0 8px #00ff00;
-    box-shadow: 0 0 12px rgba(0,255,0,0.35), inset 0 0 8px rgba(0,255,0,0.15);
-    pointer-events: none; /* so taps go to input */
-    white-space: nowrap;
-  }
+    .console{height:280px; background:#05080d; border:1px solid rgba(39,241,138,.25); border-radius:14px; padding:14px; overflow:auto; font-size:13px; line-height:1.4; box-shadow: inset 0 0 18px rgba(0,0,0,.6)}
+    .line{opacity:.9; white-space:pre-wrap}
+    .line .prompt{ color:var(--accent) }
 
-  label {
-    display: block;
-    font-size: 12px;
-    color: #6cff6c;
-    margin-bottom: 8px;
-    letter-spacing: .5px;
-  }
+    .actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px }
+    .btn{ padding:10px 14px; border-radius:12px; border:1px solid rgba(39,241,138,.3); background: rgba(39,241,138,.08); color:var(--text); cursor:pointer; transition: .15s ease; font-weight:600; letter-spacing:.04em }
+    .btn:hover{ transform: translateY(-1px); box-shadow: 0 6px 16px rgba(0,0,0,.35) }
+    .btn.secondary{ background: rgba(255,255,255,.04); border-color: rgba(255,255,255,.12) }
 
-  input[type="text"] {
-    width: 100%;
-    padding: 14px 16px;
-    border-radius: 12px;
-    border: 1px solid rgba(0,255,0,0.45);
-    background: rgba(0, 0, 0, 0.65);
-    color: #ccffcc;
-    font-size: 18px;
-    outline: none;
-    text-align: center;
-    box-shadow: inset 0 0 10px rgba(0,255,0,0.15);
-  }
-  input[type="text"]::placeholder { color: #3fa43f; }
+    .result{ margin-top:14px; padding:16px; border-radius:14px; border:1px solid rgba(39,241,138,.35); background: linear-gradient(180deg, rgba(8,14,20,.8), rgba(6,8,12,.9)); display:block }
+    .result h3{ margin:0 0 8px; font-size:16px; letter-spacing:.05em; opacity:.8 }
+    .badge{ display:inline-block; padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.15); font-size:16px; letter-spacing:.04em }
 
-  input[type="text"]:focus {
-    border-color: #00ff6a;
-    box-shadow: 0 0 10px rgba(0,255,128,0.4), inset 0 0 12px rgba(0,255,128,0.2);
-  }
+    .modal-backdrop{ position:fixed; inset:0; background: rgba(0,0,0,.6); display:none; align-items:center; justify-content:center; z-index:20 }
+    .modal{ width:min(560px, 92vw); background:var(--panel); border:1px solid rgba(39,241,138,.35); border-radius:18px; padding:18px; box-shadow: 0 24px 60px rgba(0,0,0,.6) }
+    .modal h3{ margin:6px 0 12px }
+    .modal .field{ display:flex; gap:10px; align-items:center }
+    .modal input{ flex:1; padding:12px 14px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0b1220; color:var(--text); outline:none }
+    .modal .modal-actions{ display:flex; gap:10px; justify-content:flex-end; margin-top:14px }
 
-  button {
-    width: 100%;
-    margin-top: 14px;
-    padding: 14px;
-    background: linear-gradient(135deg, #00ff88 0%, #00ff00 100%);
-    border: none;
-    border-radius: 12px;
-    color: #000;
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: 1px;
-    cursor: pointer;
-    box-shadow: 0 10px 20px rgba(0,255,0,0.2);
-  }
-  button:active { transform: translateY(1px); }
-
-  .result-box {
-    margin-top: 16px;
-    padding: 16px;
-    border-radius: 12px;
-    font-weight: 800;
-    font-size: 18px;
-    color: #eaffea;
-    text-align: center;
-    min-height: 56px;
-    border: 1px solid rgba(0,255,0,0.25);
-    box-shadow: inset 0 0 12px rgba(0,255,0,0.15);
-  }
-
-  .small { background-color: rgba(0, 100, 255, 0.12); }
-  .big   { background-color: rgba(255, 152, 0, 0.12); }
-  .red   { color: #ff6a6a; text-shadow: 0 0 8px #ff0000; }
-  .green { color: #baffba; text-shadow: 0 0 8px #00ff00; }
-
-  /* Glitch effect for "ACCESSING SYSTEM..." */
-  .hacking-effect { animation: glitch 1s infinite; }
-  @keyframes glitch {
-    0%   { text-shadow: 2px 2px #0f0, -2px -2px #f00; }
-    20%  { text-shadow: -2px -1px #0f0, 2px 1px #f00; }
-    40%  { text-shadow: 2px -1px #0f0, -1px 1px #f00; }
-    60%  { text-shadow: -1px 1px #0f0, 1px -1px #f00; }
-    80%  { text-shadow: 1px -1px #0f0, -2px 2px #f00; }
-    100% { text-shadow: 0 0 5px #0f0, 0 0 10px #f00; }
-  }
-
-  @media (max-width: 420px) {
-    .heading { font-size: 22px; }
-    input[type="text"] { font-size: 17px; }
-  }
-</style>
+    .progress{ height:6px; background:#081018; border-radius:999px; overflow:hidden; border:1px solid rgba(39,241,138,.25); margin-top:10px }
+    .bar{ height:100%; width:0%; background: linear-gradient(90deg, var(--neon), var(--accent)); transition: width .2s ease }
+  </style>
 </head>
 <body>
+  <div class="scan"></div>
+  <div class="grid"></div>
 
-<!-- Background matrix -->
-<canvas id="matrix"></canvas>
-
-<div class="panel" role="main" aria-label="Amar Cloub Big Small Result Calculator">
-  <div class="heading">AMAR CLUB</div>
-
-  <form id="cloubForm" autocomplete="off">
-    <label for="numbersInput">Enter Three Numbers (0-9) Without Spaces</label>
-
-    <div class="input-wrap">
-      <!-- The requested over-input title -->
-      <div class="title-over-input">HS COMMUNITY</div>
-      <input
-        type="text"
-        id="numbersInput"
-        name="numbersInput"
-        maxlength="3"
-        pattern="[0-9]{3}"
-        required
-        placeholder="e.g. 000"
-        inputmode="numeric"
-        aria-label="Three digit number input"
-      />
+  <div class="container">
+    <div class="appbar">
+      <div class="brand">Balance Crack</div>
+      <button class="btn secondary" id="about">Info</button>
     </div>
 
-    <button type="submit" aria-live="polite" aria-atomic="true">Calculate Result</button>
-  </form>
+    <div class="split">
+      <div class="card">
+        <div class="option nagad" id="opt-nagad" title="Nagad">
+          <div class="dot"></div>
+          <div class="label">Nagad</div>
+          <div class="tag">LEFT</div>
+        </div>
+        <div class="console" id="console-nagad" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn" onclick="openPrompt('nagad')">Select Nagad</button>
+          <button class="btn secondary" onclick="resetConsole('nagad')">Reset</button>
+        </div>
+        <div class="result" id="result-nagad">
+          <h3>Current Balance</h3>
+          <div class="badge mono" id="amount-nagad">Tk</div>
+        </div>
+      </div>
 
-  <div id="result" class="result-box" role="region" aria-live="polite" aria-atomic="true" aria-label="Calculation Result">
-    Please enter three numbers and click Calculate.
+      <div class="card">
+        <div class="option bkash" id="opt-bkash" title="bKash">
+          <div class="dot"></div>
+          <div class="label">bKash</div>
+          <div class="tag">RIGHT</div>
+        </div>
+        <div class="console" id="console-bkash" aria-live="polite"></div>
+        <div class="actions">
+          <button class="btn" onclick="openPrompt('bkash')">Select bKash</button>
+          <button class="btn secondary" onclick="resetConsole('bkash')">Reset</button>
+        </div>
+        <div class="result" id="result-bkash">
+          <h3>Current Balance</h3>
+          <div class="badge mono" id="amount-bkash">Tk</div>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
 
-<script>
-  /* ===== Matrix effect (infinite downward rain, no gaps) ===== */
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
+  <!-- Modal -->
+  <div class="modal-backdrop" id="modal">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="m-title">
+      <h3 id="m-title">Enter mobile number</h3>
+      <div class="field">
+        <input id="input-number" type="tel" placeholder="e.g. 01292918" maxlength="14" />
+        <button class="btn" id="submit-number">Submit</button>
+        <button class="btn secondary" id="cancel">Cancel</button>
+      </div>
+      <div class="progress" aria-hidden="true"><div class="bar" id="bar"></div></div>
+      <div id="err" class="mono" style="color:var(--danger); margin-top:8px; display:none;">Number mismatch. Try again.</div>
+    </div>
+  </div>
 
-  function resizeCanvas() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  }
-  resizeCanvas();
-  window.addEventListener("resize", resizeCanvas);
+  <script>
+    // ====== Config ======
+    const PRESET_NUMBER = "01828720781"; // set number
+    const NAGAD_AMOUNT = 200;  // Tk 200
+    const BKASH_AMOUNT = 5;    // Tk 5
 
-  const glyphs = "01<>[]{}#@$%^&*+=-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-  const fontSize = 16; // tuned for mobile readability
-  let columns = Math.floor(canvas.width / fontSize);
-  let drops = new Array(columns).fill(0);
+    const FAKE_LINES = (p) => [
+      `[INIT] boot.kernel => ok`,
+      `[SCAN] provider: ${p} :: handshake...`,
+      `[AUTH] seeding IV... ok`,
+      `[AUTH] deriving key... ok`,
+      `[AUTH] tunneling socket... ok`,
+      `[PROBE] node: dhk-core-01 latency=12ms`,
+      `[PROBE] node: dhk-edge-07 latency=9ms`,
+      `[TRACE] msisdn.index :: mapping`,
+      `[TRACE] msisdn.hash :: 8f3c:92aa:*`,
+      `[LOOKUP] subscriber cache -> hit`,
+      `[ACL] sandbox override -> ok`,
+      `[MUX] open channel :#77`,
+      `[IO] read ledger...`,
+      `[IO] read ledger... ok`,
+      `[LEDGER] reconcile blocks: 24`,
+      `[LEDGER] verify sig... ok`,
+      `[SESSION] acquire lock -> ok`,
+      `[SESSION] token :: 0xA7F9…`,
+      `[SANITY] checksum :: ok`,
+      `[PATCH] temp rule applied`,
+      `[PATCH] forward credits :: ok`,
+      `[STREAM] tail -f tx.log`,
+      `[WATCH] events: 3 pending`,
+      `[FINALIZE] writing stdout...`,
+      `[OK] pipeline completed`
+    ];
 
-  function draw() {
-    // Slight transparent fill to create trailing effect (no full wipe, so no gaps)
-    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    let activeProvider = null; // 'nagad' | 'bkash'
 
-    ctx.fillStyle = "#0f0";
-    ctx.font = fontSize + "px monospace";
+    const $ = (q) => document.querySelector(q);
+    const byId = (id) => document.getElementById(id);
 
-    for (let i = 0; i < drops.length; i++) {
-      const text = glyphs.charAt(Math.floor(Math.random() * glyphs.length));
-      const x = i * fontSize;
-      const y = (drops[i] + 1) * fontSize;
+    function openPrompt(provider){
+      activeProvider = provider;
+      byId('input-number').value = '';
+      byId('err').style.display = 'none';
+      byId('bar').style.width = '0%';
+      byId('modal').style.display = 'flex';
+      setTimeout(()=> byId('input-number').focus(), 50);
+    }
+    function closePrompt(){ byId('modal').style.display = 'none'; }
 
-      ctx.fillText(text, x, y);
+    function resetConsole(provider){
+      const con = byId(`console-${provider}`);
+      con.innerHTML = '';
+      if(provider==='nagad') byId('amount-nagad').textContent = 'Tk';
+      if(provider==='bkash') byId('amount-bkash').textContent = 'Tk';
+    }
 
-      // Keep it endless and dense: reset immediately when reaching bottom
-      if (y > canvas.height) {
-        drops[i] = 0;
+    function printLine(con, text){
+      const div = document.createElement('div');
+      div.className = 'line';
+      div.innerHTML = `<span class="prompt">$</span> ${text}`;
+      con.appendChild(div);
+      con.scrollTop = con.scrollHeight;
+    }
+
+    async function runSequence(provider){
+      const con = byId(`console-${provider}`);
+      const lines = FAKE_LINES(provider.toUpperCase());
+      for(let i=0; i<lines.length; i++){
+        printLine(con, lines[i]);
+        await new Promise(r=> setTimeout(r, 120 + Math.random()*140));
+        const pct = Math.min(100, Math.round(((i+1)/lines.length)*100));
+        byId('bar').style.width = pct + '%';
+      }
+      const amt = provider==='nagad' ? NAGAD_AMOUNT : BKASH_AMOUNT;
+      const target = provider==='nagad' ? 'amount-nagad' : 'amount-bkash';
+      byId(target).textContent = `Tk ${amt}`;
+    }
+
+    byId('cancel').addEventListener('click', closePrompt);
+    byId('submit-number').addEventListener('click', handleSubmit);
+    byId('input-number').addEventListener('keydown', (e)=>{ if(e.key==='Enter') handleSubmit(); });
+
+    function normalize(num){ return (num||'').replace(/\D/g,''); }
+
+    function handleSubmit(){
+      const input = normalize(byId('input-number').value);
+      const preset = normalize(PRESET_NUMBER);
+      if(!activeProvider){ return closePrompt(); }
+      if(input === preset){
+        byId('err').style.display = 'none';
+        closePrompt();
+        resetConsole(activeProvider);
+        runSequence(activeProvider);
       } else {
-        drops[i] += 1;
+        byId('err').style.display = 'block';
+        byId('bar').style.width = '0%';
       }
     }
-    requestAnimationFrame(draw);
-  }
 
-  // Start the animation loop
-  requestAnimationFrame(draw);
+    byId('opt-nagad').addEventListener('click', ()=> openPrompt('nagad'));
+    byId('opt-bkash').addEventListener('click', ()=> openPrompt('bkash'));
 
-  // Recalculate columns/drops on rotate/resize (mobile safe)
-  window.addEventListener("resize", () => {
-    columns = Math.floor(canvas.width / fontSize);
-    drops = new Array(columns).fill(0);
-  });
-
-  /* ===== Calculator logic (unchanged) ===== */
-  const form = document.getElementById('cloubForm');
-  const resultBox = document.getElementById('result');
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
-
-    let inputVal = form.numbersInput.value.trim();
-
-    if (!/^[0-9]{3}$/.test(inputVal)) {
-      resultBox.textContent = "Please enter exactly 3 digits (0-9) without spaces.";
-      resultBox.className = "result-box";
-      return;
-    }
-
-    const digits = inputVal.split('').map(d => parseInt(d, 10));
-    const [n1, n2, n3] = digits;
-
-    const sumFirstTwo = n1 + n2;
-    const diff = Math.abs(sumFirstTwo - n3);
-
-    let sizeClass = "";
-    if (diff >= 0 && diff <= 4) sizeClass = "small";
-    else if (diff >= 5 && diff <= 9) sizeClass = "big";
-
-    const colorClass = (diff % 2 === 0) ? "red" : "green";
-
-    // Hacking-style pre-result
-    resultBox.textContent = "ACCESSING SYSTEM...";
-    resultBox.className = "result-box hacking-effect";
-
-    setTimeout(() => {
-      const resultText = `Result: <span>${diff}</span> — ${sizeClass.toUpperCase()} — <span>${colorClass.toUpperCase()}</span>`;
-      resultBox.innerHTML = resultText;
-      resultBox.className = `result-box ${sizeClass} ${colorClass}`;
-    }, 1500);
-  });
-</script>
+    document.getElementById('about').addEventListener('click', ()=>{ alert('Balance module v1.0'); });
+  </script>
 </body>
 </html>
