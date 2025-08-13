@@ -1,200 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Amar Cloub</title>
 <style>
-  /* Reset & base */
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;
-  }
+  /* Base */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
   body {
-    min-height: 100vh;
-    background: linear-gradient(135deg, #000000, #003300);
+    margin: 0;
+    background: #000;
+    color: #0f0;
+    font-family: monospace;
+    overflow: hidden;
+    height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-    color: #eee;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
   }
 
-  /* হ্যাকিং টাইপ স্ক্যান লাইন */
+  /* Background hacking code canvas */
+  canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%; height: 100%;
+    z-index: -1;
+  }
+
+  /* Scan lines */
   body::before {
     content: '';
     position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
+    inset: 0;
     background: repeating-linear-gradient(
       rgba(0,255,0,0.03) 0px,
       rgba(0,255,0,0.03) 1px,
       transparent 2px
     );
-    pointer-events: none;
     animation: scan 5s linear infinite;
+    pointer-events: none;
+    z-index: 0;
   }
   @keyframes scan {
     0% { background-position: 0 0; }
     100% { background-position: 0 100%; }
   }
 
-  .container {
-    background: rgba(255 255 255 / 0.05);
-    border-radius: 20px;
-    box-shadow: 0 8px 32px 0 rgba(0, 255, 0, 0.37);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(0 255 0 / 0.2);
-    max-width: 400px;
-    width: 100%;
-    padding: 30px 25px 40px 25px;
+  /* Container */
+  .panel {
+    position: relative;
+    z-index: 1;
+    width: 92vw;
+    max-width: 420px;
+    background: rgba(0,0,0,0.7);
+    border: 1px solid rgba(0,255,0,0.35);
+    box-shadow: 0 0 24px rgba(0,255,0,0.25);
+    border-radius: 16px;
+    padding: 20px 16px 24px;
+    backdrop-filter: blur(6px);
+  }
+
+  .heading {
     text-align: center;
-  }
-  h1 {
-    font-weight: 700;
-    font-size: 2.4rem;
-    margin-bottom: 30px;
-    color: #0f0;
+    font-weight: 800;
     letter-spacing: 2px;
-    text-shadow: 0 0 10px #0f0;
+    color: #9cff9c;
+    text-shadow: 0 0 10px #0f0, 0 0 18px #0f0;
+    margin-bottom: 16px;
+    font-size: 24px;
   }
+
+  /* Input group with over-title */
+  .input-wrap {
+    position: relative;
+    margin-top: 24px;
+  }
+  .title-over-input {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, -60%);
+    top: 0;
+    padding: 6px 14px;
+    background: #000;
+    border: 1px solid rgba(0,255,0,0.6);
+    border-radius: 999px;
+    font-weight: 800;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    color: #b5ffb5;
+    text-shadow: 0 0 8px #00ff00;
+    box-shadow: 0 0 12px rgba(0,255,0,0.35), inset 0 0 8px rgba(0,255,0,0.15);
+    pointer-events: none; /* so taps go to input */
+    white-space: nowrap;
+  }
+
   label {
     display: block;
-    font-weight: 600;
-    font-size: 1rem;
+    font-size: 12px;
+    color: #6cff6c;
     margin-bottom: 8px;
-    text-align: left;
-    color: #0f0;
+    letter-spacing: .5px;
   }
+
   input[type="text"] {
     width: 100%;
-    padding: 12px 15px;
+    padding: 14px 16px;
     border-radius: 12px;
-    border: none;
-    background: rgba(0 255 0 / 0.15);
-    color: #0f0;
-    font-size: 1.1rem;
-    margin-bottom: 20px;
-    transition: background-color 0.3s ease;
-    text-shadow: 0 0 5px #0f0;
-  }
-  input[type="text"]:focus {
+    border: 1px solid rgba(0,255,0,0.45);
+    background: rgba(0, 0, 0, 0.65);
+    color: #ccffcc;
+    font-size: 18px;
     outline: none;
-    background: rgba(0 255 0 / 0.3);
-    box-shadow: 0 0 8px #0f0;
+    text-align: center;
+    box-shadow: inset 0 0 10px rgba(0,255,0,0.15);
   }
+  input[type="text"]::placeholder { color: #3fa43f; }
+
+  input[type="text"]:focus {
+    border-color: #00ff6a;
+    box-shadow: 0 0 10px rgba(0,255,128,0.4), inset 0 0 12px rgba(0,255,128,0.2);
+  }
+
   button {
     width: 100%;
+    margin-top: 14px;
     padding: 14px;
     background: linear-gradient(135deg, #00ff88 0%, #00ff00 100%);
     border: none;
-    border-radius: 18px;
+    border-radius: 12px;
     color: #000;
-    font-size: 1.2rem;
-    font-weight: 700;
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 1px;
     cursor: pointer;
-    box-shadow: 0 8px 15px rgba(0, 255, 0, 0.6);
-    transition: all 0.3s ease;
-    user-select: none;
+    box-shadow: 0 10px 20px rgba(0,255,0,0.2);
   }
-  button:hover {
-    background: linear-gradient(135deg, #00ff00 0%, #00ff88 100%);
-    box-shadow: 0 12px 24px rgba(0, 255, 0, 0.8);
-  }
+  button:active { transform: translateY(1px); }
+
   .result-box {
-    margin-top: 28px;
-    padding: 25px;
-    border-radius: 18px;
-    font-weight: 700;
-    font-size: 1.5rem;
-    user-select: none;
-    min-height: 60px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #0f0;
-    letter-spacing: 1.5px;
-    transition: background-color 0.4s ease;
-    text-shadow: 0 0 10px #0f0;
-  }
-  .small {
-    background-color: rgba(0, 100, 255, 0.2);
-    box-shadow: 0 0 12px #2196f3aa;
-  }
-  .big {
-    background-color: rgba(255, 152, 0, 0.2);
-    box-shadow: 0 0 12px #ff9800aa;
-  }
-  .red {
-    color: #ff4a4a;
-    text-shadow: 0 0 8px #ff0000;
-  }
-  .green {
-    color: #0f0;
-    text-shadow: 0 0 8px #00ff00;
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 12px;
+    font-weight: 800;
+    font-size: 18px;
+    color: #eaffea;
+    text-align: center;
+    min-height: 56px;
+    border: 1px solid rgba(0,255,0,0.25);
+    box-shadow: inset 0 0 12px rgba(0,255,0,0.15);
   }
 
-  /* হ্যাকিং টাইপ গ্লিচ ইফেক্ট */
-  .hacking-effect {
-    animation: glitch 1s infinite;
-  }
+  .small { background-color: rgba(0, 100, 255, 0.12); }
+  .big   { background-color: rgba(255, 152, 0, 0.12); }
+  .red   { color: #ff6a6a; text-shadow: 0 0 8px #ff0000; }
+  .green { color: #baffba; text-shadow: 0 0 8px #00ff00; }
+
+  /* Glitch effect for "ACCESSING SYSTEM..." */
+  .hacking-effect { animation: glitch 1s infinite; }
   @keyframes glitch {
-    0% { text-shadow: 2px 2px #0f0, -2px -2px #f00; }
-    20% { text-shadow: -2px -1px #0f0, 2px 1px #f00; }
-    40% { text-shadow: 2px -1px #0f0, -1px 1px #f00; }
-    60% { text-shadow: -1px 1px #0f0, 1px -1px #f00; }
-    80% { text-shadow: 1px -1px #0f0, -2px 2px #f00; }
+    0%   { text-shadow: 2px 2px #0f0, -2px -2px #f00; }
+    20%  { text-shadow: -2px -1px #0f0, 2px 1px #f00; }
+    40%  { text-shadow: 2px -1px #0f0, -1px 1px #f00; }
+    60%  { text-shadow: -1px 1px #0f0, 1px -1px #f00; }
+    80%  { text-shadow: 1px -1px #0f0, -2px 2px #f00; }
     100% { text-shadow: 0 0 5px #0f0, 0 0 10px #f00; }
   }
 
-  @media (max-width: 440px) {
-    .container {
-      max-width: 95vw;
-      padding: 25px 20px 35px 20px;
-    }
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 24px;
-    }
-    input[type="text"] {
-      font-size: 1rem;
-    }
-    button {
-      font-size: 1.1rem;
-      padding: 12px;
-    }
-    .result-box {
-      font-size: 1.3rem;
-      padding: 18px;
-      min-height: 55px;
-    }
+  @media (max-width: 420px) {
+    .heading { font-size: 22px; }
+    input[type="text"] { font-size: 17px; }
   }
 </style>
 </head>
 <body>
 
-<div class="container" role="main" aria-label="Amar Cloub Big Small Result Calculator">
-  <h1>Amar Cloub</h1>
-  
-  <form id="cloubForm" autocomplete="off" aria-describedby="instructions">
+<!-- Background matrix -->
+<canvas id="matrix"></canvas>
+
+<div class="panel" role="main" aria-label="Amar Cloub Big Small Result Calculator">
+  <div class="heading">AMAR CLOUB</div>
+
+  <form id="cloubForm" autocomplete="off">
     <label for="numbersInput">Enter Three Numbers (0-9) Without Spaces</label>
-    <input type="text" id="numbersInput" name="numbersInput" maxlength="3" pattern="[0-9]{3}" required aria-required="true" aria-label="Three digit number input" placeholder="e.g. 123" inputmode="numeric" />
-    
+
+    <div class="input-wrap">
+      <!-- The requested over-input title -->
+      <div class="title-over-input">SH COMMUNITY</div>
+      <input
+        type="text"
+        id="numbersInput"
+        name="numbersInput"
+        maxlength="3"
+        pattern="[0-9]{3}"
+        required
+        placeholder="e.g. 123"
+        inputmode="numeric"
+        aria-label="Three digit number input"
+      />
+    </div>
+
     <button type="submit" aria-live="polite" aria-atomic="true">Calculate Result</button>
   </form>
-  
+
   <div id="result" class="result-box" role="region" aria-live="polite" aria-atomic="true" aria-label="Calculation Result">
     Please enter three numbers and click Calculate.
   </div>
 </div>
 
 <script>
+  /* ===== Matrix effect (infinite downward rain, no gaps) ===== */
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resizeCanvas();
+  window.addEventListener("resize", resizeCanvas);
+
+  const glyphs = "01<>[]{}#@$%^&*+=-ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  const fontSize = 16; // tuned for mobile readability
+  let columns = Math.floor(canvas.width / fontSize);
+  let drops = new Array(columns).fill(0);
+
+  function draw() {
+    // Slight transparent fill to create trailing effect (no full wipe, so no gaps)
+    ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#0f0";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+      const text = glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+      const x = i * fontSize;
+      const y = (drops[i] + 1) * fontSize;
+
+      ctx.fillText(text, x, y);
+
+      // Keep it endless and dense: reset immediately when reaching bottom
+      if (y > canvas.height) {
+        drops[i] = 0;
+      } else {
+        drops[i] += 1;
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  // Start the animation loop
+  requestAnimationFrame(draw);
+
+  // Recalculate columns/drops on rotate/resize (mobile safe)
+  window.addEventListener("resize", () => {
+    columns = Math.floor(canvas.width / fontSize);
+    drops = new Array(columns).fill(0);
+  });
+
+  /* ===== Calculator logic (unchanged) ===== */
   const form = document.getElementById('cloubForm');
   const resultBox = document.getElementById('result');
 
@@ -216,18 +280,15 @@
     const diff = Math.abs(sumFirstTwo - n3);
 
     let sizeClass = "";
-    if (diff >= 0 && diff <= 4) {
-      sizeClass = "small";
-    } else if (diff >= 5 && diff <= 9) {
-      sizeClass = "big";
-    }
+    if (diff >= 0 && diff <= 4) sizeClass = "small";
+    else if (diff >= 5 && diff <= 9) sizeClass = "big";
 
     const colorClass = (diff % 2 === 0) ? "red" : "green";
 
-    // প্রথমে ভয়ংকর হ্যাকিং ইফেক্ট
+    // Hacking-style pre-result
     resultBox.textContent = "ACCESSING SYSTEM...";
     resultBox.className = "result-box hacking-effect";
-    
+
     setTimeout(() => {
       const resultText = `Result: <span>${diff}</span> — ${sizeClass.toUpperCase()} — <span>${colorClass.toUpperCase()}</span>`;
       resultBox.innerHTML = resultText;
@@ -235,6 +296,5 @@
     }, 1500);
   });
 </script>
-
 </body>
 </html>
