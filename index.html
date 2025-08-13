@@ -1,301 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Hridoy Signal Tools</title>
-  <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Amar Cloub</title>
+<style>
+  /* Reset & base */
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+  }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #000000, #003300);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #eee;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
+  }
+
+  /* হ্যাকিং টাইপ স্ক্যান লাইন */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: repeating-linear-gradient(
+      rgba(0,255,0,0.03) 0px,
+      rgba(0,255,0,0.03) 1px,
+      transparent 2px
+    );
+    pointer-events: none;
+    animation: scan 5s linear infinite;
+  }
+  @keyframes scan {
+    0% { background-position: 0 0; }
+    100% { background-position: 0 100%; }
+  }
+
+  .container {
+    background: rgba(255 255 255 / 0.05);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px 0 rgba(0, 255, 0, 0.37);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(0 255 0 / 0.2);
+    max-width: 400px;
+    width: 100%;
+    padding: 30px 25px 40px 25px;
+    text-align: center;
+  }
+  h1 {
+    font-weight: 700;
+    font-size: 2.4rem;
+    margin-bottom: 30px;
+    color: #0f0;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px #0f0;
+  }
+  label {
+    display: block;
+    font-weight: 600;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    text-align: left;
+    color: #0f0;
+  }
+  input[type="text"] {
+    width: 100%;
+    padding: 12px 15px;
+    border-radius: 12px;
+    border: none;
+    background: rgba(0 255 0 / 0.15);
+    color: #0f0;
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+    text-shadow: 0 0 5px #0f0;
+  }
+  input[type="text"]:focus {
+    outline: none;
+    background: rgba(0 255 0 / 0.3);
+    box-shadow: 0 0 8px #0f0;
+  }
+  button {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #00ff88 0%, #00ff00 100%);
+    border: none;
+    border-radius: 18px;
+    color: #000;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 15px rgba(0, 255, 0, 0.6);
+    transition: all 0.3s ease;
+    user-select: none;
+  }
+  button:hover {
+    background: linear-gradient(135deg, #00ff00 0%, #00ff88 100%);
+    box-shadow: 0 12px 24px rgba(0, 255, 0, 0.8);
+  }
+  .result-box {
+    margin-top: 28px;
+    padding: 25px;
+    border-radius: 18px;
+    font-weight: 700;
+    font-size: 1.5rem;
+    user-select: none;
+    min-height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #0f0;
+    letter-spacing: 1.5px;
+    transition: background-color 0.4s ease;
+    text-shadow: 0 0 10px #0f0;
+  }
+  .small {
+    background-color: rgba(0, 100, 255, 0.2);
+    box-shadow: 0 0 12px #2196f3aa;
+  }
+  .big {
+    background-color: rgba(255, 152, 0, 0.2);
+    box-shadow: 0 0 12px #ff9800aa;
+  }
+  .red {
+    color: #ff4a4a;
+    text-shadow: 0 0 8px #ff0000;
+  }
+  .green {
+    color: #0f0;
+    text-shadow: 0 0 8px #00ff00;
+  }
+
+  /* হ্যাকিং টাইপ গ্লিচ ইফেক্ট */
+  .hacking-effect {
+    animation: glitch 1s infinite;
+  }
+  @keyframes glitch {
+    0% { text-shadow: 2px 2px #0f0, -2px -2px #f00; }
+    20% { text-shadow: -2px -1px #0f0, 2px 1px #f00; }
+    40% { text-shadow: 2px -1px #0f0, -1px 1px #f00; }
+    60% { text-shadow: -1px 1px #0f0, 1px -1px #f00; }
+    80% { text-shadow: 1px -1px #0f0, -2px 2px #f00; }
+    100% { text-shadow: 0 0 5px #0f0, 0 0 10px #f00; }
+  }
+
+  @media (max-width: 440px) {
+    .container {
+      max-width: 95vw;
+      padding: 25px 20px 35px 20px;
     }
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #1f2c41, #32475b);
-      color: #eee;
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px;
-    }
-    /* Container Card */
-    .card {
-      background: #2a3a55;
-      border-radius: 20px;
-      padding: 30px 40px;
-      box-shadow:
-        0 4px 15px rgba(0,255,136,0.3),
-        0 0 30px rgba(0,255,136,0.15);
-      width: 100%;
-      max-width: 420px;
-      text-align: center;
-      user-select: none;
-    }
-    /* Title */
     h1 {
-      font-size: 2.8rem;
-      font-weight: 900;
-      color: #00ff88;
-      margin-bottom: 30px;
-      letter-spacing: 3px;
-      text-shadow:
-        0 0 8px #00ff88,
-        0 0 20px #00ff88cc;
-      animation: glowTitle 3s ease-in-out infinite alternate;
-    }
-    @keyframes glowTitle {
-      0% { text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88cc; }
-      100% { text-shadow: 0 0 20px #00ff88, 0 0 40px #00ff88cc; }
-    }
-    /* Input & Button */
-    .input-container {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 25px;
-      justify-content: center;
-      flex-wrap: wrap;
+      font-size: 2rem;
+      margin-bottom: 24px;
     }
     input[type="text"] {
-      flex: 1 1 170px;
-      padding: 15px 20px;
-      font-size: 1.2rem;
-      border-radius: 12px;
-      border: none;
-      outline: none;
-      background: #1f2c41;
-      color: #cce8dd;
-      box-shadow: inset 0 0 12px #00ff8844;
-      text-align: center;
-      transition: box-shadow 0.3s ease;
-    }
-    input[type="text"]:focus {
-      box-shadow: inset 0 0 18px #00ff88aa;
+      font-size: 1rem;
     }
     button {
-      background: #00ff88;
-      color: #121212;
-      font-weight: 700;
-      font-size: 1.2rem;
-      padding: 15px 30px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 0 18px #00ff88aa;
-      transition: background-color 0.3s ease, transform 0.2s ease;
-      user-select: none;
-      min-width: 130px;
+      font-size: 1.1rem;
+      padding: 12px;
     }
-    button:hover {
-      background-color: #00cc6a;
-      transform: scale(1.05);
-    }
-    /* Result card */
-    #resultWrapper {
-      margin-top: 20px;
-      background: #1f2c41;
-      border-radius: 15px;
-      padding: 25px 30px;
-      box-shadow: 0 0 25px #00ff8844;
-      opacity: 0;
-      transform: scale(0.9);
-      transition: opacity 0.5s ease, transform 0.5s ease;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      align-items: center;
-      user-select: none;
-      min-height: 130px;
-    }
-    #resultWrapper.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-    /* Result texts container */
-    .result-row {
-      display: flex;
-      gap: 30px;
-      justify-content: center;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    /* Size & Color boxes */
     .result-box {
-      background: #2a3a55;
-      border-radius: 15px;
-      padding: 18px 30px;
-      min-width: 120px;
-      box-shadow: inset 0 0 12px #00ff8833;
-      user-select: none;
-      transition: box-shadow 0.3s ease;
+      font-size: 1.3rem;
+      padding: 18px;
+      min-height: 55px;
     }
-    .result-box:hover {
-      box-shadow: inset 0 0 25px #00ff8866;
-    }
-    .result-title {
-      font-weight: 600;
-      font-size: 1.15rem;
-      color: #99ffcc;
-      letter-spacing: 1.2px;
-      margin-bottom: 10px;
-      user-select: none;
-    }
-    /* Animated size text */
-    .size-text {
-      font-weight: 900;
-      font-size: 2.5rem;
-      color: #ccc;
-      letter-spacing: 3px;
-      animation: pulseSize 3s ease-in-out infinite alternate;
-    }
-    @keyframes pulseSize {
-      0% { color: #ccc; text-shadow: none; }
-      50% { color: #00ff88; text-shadow: 0 0 15px #00ff88bb; }
-      100% { color: #ccc; text-shadow: none; }
-    }
-    /* Animated color text */
-    .color-text {
-      font-weight: 900;
-      font-size: 2.5rem;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      animation: pulseColor 2s ease-in-out infinite alternate;
-      user-select: none;
-    }
-    .color-red {
-      color: #ff4d4d;
-      text-shadow: 0 0 15px #ff4d4dbb;
-    }
-    .color-green {
-      color: #00ff88;
-      text-shadow: 0 0 15px #00ff88bb;
-    }
-    @keyframes pulseColor {
-      0%, 100% { text-shadow: 0 0 10px; }
-      50% { text-shadow: 0 0 25px; }
-    }
-    /* Spinner */
-    .spinner {
-      border: 5px solid rgba(255, 255, 255, 0.15);
-      border-top: 5px solid #00ff88;
-      border-radius: 50%;
-      width: 40px;
-      height: 40px;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 15px;
-    }
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-    /* Responsive */
-    @media (max-width: 440px) {
-      .input-container {
-        flex-direction: column;
-      }
-      input[type="text"], button {
-        width: 100%;
-        min-width: auto;
-      }
-      .result-row {
-        flex-direction: column;
-        gap: 12px;
-      }
-      .result-box {
-        min-width: auto;
-        width: 100%;
-      }
-    }
-  </style>
+  }
+</style>
 </head>
 <body>
-  <div class="card" role="main" aria-label="Hridoy Signal Tools Calculator">
-    <h1>Hridoy Signal Tools</h1>
-    <div class="input-container">
-      <input
-        id="periodInput"
-        type="text"
-        maxlength="3"
-        aria-label="Enter three digit number"
-        placeholder="Enter 3-digit number"
-        autocomplete="off"
-        pattern="\d{3}"
-        inputmode="numeric"
-      />
-      <button onclick="processPeriod()" aria-label="Process input and show signals">Process</button>
-    </div>
 
-    <div id="resultWrapper" aria-live="polite" aria-atomic="true">
-      <div id="resultBox"></div>
-    </div>
+<div class="container" role="main" aria-label="Amar Cloub Big Small Result Calculator">
+  <h1>Amar Cloub</h1>
+  
+  <form id="cloubForm" autocomplete="off" aria-describedby="instructions">
+    <label for="numbersInput">Enter Three Numbers (0-9) Without Spaces</label>
+    <input type="text" id="numbersInput" name="numbersInput" maxlength="3" pattern="[0-9]{3}" required aria-required="true" aria-label="Three digit number input" placeholder="e.g. 123" inputmode="numeric" />
+    
+    <button type="submit" aria-live="polite" aria-atomic="true">Calculate Result</button>
+  </form>
+  
+  <div id="result" class="result-box" role="region" aria-live="polite" aria-atomic="true" aria-label="Calculation Result">
+    Please enter three numbers and click Calculate.
   </div>
+</div>
 
-  <script>
-    function processPeriod() {
-      const inputField = document.getElementById("periodInput");
-      const input = inputField.value.trim();
-      const resultWrapper = document.getElementById("resultWrapper");
-      const resultBox = document.getElementById("resultBox");
+<script>
+  const form = document.getElementById('cloubForm');
+  const resultBox = document.getElementById('result');
 
-      // Validate input
-      if (!/^\d{3}$/.test(input)) {
-        alert("Please enter a valid 3-digit number.");
-        inputField.focus();
-        return;
-      }
+  form.addEventListener('submit', e => {
+    e.preventDefault();
 
-      // Parse digits
-      const a = parseInt(input[0], 10);
-      const b = parseInt(input[1], 10);
-      const c = parseInt(input[2], 10);
+    let inputVal = form.numbersInput.value.trim();
 
-      // Calculate result = (a + b) - c
-      const result = (a + b) - c;
-
-      // Color logic based on parity of result
-      let colorClass = "";
-      let colorText = "";
-      if (result % 2 === 0) {
-        colorClass = "color-red";
-        colorText = "RED";
-      } else {
-        colorClass = "color-green";
-        colorText = "GREEN";
-      }
-
-      // Size logic based on last digit c
-      let sizeText = "";
-      if (c >= 0 && c <= 4) {
-        sizeText = "SMALL";
-      } else {
-        sizeText = "BIG";
-      }
-
-      // Show loading spinner first
-      resultBox.innerHTML = `
-        <div class="spinner" role="img" aria-label="Loading"></div>
-        <div style="font-weight:600; font-size:1.1rem; color:#aaa; user-select:none;">Processing...</div>
-      `;
-      resultWrapper.classList.add("show");
-
-      setTimeout(() => {
-        resultBox.innerHTML = `
-          <div class="result-row" role="group" aria-label="Size and Color result">
-            <div class="result-box" aria-live="polite" aria-atomic="true">
-              <div class="result-title">Size</div>
-              <div class="size-text">${sizeText}</div>
-            </div>
-            <div class="result-box" aria-live="polite" aria-atomic="true">
-              <div class="result-title">Color</div>
-              <div class="color-text ${colorClass}">${colorText}</div>
-            </div>
-          </div>
-        `;
-      }, 900);
+    if (!/^[0-9]{3}$/.test(inputVal)) {
+      resultBox.textContent = "Please enter exactly 3 digits (0-9) without spaces.";
+      resultBox.className = "result-box";
+      return;
     }
-  </script>
+
+    const digits = inputVal.split('').map(d => parseInt(d, 10));
+    const [n1, n2, n3] = digits;
+
+    const sumFirstTwo = n1 + n2;
+    const diff = Math.abs(sumFirstTwo - n3);
+
+    let sizeClass = "";
+    if (diff >= 0 && diff <= 4) {
+      sizeClass = "small";
+    } else if (diff >= 5 && diff <= 9) {
+      sizeClass = "big";
+    }
+
+    const colorClass = (diff % 2 === 0) ? "red" : "green";
+
+    // প্রথমে ভয়ংকর হ্যাকিং ইফেক্ট
+    resultBox.textContent = "ACCESSING SYSTEM...";
+    resultBox.className = "result-box hacking-effect";
+    
+    setTimeout(() => {
+      const resultText = `Result: <span>${diff}</span> — ${sizeClass.toUpperCase()} — <span>${colorClass.toUpperCase()}</span>`;
+      resultBox.innerHTML = resultText;
+      resultBox.className = `result-box ${sizeClass} ${colorClass}`;
+    }, 1500);
+  });
+</script>
+
 </body>
 </html>
