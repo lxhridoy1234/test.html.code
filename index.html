@@ -1,129 +1,159 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WiFi QR স্ক্যানার</title>
-<script src="https://unpkg.com/html5-qrcode"></script>
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<style>
-  body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #ece9e6, #ffffff);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-  }
-
-  h1 {
-    margin: 20px 0;
-    color: #2c3e50;
-    text-align: center;
-    font-size: 26px;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-
-  #reader {
-    width: 90%;
-    max-width: 400px;
-    margin: 20px auto;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-    border: 2px solid #3498db;
-  }
-
-  #result {
-    margin-top: 25px;
-    background: #ffffff;
-    width: 90%;
-    max-width: 400px;
-    padding: 25px;
-    border-radius: 20px;
-    text-align: center;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-    font-size: 18px;
-    color: #2c3e50;
-    transition: transform 0.3s ease, background 0.3s ease;
-  }
-
-  #result:hover {
-    transform: translateY(-5px);
-    background: #f0f8ff;
-  }
-
-  .highlight {
-    color: #2980b9;
-    font-weight: 700;
-    font-size: 20px;
-  }
-
-  .info {
-    margin-top: 12px;
-    font-size: 16px;
-    color: #7f8c8d;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Balance Crack</title>
+  <style>
+    :root{ --bg:#0b0f14; --panel:#0f1520; --neon:#27f18a; --neon-dim:#1aa763; --text:#d7ffe6; --accent:#00ffd0; --danger:#ff4d6d; --nagad:#ff6a00; --bkash:#e2136e }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;background: radial-gradient(1000px 600px at 20% -10%, #112233 0%, #0b0f14 50%, #06080c 100%);color:var(--text);font-family:ui-monospace, monospace;overflow-x:hidden}
+    .scan{position:fixed; inset:0; pointer-events:none; opacity:.06; background: repeating-linear-gradient(to bottom,transparent 0 2px,#000 3px 3px);mix-blend-mode:overlay;z-index:0}
+    .grid{position:fixed; inset:-2rem; pointer-events:none; opacity:.2; background-image:linear-gradient(transparent 0 23px,rgba(39,241,138,.12)24px),linear-gradient(90deg,transparent 0 23px,rgba(39,241,138,.12)24px); background-size:24px 24px; animation: drift 18s linear infinite; z-index:0;filter:drop-shadow(0 0 12px var(--neon))}
+    @keyframes drift{from{transform:translate3d(0,0,0)} to{transform:translate3d(24px,24px,0)}}
+    .container{max-width:980px;margin:16px auto 40px;padding:16px;position:relative;z-index:1}
+    .appbar{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border:1px solid rgba(39,241,138,.2);border-radius:18px;background:linear-gradient(180deg,rgba(15,21,32,.85),rgba(10,14,22,.85));box-shadow:0 0 0 2px rgba(39,241,138,.06),0 10px 30px rgba(0,0,0,.45)}
+    .brand{font-size:clamp(22px,5vw,36px);letter-spacing:.08em;text-transform:uppercase;color:var(--text);text-shadow:0 0 8px var(--neon),0 0 18px var(--neon-dim)}
+    .brand::after{content:"_";animation:caret 1.4s steps(1) infinite;color:var(--accent);margin-left:6px}
+    @keyframes caret{50%{opacity:0}}
+    .split{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+    @media(max-width:760px){.split{grid-template-columns:1fr}}
+    .card{position:relative;overflow:hidden;padding:20px;border:1px dashed rgba(39,241,138,.35);border-radius:18px;background:linear-gradient(180deg,rgba(18,24,36,.95),rgba(10,14,22,.95))}
+    .card::before{content:"";position:absolute;inset:-40%;background:conic-gradient(from0deg,transparent,rgba(39,241,138,.08),transparent30%);animation:spin10s linear infinite;filter:blur(16px);z-index:-1}
+    @keyframes spin{to{transform:rotate(1turn)}}
+    .option{display:flex;align-items:center;gap:14px;padding:14px 18px;border-radius:14px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03);cursor:pointer;transition:transform .12s ease;border-color: rgba(255,255,255,.12)}
+    .option:hover{transform:translateY(-2px);border-color:rgba(39,241,138,.45);box-shadow:0 10px 20px rgba(0,0,0,.35)}
+    .option .tag{font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.12)}
+    .option .label{font-size:20px}
+    .nagad .tag{border-color:rgba(255,106,0,.45)}
+    .bkash .tag{border-color:rgba(226,19,110,.45)}
+    .nagad .dot,.bkash .dot{width:10px;height:10px;border-radius:50%}
+    .nagad .dot{background:var(--nagad)}
+    .bkash .dot{background:var(--bkash)}
+    .console{height:280px;background:#05080d;border:1px solid rgba(39,241,138,.25);border-radius:14px;padding:14px;overflow:auto;font-size:13px;line-height:1.4}
+    .line{white-space:pre-wrap}
+    .line .prompt{color:var(--accent)}
+    .actions{display:flex;gap:10px;margin-top:12px}
+    .btn{padding:10px 14px;border-radius:12px;border:1px solid rgba(39,241,138,.3);background:rgba(39,241,138,.08);color:var(--text);cursor:pointer;font-weight:600}
+    .btn.secondary{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12)}
+    .result{margin-top:14px;padding:16px;border-radius:14px;border:1px solid rgba(39,241,138,.35);background:linear-gradient(180deg,rgba(8,14,20,.8),rgba(6,8,12,.9))}
+    .result h3{margin:0 0 8px}
+    .badge{display:inline-block;padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.15);font-size:16px}
+    .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:20}
+    .modal{width:min(560px,92vw);background:var(--panel);border:1px solid rgba(39,241,138,.35);border-radius:18px;padding:18px}
+    .modal .field{display:flex;gap:10px;align-items:center}
+    .modal input{flex:1;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#0b1220;color:var(--text)}
+    .progress{height:6px;background:#081018;border-radius:999px;margin-top:10px;overflow:hidden;border:1px solid rgba(39,241,138,.25)}
+    .bar{height:100%;width:0%;background:linear-gradient(90deg,var(--neon),var(--accent))}
+  </style>
 </head>
 <body>
+<div class="scan"></div>
+<div class="grid"></div>
 
-<h1>WiFi QR স্ক্যানার</h1>
-<div id="reader"></div>
-<div id="result">স্ক্যানিং শুরু হচ্ছে...</div>
+<div class="container">
+  <div class="appbar">
+    <div class="brand">Balance Crack</div>
+    <button class="btn secondary" id="about">Info</button>
+  </div>
+
+  <div class="split">
+    <div class="card">
+      <div class="option nagad" id="opt-nagad"><div class="dot"></div> <div class="label">Nagad</div></div>
+      <div class="console" id="console-nagad"></div>
+      <div class="actions">
+        <button class="btn" onclick="openPrompt('nagad')">Select Nagad</button>
+        <button class="btn secondary" onclick="resetConsole('nagad')">Reset</button>
+      </div>
+      <div class="result"><h3>Current Balance</h3><div class="badge" id="amount-nagad">Tk</div></div>
+    </div>
+
+    <div class="card">
+      <div class="option bkash" id="opt-bkash"><div class="dot"></div><div class="label">bKash</div></div>
+      <div class="console" id="console-bkash"></div>
+      <div class="actions">
+        <button class="btn" onclick="openPrompt('bkash')">Select bKash</button>
+        <button class="btn secondary" onclick="resetConsole('bkash')">Reset</button>
+      </div>
+      <div class="result"><h3>Current Balance</h3><div class="badge" id="amount-bkash">Tk</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-backdrop" id="modal">
+  <div class="modal">
+    <h3>Enter mobile number</h3>
+    <div class="field">
+      <input id="input-number" type="tel" placeholder="e.g. 01XXXXXXXXX" maxlength="14"/>
+      <button class="btn" id="submit-number">Submit</button>
+      <button class="btn secondary" id="cancel">Cancel</button>
+    </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+  </div>
+</div>
 
 <script>
-const resultDiv = document.getElementById("result");
+  const FAKE_LINES = (p) => [
+    `[INIT] boot.kernel => ok`,
+    `[SCAN] provider: ${p} :: handshake...`,
+    `[AUTH] seeding IV... ok`,
+    `[AUTH] deriving key... ok`,
+    `[NODE] dhk-core connected`,
+    `[SESSION] started`,
+    `[LEDGER] syncing blocks...`,
+    `[STREAM] tail -f tx.log`,
+    `[OK] pipeline completed`
+  ];
 
-function parseWifiData(qrText) {
-  const ssidMatch = qrText.match(/S:([^;]+)/);
-  const passMatch = qrText.match(/P:([^;]+)/);
-  const ssid = ssidMatch ? ssidMatch[1] : "অজানা";
-  const password = passMatch ? passMatch[1] : "অজানা";
-  return { ssid, password };
-}
+  let activeProvider = null;
+  const $ = (q) => document.querySelector(q);
 
-async function startScanner() {
-  const html5QrCode = new Html5Qrcode("reader");
-
-  try {
-    const cameras = await Html5Qrcode.getCameras();
-    if (!cameras || cameras.length === 0) {
-      resultDiv.innerHTML = "কোন ক্যামেরা পাওয়া যায়নি।";
-      return;
-    }
-
-    let backCamera = cameras.find(cam => cam.label.toLowerCase().includes("back") || cam.label.toLowerCase().includes("rear"));
-    if (!backCamera) backCamera = cameras[0];
-    const cameraId = backCamera.id;
-
-    await html5QrCode.start(
-      cameraId,
-      { fps: 10, qrbox: 280 },
-      qrCodeMessage => {
-        const wifi = parseWifiData(qrCodeMessage);
-        resultDiv.innerHTML = `
-          <div><span class="highlight">WiFi নাম:</span> ${wifi.ssid}</div>
-          <div><span class="highlight">পাসওয়ার্ড:</span> ${wifi.password}</div>
-          <div class="info">QR কোড সফলভাবে স্ক্যান করা হয়েছে।</div>
-        `;
-        html5QrCode.stop();
-      },
-      errorMessage => {
-        console.warn(errorMessage);
-      }
-    );
-  } catch(err) {
-    console.error(err);
-    resultDiv.innerHTML = "স্ক্যানার শুরু করতে সমস্যা হয়েছে।";
+  function openPrompt(provider){
+    activeProvider = provider;
+    $('#input-number').value = '';
+    $('#bar').style.width = '0%';
+    $('#modal').style.display = 'flex';
+    setTimeout(()=>$('#input-number').focus(),50);
   }
-}
+  function closePrompt(){ $('#modal').style.display = 'none'; }
+  function resetConsole(p){ $(`#console-${p}`).innerHTML=''; $(`#amount-${p}`).textContent='Tk'; }
 
-startScanner();
+  function printLine(con,text){
+    const d=document.createElement('div');
+    d.className='line';
+    d.innerHTML=`<span class="prompt">$</span> ${text}`;
+    con.appendChild(d);
+    con.scrollTop=con.scrollHeight;
+  }
+
+  async function runSequence(p){
+    const con=$(`#console-${p}`);
+    const lines=FAKE_LINES(p.toUpperCase());
+    for(let i=0;i<lines.length;i++){
+      printLine(con,lines[i]);
+      await new Promise(r=>setTimeout(r,150));
+      const pct=Math.min(100,Math.round(((i+1)/lines.length)*100));
+      $('#bar').style.width=pct+'%';
+    }
+    const randomAmount = Math.floor(Math.random()*1000); // 0–999
+    $(`#amount-${p}`).textContent=`Tk ${randomAmount}`;
+  }
+
+  $('#cancel').onclick=closePrompt;
+  $('#submit-number').onclick=handleSubmit;
+  $('#input-number').addEventListener('keydown',(e)=>{if(e.key==='Enter') handleSubmit();});
+
+  function handleSubmit(){
+    if(!activeProvider) return closePrompt();
+    closePrompt();
+    resetConsole(activeProvider);
+    runSequence(activeProvider);
+  }
+
+  $('#about').onclick=()=>alert('Balance module v1.1');
+  $('#opt-nagad').onclick=()=>openPrompt('nagad');
+  $('#opt-bkash').onclick=()=>openPrompt('bkash');
 </script>
-
 </body>
 </html>
