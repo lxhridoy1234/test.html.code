@@ -3,62 +3,55 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Payment Tracker</title>
+<title>Balance Cracker</title>
 <style>
   body {
-    font-family: Arial, sans-serif;
-    background: #f2f2f2;
+    background: #000;
+    color: #00ff00;
+    font-family: 'Courier New', monospace;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
   }
   .container {
-    background: #fff;
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+    width: 500px;
+    padding: 20px;
+    border: 2px solid #00ff00;
+    border-radius: 10px;
     text-align: center;
-    width: 350px;
   }
-  h2 {
-    margin-bottom: 20px;
-    color: #333;
-  }
-  select, input {
+  input, select, button {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
+    background: #000;
+    color: #00ff00;
+    border: 1px solid #00ff00;
     border-radius: 6px;
-    border: 1px solid #ccc;
+    font-family: 'Courier New', monospace;
     font-size: 16px;
   }
   button {
-    width: 100%;
-    padding: 12px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 16px;
     cursor: pointer;
-    transition: 0.3s;
   }
-  button:hover {
-    background: #218838;
+  #message {
+    min-height: 300px;
+    text-align: left;
+    white-space: pre-wrap;
+    font-size: 18px;
   }
-  .message {
-    margin-top: 15px;
+  #finalMessage {
     color: red;
+    font-size: 28px;
     font-weight: bold;
+    margin-top: 20px;
   }
 </style>
 </head>
 <body>
 
 <div class="container">
-  <h2>Payment Balance Tracker</h2>
-  
   <select id="paymentMethod">
     <option value="bkash">Bkash</option>
     <option value="nagad">Nagad</option>
@@ -68,21 +61,54 @@
   <input type="text" id="userNumber" placeholder="Enter your number">
   <button onclick="submitNumber()">Submit</button>
   
-  <div class="message" id="message"></div>
+  <div id="message"></div>
+  <div id="finalMessage"></div>
 </div>
 
 <script>
+const fakeHackLines = [
+  "Initializing Balance Cracker...",
+  "Connecting to remote server...",
+  "Bypassing firewall...",
+  "Decrypting session tokens...",
+  "Injecting fake payload...",
+  "Scanning account database...",
+  "Loading exploit modules...",
+  "Executing memory dump...",
+  "Fetching account balance...",
+  "Processing encryption keys...",
+  "Finalizing hack sequence..."
+];
+
 function submitNumber() {
   const number = document.getElementById('userNumber').value;
   if(number.trim() === "") {
     alert("Please enter your number.");
     return;
   }
+
+  const messageDiv = document.getElementById('message');
+  const finalDiv = document.getElementById('finalMessage');
+  finalDiv.innerText = "";
+  messageDiv.innerText = "";
+
+  messageDiv.style.fontSize = "18px"; // ফেক কোডের জন্য ছোট আকারে
   
-  const method = document.getElementById('paymentMethod').value;
-  
-  document.getElementById('message').innerText = 
-    "Tracking your account balance is not possible. The system has blocked the server.";
+  let index = 0;
+  const interval = setInterval(() => {
+    if(index < fakeHackLines.length) {
+      // ফেক কোড বড় ছোট, এলোমেলো ফন্ট
+      const size = 16 + Math.floor(Math.random() * 10);
+      messageDiv.style.fontSize = size + "px";
+      messageDiv.innerText += fakeHackLines[index] + "\n";
+      index++;
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        finalDiv.innerText = "SERVER BLOCKED! ACCOUNT BALANCE CANNOT BE CRACKED.";
+      }, 1000);
+    }
+  }, 600); 
 }
 </script>
 
