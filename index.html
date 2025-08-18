@@ -1,116 +1,191 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Balance Cracker</title>
-<style>
-  body {
-    background: #000;
-    color: #00ff00;
-    font-family: 'Courier New', monospace;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  .container {
-    width: 500px;
-    padding: 20px;
-    border: 2px solid #00ff00;
-    border-radius: 10px;
-    text-align: center;
-  }
-  input, select, button {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    background: #000;
-    color: #00ff00;
-    border: 1px solid #00ff00;
-    border-radius: 6px;
-    font-family: 'Courier New', monospace;
-    font-size: 16px;
-  }
-  button {
-    cursor: pointer;
-  }
-  #message {
-    min-height: 300px;
-    text-align: left;
-    white-space: pre-wrap;
-    font-size: 18px;
-  }
-  #finalMessage {
-    color: red;
-    font-size: 28px;
-    font-weight: bold;
-    margin-top: 20px;
-  }
-</style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Daily Earn Money</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src='//libtl.com/sdk.js' data-zone='9468999' data-sdk='show_9468999'></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI', sans-serif}
+    body{
+      background: linear-gradient(135deg,#ffecd2,#fcb69f,#a18cd1,#fbc2eb);
+      min-height:100vh;
+      color:#333;
+      padding:20px;
+      animation:fadeIn .8s ease-in;
+    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(15px)} to{opacity:1}}
+    h2{text-align:center;font-size:30px;font-weight:700;color:#4b0082;margin-bottom:20px;text-shadow:2px 2px 4px rgba(0,0,0,0.2)}
+    .balance-circle{
+      width:170px;height:170px;border-radius:50%;
+      margin:0 auto 25px;
+      background:rgba(255,255,255,0.4);
+      backdrop-filter:blur(8px);
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:28px; color:#4b0082;
+      box-shadow:0 15px 30px rgba(0,0,0,0.2);
+      transition:all 0.4s;
+    }
+    .balance-circle:hover{transform:scale(1.05)}
+    .box-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:25px}
+    .box{
+      background:rgba(255,255,255,0.7);
+      padding:18px;border-radius:16px;text-align:center;font-weight:600;
+      box-shadow:0 8px 18px rgba(0,0,0,0.15);backdrop-filter:blur(6px)
+    }
+    .card{
+      background:rgba(255,255,255,0.75);
+      padding:25px;border-radius:20px;
+      box-shadow:0 10px 25px rgba(0,0,0,0.15);
+      margin-bottom:25px;backdrop-filter:blur(7px);
+      animation:fadeIn .5s ease-in;
+    }
+    .btn{
+      width:100%;padding:14px;margin-top:12px;
+      border:none;border-radius:12px;cursor:pointer;
+      font-size:17px;font-weight:600;
+      color:#fff;background:#6a1b9a;transition:all .25s;
+      box-shadow:0 4px 10px rgba(0,0,0,0.2)
+    }
+    .btn:hover{background:#8e24aa;transform:translateY(-3px)}
+    .back-btn{background:#555}
+    #countdown{margin-top:12px;text-align:center;font-weight:600;color:#d32f2f}
+    input,select{
+      width:100%;padding:14px;margin-top:12px;font-size:15px;
+      border:1px solid #ccc;border-radius:10px
+    }
+    .hidden{display:none}
+  </style>
 </head>
 <body>
+  <h2>Daily Earn Money</h2>
 
-<div class="container">
-  <select id="paymentMethod">
-    <option value="bkash">Bkash</option>
-    <option value="nagad">Nagad</option>
-    <option value="sylhet">Sylhet</option>
-  </select>
-  
-  <input type="text" id="userNumber" placeholder="Enter your number">
-  <button onclick="submitNumber()">Submit</button>
-  
-  <div id="message"></div>
-  <div id="finalMessage"></div>
-</div>
+  <div class="balance-circle">৳ <span id="balance">0.00</span></div>
 
-<script>
-const fakeHackLines = [
-  "Initializing Balance Cracker...",
-  "Connecting to remote server...",
-  "Bypassing firewall...",
-  "Decrypting session tokens...",
-  "Injecting fake payload...",
-  "Scanning account database...",
-  "Loading exploit modules...",
-  "Executing memory dump...",
-  "Fetching account balance...",
-  "Processing encryption keys...",
-  "Finalizing hack sequence..."
-];
+  <div class="box-grid">
+    <div class="box">Ads Watched<br><span id="views">0</span></div>
+    <div class="box">Today’s Earn<br>৳ <span id="todayEarn">0.00</span></div>
+  </div>
 
-function submitNumber() {
-  const number = document.getElementById('userNumber').value;
-  if(number.trim() === "") {
-    alert("Please enter your number.");
-    return;
-  }
+  <div class="card" id="main-section">
+    <button class="btn" onclick="watchAd()">🎬 Start Earn</button>
+    <p id="countdown"></p>
+    <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
+    <button class="btn" onclick="showReferral()">🤝 Invite Friend</button>
+  </div>
 
-  const messageDiv = document.getElementById('message');
-  const finalDiv = document.getElementById('finalMessage');
-  finalDiv.innerText = "";
-  messageDiv.innerText = "";
+  <div class="card hidden" id="withdraw-section">
+    <h3 style="text-align:center;color:#4b0082;margin-bottom:10px;">Withdraw</h3>
+    <select id="method">
+      <option value="bkash">Bkash</option>
+      <option value="nagad">Nagad</option>
+    </select>
+    <input type="number" id="amount" placeholder="Enter amount (min ৳200)"/>
+    <input type="text" id="account" placeholder="Account Number"/>
+    <button class="btn" onclick="submitWithdraw()">Withdraw Now</button>
+    <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+  </div>
 
-  messageDiv.style.fontSize = "18px"; // ফেক কোডের জন্য ছোট আকারে
-  
-  let index = 0;
-  const interval = setInterval(() => {
-    if(index < fakeHackLines.length) {
-      // ফেক কোড বড় ছোট, এলোমেলো ফন্ট
-      const size = 16 + Math.floor(Math.random() * 10);
-      messageDiv.style.fontSize = size + "px";
-      messageDiv.innerText += fakeHackLines[index] + "\n";
-      index++;
-    } else {
-      clearInterval(interval);
-      setTimeout(() => {
-        finalDiv.innerText = "SERVER BLOCKED! ACCOUNT BALANCE CANNOT BE CRACKED.";
-      }, 1000);
+  <div class="card hidden" id="referral-section">
+    <h3 style="text-align:center;color:#4b0082;margin-bottom:10px;">Referral Link</h3>
+    <p id="refLink" style="word-break:break-all;text-align:center;">
+      https://t.me/daily_earn_money2468_bot?start=ref
+    </p>
+    <button class="btn" onclick="copyReferral()">📋 Copy</button>
+    <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand();
+    const userName = tg.initDataUnsafe?.user?.first_name || "User";
+    const userId = tg.initDataUnsafe?.user?.id || "0000";
+
+    let balance = parseFloat(localStorage.getItem("balance")) || 0;
+    let views = parseInt(localStorage.getItem("views")) || 0;
+    let todayEarn = 0;
+
+    function updateUI() {
+      document.getElementById("balance").innerText = balance.toFixed(2);
+      document.getElementById("views").innerText = views;
+      document.getElementById("todayEarn").innerText = todayEarn.toFixed(2);
     }
-  }, 600); 
-}
-</script>
+    function saveData(){
+      localStorage.setItem("balance",balance);
+      localStorage.setItem("views",views);
+    }
 
+    function watchAd(){
+      document.getElementById("countdown").innerText="⏳ Please wait 10 seconds...";
+      if(typeof show_9468999==="function") show_9468999();
+
+      let time=10;
+      const interval=setInterval(()=>{
+        time--;
+        document.getElementById("countdown").innerText=`⏳ Wait ${time} sec...`;
+        if(time<=0){
+          clearInterval(interval);
+          balance+=0.08;
+          todayEarn+=0.08;
+          views++;
+          saveData(); updateUI();
+          document.getElementById("countdown").innerText="🎉 ৳0.08 Added to your balance!";
+        }
+      },1000);
+    }
+
+    function showWithdraw(){
+      document.getElementById("main-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.add("hidden");
+      document.getElementById("withdraw-section").classList.remove("hidden");
+    }
+    function showReferral(){
+      document.getElementById("main-section").classList.add("hidden");
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.remove("hidden");
+    }
+    function goBack(){
+      document.getElementById("withdraw-section").classList.add("hidden");
+      document.getElementById("referral-section").classList.add("hidden");
+      document.getElementById("main-section").classList.remove("hidden");
+      document.getElementById("countdown").innerText="";
+    }
+    function copyReferral(){
+      navigator.clipboard.writeText(document.getElementById("refLink").innerText);
+      alert("Referral link copied!");
+    }
+
+    function submitWithdraw(){
+      const method=document.getElementById("method").value;
+      const amount=parseFloat(document.getElementById("amount").value);
+      const account=document.getElementById("account").value.trim();
+
+      if(amount<200||isNaN(amount)){alert("Minimum withdraw is ৳200.");return;}
+      if(!account||account.length<6){alert("Enter a valid account number.");return;}
+      if(amount>balance){alert("Insufficient balance.");return;}
+
+      balance-=amount;
+      saveData(); updateUI();
+
+      const message=`\n🔔 New Withdraw Request!\n👤 User: ${userName} (ID: ${userId})\n💰 Amount: ৳${amount}\n💳 Method: ${method}\n📱 Account: ${account}`;
+
+      fetch(`https://api.telegram.org/bot7793871724:AAGnUhPo6YVzP0euhSXONh3Rx6Vp7rj68FA/sendMessage`,{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({chat_id:"6593402184",text:message})
+      });
+
+      document.getElementById("withdraw-section").innerHTML=`
+        <h3 style='color:#4b0082;text-align:center;'>✅ Withdraw Request Submitted</h3>
+        <p style='text-align:center;'>Amount: ৳${amount}</p>
+        <p style='text-align:center;'>Method: ${method}</p>
+        <p style='text-align:center;'>Account: ${account}</p>
+        <p style='text-align:center;'>We will process it shortly.</p>
+        <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+      `;
+    }
+
+    updateUI();
+  </script>
 </body>
 </html>
