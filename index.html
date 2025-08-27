@@ -94,7 +94,7 @@
       <p id="countdown"></p>
     </div>
 
-    <!-- ✅ Auto Ad Section -->
+    <!-- Auto Ad Section -->
     <div class="card">
       <button class="btn" id="startAuto" onclick="startAutoAd()">▶️ Start Auto Ad</button>
       <button class="btn back-btn hidden" id="stopAuto" onclick="stopAutoAd()">⏹ Stop Auto Ad</button>
@@ -131,14 +131,12 @@
     </div>
   </div>
 
-  <!-- শুধুমাত্র Claim সাউন্ড -->
   <audio id="coinSound">
     <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
   </audio>
 
   <script>
-    // === CONFIG ===
-    const AD_DURATION = 15; 
+    const AD_DURATION = 15;
     const REWARD = 50;
 
     const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
@@ -157,7 +155,8 @@
     let views = parseInt(localStorage.getItem("views")) || 0;
     let adTimer = null;
     let claimTimer = null;
-    let autoTimer = null;
+    let autoAdInterval = null;
+    let autoAdClaimTimeout = null;
 
     function updateUI() {
       document.getElementById("balance").innerText = coins;
@@ -174,6 +173,7 @@
       }
     }
 
+    // Watch Ad
     function watchAd() {
       const watchBtn = document.getElementById('watchBtn');
       const claimBtn = document.getElementById('claimBtn');
@@ -235,31 +235,69 @@
       }, 1000);
     }
 
-    // ✅ Auto Ad System
+    // Auto Ad
     function startAutoAd() {
       document.getElementById("startAuto").classList.add("hidden");
       document.getElementById("stopAuto").classList.remove("hidden");
       document.getElementById("autoStatus").innerText = "▶️ Auto Ad Running...";
-
-      autoTimer = setInterval(() => {
-        tryShowAd();
-        coins += REWARD;
-        views++;
-        saveData();
-        updateUI();
-        document.getElementById("autoStatus").innerText = "🎬 Auto Ad Played +50 coins";
-        const coin = document.getElementById('coinSound');
-        if (coin) coin.play().catch(e => {});
-      }, AD_DURATION * 1000);
+      playAutoAd();
+      autoAdInterval = setInterval(playAutoAd, AD_DURATION * 1000);
     }
 
     function stopAutoAd() {
-      clearInterval(autoTimer);
-      autoTimer = null;
+      clearInterval(autoAdInterval);
+      autoAdInterval = null;
+      clearTimeout(autoAdClaimTimeout);
+      autoAdClaimTimeout = null;
       document.getElementById("startAuto").classList.remove("hidden");
       document.getElementById("stopAuto").classList.add("hidden");
       document.getElementById("autoStatus").innerText = "⏹ Auto Ad Stopped";
     }
+
+    function playAutoAd() {
+      const countdownEl = document.getElementById('countdown');
+      const claimBtn = document.getElementById('claimBtn');
+      const watchBtn = document.getElementById('watchBtn');
+
+      watchBtn.disabled = true;
+      watchBtn.classList.add('muted');
+      claimBtn.classList.add('hidden');
+      countdownEl.innerText = `⏳ Auto Ad playing ${AD_DURATION} sec...`;
+
+      tryShowAd();
+
+      let remaining = AD_DURATION;
+      autoAdClaimTimeout = setInterval(() => {
+        remaining--;
+        countdownEl.innerText = `⏳ Auto Ad claiming in ${remaining} sec...`;
+        if (remaining <= 0) {
+          clearInterval(autoAdClaimTimeout);
+          autoAdClaimTimeout = null;
+
+          coins += REWARD;
+          views++;
+          saveData();
+          updateUI();
+          countdownEl.innerText = "🎉 Auto Ad Claimed +50 coins!";
+          const coin = document.getElementById('coinSound');
+          if (coin) coin.play().catch(e => {});
+
+          claimBtn.disabled = false;
+          claimBtn.classList.add('hidden');
+          claimBtn.classList.remove('muted');
+          watchBtn.disabled = false;
+          watchBtn.classList.remove('muted');
+        }
+      }, 1000);
+    }
+
+    // UI & Withdraw/Referral Functions (পূর্বের মতো)
+    function showWithdraw(){ document.getElementById("withdraw-section").classList.remove("hidden"); document.getElementById("ad-section").classList.add("hidden"); document.getElementById("referral-section").classList.add("hidden"); }
+    function calculateBDT(){ const amount = parseInt(document.getElementById("coinAmount").value) || 0; const bdt = (amount * 0.0038).toFixed(2); document.getElementById("bdtValue").innerText = `You will get: ${bdt} BDT`; }
+    function submitWithdraw(){ alert("Withdraw Submit Logic Goes Here"); }
+    function showReferral(){ document.getElementById("referral-section").classList.remove("hidden"); document.getElementById("withdraw-section").classList.add("hidden"); document.getElementById("ad-section").classList.add("hidden"); document.getElementById("refLink").innerText = `https://t.me/ads25_income_bot?start=${userId}`; }
+    function copyReferral(){ navigator.clipboard.writeText(document.getElementById("refLink").innerText).then(()=>alert("Referral link copied!")); }
+    function goBack(){ document.getElementById("withdraw-section").classList.add("hidden"); document.getElementById("referral-section").classList.add("hidden"); document.getElementById("ad-section").classList.remove("hidden"); updateUI(); }
 
     updateUI();
   </script>
