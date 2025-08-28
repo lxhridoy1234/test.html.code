@@ -234,7 +234,7 @@
       }, 1000);
     }
 
-    // ✅ Fixed Auto Ad
+    // ✅ Fixed Auto Ad (reopen ads each cycle)
     function startAutoAd() {
       document.getElementById("startAuto").classList.add("hidden");
       document.getElementById("stopAuto").classList.remove("hidden");
@@ -262,6 +262,7 @@
       let remaining = AD_DURATION;
       countdownEl.innerText = `⏳ Auto Ad playing ${remaining} sec...`;
 
+      // 👉 প্রতিবার নতুন ad ওপেন হবে
       tryShowAd();
 
       autoAdClaimTimeout = setInterval(() => {
@@ -282,8 +283,8 @@
           const coin = document.getElementById('coinSound');
           if (coin) coin.play().catch(e => {});
 
-          // আবার নতুন অটো অ্যাড শুরু হবে
-          if (document.getElementById("stopAuto").classList.contains("hidden") === false) {
+          // আবার নতুন ad রি-ওপেন হবে
+          if (!document.getElementById("stopAuto").classList.contains("hidden")) {
             setTimeout(playAutoAd, 2000);
           }
         }
