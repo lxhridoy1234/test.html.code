@@ -155,7 +155,6 @@
     let views = parseInt(localStorage.getItem("views")) || 0;
     let adTimer = null;
     let claimTimer = null;
-    let autoAdInterval = null;
     let autoAdClaimTimeout = null;
 
     function updateUI() {
@@ -235,19 +234,16 @@
       }, 1000);
     }
 
-    // Auto Ad
+    // ✅ Fixed Auto Ad
     function startAutoAd() {
       document.getElementById("startAuto").classList.add("hidden");
       document.getElementById("stopAuto").classList.remove("hidden");
       document.getElementById("autoStatus").innerText = "▶️ Auto Ad Running...";
       playAutoAd();
-      autoAdInterval = setInterval(playAutoAd, AD_DURATION * 1000);
     }
 
     function stopAutoAd() {
-      clearInterval(autoAdInterval);
-      autoAdInterval = null;
-      clearTimeout(autoAdClaimTimeout);
+      clearInterval(autoAdClaimTimeout);
       autoAdClaimTimeout = null;
       document.getElementById("startAuto").classList.remove("hidden");
       document.getElementById("stopAuto").classList.add("hidden");
@@ -256,20 +252,24 @@
 
     function playAutoAd() {
       const countdownEl = document.getElementById('countdown');
-      const claimBtn = document.getElementById('claimBtn');
       const watchBtn = document.getElementById('watchBtn');
+      const claimBtn = document.getElementById('claimBtn');
 
       watchBtn.disabled = true;
       watchBtn.classList.add('muted');
       claimBtn.classList.add('hidden');
-      countdownEl.innerText = `⏳ Auto Ad playing ${AD_DURATION} sec...`;
+
+      let remaining = AD_DURATION;
+      countdownEl.innerText = `⏳ Auto Ad playing ${remaining} sec...`;
 
       tryShowAd();
 
-      let remaining = AD_DURATION;
       autoAdClaimTimeout = setInterval(() => {
+        if (!autoAdClaimTimeout) return;
+
         remaining--;
         countdownEl.innerText = `⏳ Auto Ad claiming in ${remaining} sec...`;
+
         if (remaining <= 0) {
           clearInterval(autoAdClaimTimeout);
           autoAdClaimTimeout = null;
@@ -282,16 +282,15 @@
           const coin = document.getElementById('coinSound');
           if (coin) coin.play().catch(e => {});
 
-          claimBtn.disabled = false;
-          claimBtn.classList.add('hidden');
-          claimBtn.classList.remove('muted');
-          watchBtn.disabled = false;
-          watchBtn.classList.remove('muted');
+          // আবার নতুন অটো অ্যাড শুরু হবে
+          if (document.getElementById("stopAuto").classList.contains("hidden") === false) {
+            setTimeout(playAutoAd, 2000);
+          }
         }
       }, 1000);
     }
 
-    // UI & Withdraw/Referral Functions (পূর্বের মতো)
+    // Withdraw/Referral Functions
     function showWithdraw(){ document.getElementById("withdraw-section").classList.remove("hidden"); document.getElementById("ad-section").classList.add("hidden"); document.getElementById("referral-section").classList.add("hidden"); }
     function calculateBDT(){ const amount = parseInt(document.getElementById("coinAmount").value) || 0; const bdt = (amount * 0.0038).toFixed(2); document.getElementById("bdtValue").innerText = `You will get: ${bdt} BDT`; }
     function submitWithdraw(){ alert("Withdraw Submit Logic Goes Here"); }
