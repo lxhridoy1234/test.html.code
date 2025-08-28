@@ -1,305 +1,308 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ads Income Place</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="//libtl.com/sdk.js" data-zone="9777736" data-sdk="show_9777736"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SH Community</title>
+<style>
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0;
+  min-height: 100vh;
+}
 
-  <style>
-    * {margin: 0; padding: 0; box-sizing: border-box;}
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
-      color: #fff;
-    }
-    .container {width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px;}
-    h2 {text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 5px;}
-    p.subtitle {text-align: center; color: #e0e0ff; font-size: 15px; margin-bottom: 15px;}
-    .card {
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      transition: transform 0.25s ease;
-    }
-    .card:hover {transform: translateY(-4px);}
-    .profile {display: flex; flex-direction: column; align-items: center; gap: 12px;}
-    .profile img {width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;}
-    .user-name {font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 6px;}
-    .verify-icon {color: #00bfff; font-size: 18px;}
-    .premium-icon {color: gold; font-size: 18px;}
-    .info {font-size: 15px; margin-top: 4px;}
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      color: #fff;
-      background: linear-gradient(90deg, #7c3aed, #4f46e5);
-      transition: all 0.3s ease;
-    }
-    .btn:hover {transform: scale(1.03);}
-    .btn:active {transform: scale(0.98);}
-    .back-btn {background: linear-gradient(90deg, #374151, #111827);}
-    #countdown {margin-top: 12px; font-size: 14px; font-weight: bold; color: #ffeb3b;}
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
-    .hidden {display: none;}
-    .muted {opacity: 0.6; pointer-events: none;}
-  </style>
+/* Title */
+.title {
+  font-size: 2.5em;
+  margin: 30px 0;
+  letter-spacing: 2px;
+  animation: glow 1.5s infinite alternate;
+  text-align: center;
+}
+@keyframes glow {
+  from { text-shadow: 0 0 10px #00fff0, 0 0 20px #00fff0; }
+  to { text-shadow: 0 0 20px #00fff0, 0 0 30px #00fff0; }
+}
+
+/* User Card */
+.user-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 25px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: 320px;
+  box-shadow: 0 0 15px rgba(0,255,240,0.3);
+  backdrop-filter: blur(10px);
+  margin-bottom: 60px;
+}
+.profile-pic {
+  font-size: 60px;
+  background: rgba(0,255,240,0.2);
+  padding: 15px;
+  border-radius: 50%;
+}
+.user-info p {
+  margin: 5px 0;
+  font-size: 1em;
+}
+
+/* Circular Card */
+.circle-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+  flex-direction: column;
+}
+.circle-card {
+  width: 150px;
+  height: 150px;
+  background: #00fff0;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 0 20px #00fff0;
+  position: relative;
+}
+.circle-card button {
+  background: #1e1e2f;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 25px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #00fff0;
+  font-size: 1.1em;
+  transition: background 0.3s, transform 0.3s;
+}
+.circle-card button:hover {
+  background: #00fff0;
+  color: #1e1e2f;
+  transform: scale(1.1);
+}
+/* Countdown on top of card */
+#countdown {
+  position: absolute;
+  top: -30px;
+  font-size: 1em;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Bottom Card */
+.bottom-card {
+  background: rgba(255,255,255,0.05);
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  gap: 20px;
+  width: 320px;
+  justify-content: space-between;
+  box-shadow: 0 0 15px rgba(0,255,240,0.3);
+  backdrop-filter: blur(10px);
+}
+.bottom-card button {
+  flex: 1;
+  padding: 12px 0;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #1e1e2f;
+  background: #00fff0;
+  transition: background 0.3s, transform 0.3s;
+}
+.bottom-card button:hover {
+  background: #1e1e2f;
+  color: #00fff0;
+  transform: scale(1.05);
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  background-color: rgba(0,0,0,0.7);
+  justify-content: center;
+  align-items: center;
+}
+.modal-content {
+  background: #1e1e2f;
+  padding: 25px;
+  border-radius: 20px;
+  width: 320px;
+  box-shadow: 0 0 20px #00fff0;
+}
+.modal-content h3 { text-align: center; margin-top:0; }
+.modal-content input, .modal-content select {
+  width: 100%; margin: 8px 0; padding: 10px;
+  border-radius: 15px; border: none; font-size:1em;
+}
+.modal-content button {
+  margin-top: 15px;
+  width: 100%; padding: 12px;
+  border-radius: 15px;
+  background: #00fff0;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  color: #1e1e2f;
+  font-size: 1em;
+}
+.modal-content button:hover {
+  background: #1e1e2f; color:#00fff0;
+  transform: scale(1.05);
+}
+.close, .close-invite {
+  float: right; font-size: 22px; cursor: pointer; color:#00fff0;
+}
+input:focus, select:focus {
+  outline: none; box-shadow:0 0 10px #00fff0;
+  background: rgba(0,255,240,0.05);
+}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>🎥 ADS INCOME PLACE</h2>
-    <p class="subtitle">Earn 50 coins after ad + claim</p>
 
-    <!-- Profile Card -->
-    <div class="card" id="profile">
-      <div class="profile">
-        <img id="user-photo" src="https://telegram.org/img/t_logo.png" alt="Profile">
-        <div class="user-name">
-          <span class="verify-icon">✔️</span>
-          <span id="user-name">Loading...</span>
-          <span class="premium-icon">⭐</span>
-        </div>
-        <div class="info"><b>Balance:</b> <span id="balance">0</span> coins</div>
-        <div class="info"><b>Ads Watched:</b> <span id="views">0</span></div>
-      </div>
-    </div>
+<h1 class="title">SH Community</h1>
 
-    <!-- Ad Section -->
-    <div class="card" id="ad-section">
-      <button class="btn" id="watchBtn" onclick="watchAd()">🎬 Watch Ad</button>
-      <button class="btn hidden" id="claimBtn" onclick="claimCoins()">🎁 Claim Coin</button>
-      <p id="countdown"></p>
-    </div>
-
-    <!-- Auto Ad Section -->
-    <div class="card">
-      <button class="btn" id="startAuto" onclick="startAutoAd()">▶️ Start Auto Ad</button>
-      <button class="btn back-btn hidden" id="stopAuto" onclick="stopAutoAd()">⏹ Stop Auto Ad</button>
-      <p id="autoStatus"></p>
-    </div>
-
-    <!-- Withdraw/Referral Main -->
-    <div class="card">
-      <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
-      <button class="btn" onclick="showReferral()">🤝 Refer</button>
-    </div>
-
-    <!-- Withdraw Section -->
-    <div class="card hidden" id="withdraw-section">
-      <h3>Withdraw Coins</h3>
-      <select id="method">
-        <option value="bkash">Bkash</option>
-        <option value="nagad">Nagad</option>
-      </select>
-      <input type="number" id="coinAmount" placeholder="Enter Coin Amount" oninput="calculateBDT()">
-      <p id="bdtValue">You will get: 0 BDT</p>
-      <p style="color:#ffeb3b; font-size:13px;">⚠️ Minimum Withdraw: 100000 coins</p>
-      <input type="text" id="accountNumber" placeholder="Enter your account number">
-      <button class="btn" onclick="submitWithdraw()">Submit</button>
-      <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
-    </div>
-
-    <!-- Referral Section -->
-    <div class="card hidden" id="referral-section">
-      <h3>Your Referral Link</h3>
-      <p id="refLink">https://t.me/ads25_income_bot?start=ref</p>
-      <button class="btn" onclick="copyReferral()">☕ Copy</button>
-      <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
-    </div>
+<div class="user-card">
+  <div class="profile-pic">👤</div>
+  <div class="user-info">
+    <p id="telegram-id">Telegram ID: @example_user</p>
+    <p id="first-name">Name: John</p>
+    <p id="balance">Balance: ৳0.00</p>
   </div>
+</div>
 
-  <audio id="coinSound">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
-  </audio>
+<div class="circle-card-container">
+  <div class="circle-card">
+    <div id="countdown">10s</div>
+    <button id="start-btn">Start</button>
+  </div>
+</div>
 
-  <script>
-    const AD_DURATION = 15;
-    const REWARD = 50;
+<div class="bottom-card">
+  <button id="telegram-btn">Telegram</button>
+  <button id="invite-btn">Invite</button>
+  <button id="withdraw-btn">Withdraw</button>
+</div>
 
-    const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-    if (tg && typeof tg.expand === 'function') {
-      try { tg.expand(); } catch (e) { console.log('tg.expand error', e); }
+<!-- Withdraw Modal -->
+<div id="withdraw-modal" class="modal">
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <h3>Withdraw</h3>
+    <label>Method:</label>
+    <select id="method">
+      <option value="bKash">bKash</option>
+      <option value="Nagad">Nagad</option>
+      <option value="Account">Account</option>
+    </select>
+    <input type="text" id="amount" placeholder="Amount">
+    <input type="text" id="account" placeholder="Account Number/Name">
+    <button id="withdraw-submit">Submit</button>
+  </div>
+</div>
+
+<!-- Invite Modal -->
+<div id="invite-modal" class="modal">
+  <div class="modal-content">
+    <span class="close-invite">&times;</span>
+    <h3>Your Referral Link</h3>
+    <input type="text" id="ref-link" readonly value="https://example.com/referral?user=John">
+    <button id="copy-ref">Copy</button>
+  </div>
+</div>
+
+<!-- Sound -->
+<audio id="coin-sound">
+  <source src="https://www.soundjay.com/coin/sounds/coin-drop-1.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+let balance = 0;
+let interval = null;
+let countdown = 10;
+const balanceEl = document.getElementById('balance');
+const startBtn = document.getElementById('start-btn');
+const countdownEl = document.getElementById('countdown');
+const coinSound = document.getElementById('coin-sound');
+
+function resetCountdown() {
+  countdown = 10;
+  countdownEl.textContent = `${countdown}s`;
+}
+
+function startTimer() {
+  interval = setInterval(() => {
+    countdown--;
+    countdownEl.textContent = `${countdown}s`;
+    if(countdown === 0){
+      balance += 0.10;
+      balanceEl.textContent = `Balance: ৳${balance.toFixed(2)}`;
+      coinSound.play();
+      resetCountdown();
     }
+  }, 1000);
+}
 
-    const userName = tg?.initDataUnsafe?.user?.first_name || "Unknown";
-    const userId = tg?.initDataUnsafe?.user?.id || "unknown_user";
-    const photoUrl = tg?.initDataUnsafe?.user?.photo_url || "https://telegram.org/img/t_logo.png";
+startBtn.addEventListener('click', () => {
+  if(startBtn.textContent === 'Start'){
+    startBtn.textContent = 'Stop';
+    resetCountdown();
+    startTimer();
+  } else {
+    startBtn.textContent = 'Start';
+    clearInterval(interval);
+  }
+});
 
-    document.getElementById("user-name").innerText = userName;
-    document.getElementById("user-photo").src = photoUrl;
+// Telegram
+document.getElementById('telegram-btn').addEventListener('click', ()=>{window.open('https://t.me/yourtelegram','_blank');});
 
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
-    let views = parseInt(localStorage.getItem("views")) || 0;
-    let adTimer = null;
-    let claimTimer = null;
-    let autoAdClaimTimeout = null;
+// Withdraw Modal
+const withdrawModal = document.getElementById('withdraw-modal');
+const closeModal = document.querySelector('.close');
+document.getElementById('withdraw-btn').addEventListener('click', ()=>{withdrawModal.style.display='flex';});
+closeModal.onclick = ()=> withdrawModal.style.display='none';
+document.getElementById('withdraw-submit').addEventListener('click', ()=>{
+  const method=document.getElementById('method').value;
+  const amount=document.getElementById('amount').value;
+  const account=document.getElementById('account').value;
+  fetch(`https://api.telegram.org/bot2929282WJWHEHEWHAI/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({chat_id:29292923, text:`Withdraw Request:\nMethod: ${method}\nAmount: ${amount}\nAccount: ${account}`})
+  }).then(()=>alert('Withdraw request sent!'));
+  withdrawModal.style.display='none';
+});
 
-    function updateUI() {
-      document.getElementById("balance").innerText = coins;
-      document.getElementById("views").innerText = views;
-    }
-    function saveData() {
-      localStorage.setItem("coins", coins);
-      localStorage.setItem("views", views);
-    }
+// Invite Modal
+const inviteModal = document.getElementById('invite-modal');
+const closeInvite = document.querySelector('.close-invite');
+document.getElementById('invite-btn').addEventListener('click',()=>{inviteModal.style.display='flex';});
+closeInvite.onclick = ()=> inviteModal.style.display='none';
 
-    function tryShowAd() {
-      if (typeof window.show_9777736 === "function") {
-        try { window.show_9777736(); } catch(e){ console.log('ad sdk error', e); }
-      }
-    }
-
-    // Watch Ad
-    function watchAd() {
-      const watchBtn = document.getElementById('watchBtn');
-      const claimBtn = document.getElementById('claimBtn');
-      const countdownEl = document.getElementById('countdown');
-
-      watchBtn.disabled = true;
-      watchBtn.classList.add('muted');
-      claimBtn.classList.add('hidden');
-      countdownEl.innerText = `⏳ Please wait ${AD_DURATION} seconds...`;
-
-      tryShowAd();
-
-      let remaining = AD_DURATION;
-      adTimer = setInterval(() => {
-        remaining--;
-        countdownEl.innerText = `⏳ Please wait ${remaining} seconds...`;
-        if (remaining <= 0) {
-          clearInterval(adTimer);
-          adTimer = null;
-          countdownEl.innerText = "✅ Ad watched. Now claim your coin!";
-          claimBtn.classList.remove('hidden');
-          watchBtn.disabled = false;
-          watchBtn.classList.remove('muted');
-        }
-      }, 1000);
-    }
-
-    function claimCoins() {
-      const claimBtn = document.getElementById('claimBtn');
-      const watchBtn = document.getElementById('watchBtn');
-      const countdownEl = document.getElementById('countdown');
-
-      claimBtn.disabled = true;
-      claimBtn.classList.add('muted');
-      countdownEl.innerText = `⏳ Claiming in ${AD_DURATION} seconds...`;
-
-      tryShowAd();
-
-      let remaining = AD_DURATION;
-      claimTimer = setInterval(() => {
-        remaining--;
-        countdownEl.innerText = `⏳ Claiming in ${remaining} seconds...`;
-        if (remaining <= 0) {
-          clearInterval(claimTimer);
-          claimTimer = null;
-          coins += REWARD;
-          views++;
-          saveData();
-          updateUI();
-          countdownEl.innerText = "🎉 You earned 50 coins!";
-          const coin = document.getElementById('coinSound');
-          if (coin) coin.play().catch(e => {});
-          claimBtn.disabled = false;
-          claimBtn.classList.add('hidden');
-          claimBtn.classList.remove('muted');
-          watchBtn.disabled = false;
-          watchBtn.classList.remove('muted');
-        }
-      }, 1000);
-    }
-
-    // ✅ Fixed Auto Ad (reopen ads each cycle)
-    function startAutoAd() {
-      document.getElementById("startAuto").classList.add("hidden");
-      document.getElementById("stopAuto").classList.remove("hidden");
-      document.getElementById("autoStatus").innerText = "▶️ Auto Ad Running...";
-      playAutoAd();
-    }
-
-    function stopAutoAd() {
-      clearInterval(autoAdClaimTimeout);
-      autoAdClaimTimeout = null;
-      document.getElementById("startAuto").classList.remove("hidden");
-      document.getElementById("stopAuto").classList.add("hidden");
-      document.getElementById("autoStatus").innerText = "⏹ Auto Ad Stopped";
-    }
-
-    function playAutoAd() {
-      const countdownEl = document.getElementById('countdown');
-      const watchBtn = document.getElementById('watchBtn');
-      const claimBtn = document.getElementById('claimBtn');
-
-      watchBtn.disabled = true;
-      watchBtn.classList.add('muted');
-      claimBtn.classList.add('hidden');
-
-      let remaining = AD_DURATION;
-      countdownEl.innerText = `⏳ Auto Ad playing ${remaining} sec...`;
-
-      // 👉 প্রতিবার নতুন ad ওপেন হবে
-      tryShowAd();
-
-      autoAdClaimTimeout = setInterval(() => {
-        if (!autoAdClaimTimeout) return;
-
-        remaining--;
-        countdownEl.innerText = `⏳ Auto Ad claiming in ${remaining} sec...`;
-
-        if (remaining <= 0) {
-          clearInterval(autoAdClaimTimeout);
-          autoAdClaimTimeout = null;
-
-          coins += REWARD;
-          views++;
-          saveData();
-          updateUI();
-          countdownEl.innerText = "🎉 Auto Ad Claimed +50 coins!";
-          const coin = document.getElementById('coinSound');
-          if (coin) coin.play().catch(e => {});
-
-          // আবার নতুন ad রি-ওপেন হবে
-          if (!document.getElementById("stopAuto").classList.contains("hidden")) {
-            setTimeout(playAutoAd, 2000);
-          }
-        }
-      }, 1000);
-    }
-
-    // Withdraw/Referral Functions
-    function showWithdraw(){ document.getElementById("withdraw-section").classList.remove("hidden"); document.getElementById("ad-section").classList.add("hidden"); document.getElementById("referral-section").classList.add("hidden"); }
-    function calculateBDT(){ const amount = parseInt(document.getElementById("coinAmount").value) || 0; const bdt = (amount * 0.0038).toFixed(2); document.getElementById("bdtValue").innerText = `You will get: ${bdt} BDT`; }
-    function submitWithdraw(){ alert("Withdraw Submit Logic Goes Here"); }
-    function showReferral(){ document.getElementById("referral-section").classList.remove("hidden"); document.getElementById("withdraw-section").classList.add("hidden"); document.getElementById("ad-section").classList.add("hidden"); document.getElementById("refLink").innerText = `https://t.me/ads25_income_bot?start=${userId}`; }
-    function copyReferral(){ navigator.clipboard.writeText(document.getElementById("refLink").innerText).then(()=>alert("Referral link copied!")); }
-    function goBack(){ document.getElementById("withdraw-section").classList.add("hidden"); document.getElementById("referral-section").classList.add("hidden"); document.getElementById("ad-section").classList.remove("hidden"); updateUI(); }
-
-    updateUI();
-  </script>
+// Copy Referral
+document.getElementById('copy-ref').addEventListener('click', ()=>{
+  const refInput=document.getElementById('ref-link');
+  refInput.select();
+  refInput.setSelectionRange(0,99999);
+  document.execCommand('copy');
+  alert('Referral link copied!');
+});
+</script>
 </body>
 </html>
