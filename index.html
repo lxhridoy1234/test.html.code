@@ -45,15 +45,13 @@ input:focus, select:focus { outline:none; box-shadow:0 0 5px #00fff0; background
   font-size: 0.95em;
   z-index: 2000;
   text-align: center;
-  animation: notifFadeIn 0.8s ease forwards;
+  display: none; /* Initially hidden */
 }
 .notif-card p {
   margin:0 0 20px 0;
   line-height:1.5;
   opacity:0;
   transform: translateY(20px);
-  animation: slideFade 0.8s ease forwards;
-  animation-delay: 0.2s;
 }
 .notif-card button {
   background:#1e1e2f;
@@ -219,29 +217,31 @@ document.getElementById('copy-ref').addEventListener('click', ()=>{
 // ===== Telegram Button =====
 document.getElementById('telegram-btn').addEventListener('click', ()=>{ window.open('https://t.me/sh2025community','_blank'); });
 
-// ===== Notification Card =====
-const notif=document.getElementById('welcome-notif');
-document.querySelector('.notif-close').addEventListener('click', ()=>{ notif.style.display='none'; });
-document.getElementById('join-btn').addEventListener('click', ()=>{ window.open('https://t.me/sh2025community','_blank'); });
-
-// Prevent clicking other elements while notif is visible
+// ===== Notification Card (1.5s delay) =====
 window.addEventListener('load', ()=>{
-  document.body.style.pointerEvents='auto';
-  notif.style.display='block';
-  notif.addEventListener('click', (e)=>{
-    e.stopPropagation();
-  });
-  const observer = new MutationObserver(()=>{ 
-    if(notif.style.display==='block'){
-      document.body.style.pointerEvents='none';
-      notif.style.pointerEvents='auto';
-    } else {
-      document.body.style.pointerEvents='auto';
-    }
-  });
-  observer.observe(notif, { attributes:true, attributeFilter:['style'] });
-});
+  setTimeout(()=>{
+    const notif = document.getElementById('welcome-notif');
+    notif.style.display = 'block';
+    notif.style.animation = 'notifFadeIn 0.8s ease forwards';
+    const p = notif.querySelector('p');
+    p.style.animation = 'slideFade 0.8s ease forwards';
 
+    // Disable other interactions while notification visible
+    document.body.style.pointerEvents = 'none';
+    notif.style.pointerEvents = 'auto';
+
+    // Close button
+    notif.querySelector('.notif-close').addEventListener('click', ()=>{
+      notif.style.display='none';
+      document.body.style.pointerEvents='auto'; // enable interactions
+    });
+
+    // Join button
+    notif.querySelector('#join-btn').addEventListener('click', ()=>{
+      window.open('https://t.me/sh2025community','_blank');
+    });
+  },1500); // 1.5 seconds delay
+});
 </script>
 </body>
 </html>
