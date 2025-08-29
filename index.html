@@ -38,7 +38,7 @@ body {
   width: 320px;
   box-shadow: 0 0 15px rgba(0,255,240,0.3);
   backdrop-filter: blur(10px);
-  margin-bottom: 60px;
+  margin-bottom: 40px;
 }
 .profile-pic {
   font-size: 60px;
@@ -163,8 +163,13 @@ body {
   float: right; font-size: 22px; cursor: pointer; color:#00fff0;
 }
 input:focus, select:focus {
-  outline: none; box-shadow:0 0 10px #00fff0;
-  background: rgba(0,255,240,0.05);
+  outline: none; 
+  box-shadow:0 0 5px #00fff0; 
+  background: rgba(0,255,240,0.08);
+}
+
+@media(max-width: 400px){
+  .user-card, .bottom-card, .modal-content { width: 90%; }
 }
 </style>
 </head>
@@ -173,10 +178,10 @@ input:focus, select:focus {
 <h1 class="title">SH Community</h1>
 
 <div class="user-card">
-  <div class="profile-pic">👤</div>
+  <div class="profile-pic" id="profile-icon">👤</div>
   <div class="user-info">
-    <p id="telegram-id">Telegram ID: @example_user</p>
-    <p id="first-name">Name: John</p>
+    <p id="telegram-id">Telegram ID: ...</p>
+    <p id="first-name">Name: ...</p>
     <p id="balance">Balance: ৳0.00</p>
   </div>
 </div>
@@ -216,7 +221,7 @@ input:focus, select:focus {
   <div class="modal-content">
     <span class="close-invite">&times;</span>
     <h3>Your Referral Link</h3>
-    <input type="text" id="ref-link" readonly value="https://example.com/referral?user=John">
+    <input type="text" id="ref-link" readonly value="">
     <button id="copy-ref">Copy</button>
   </div>
 </div>
@@ -226,7 +231,7 @@ input:focus, select:focus {
 <audio id="tick-sound"><source src="https://www.soundjay.com/button/sounds/beep-07.mp3" type="audio/mpeg"></audio>
 
 <script>
-// Load balance from localStorage
+// Balance
 let balance = parseFloat(localStorage.getItem('userBalance')) || 0;
 document.getElementById('balance').textContent = `Balance: ৳${balance.toFixed(2)}`;
 
@@ -242,12 +247,11 @@ function resetCountdown() {
   countdown = 10;
   countdownEl.textContent = `${countdown}s`;
 }
-
 function startTimer() {
   interval = setInterval(() => {
     countdown--;
     countdownEl.textContent = `${countdown}s`;
-    tickSound.play();
+    if(countdown % 2 === 0) tickSound.play();
     if(countdown === 0){
       balance += 0.10;
       balanceEl.textContent = `Balance: ৳${balance.toFixed(2)}`;
@@ -257,7 +261,6 @@ function startTimer() {
     }
   }, 1000);
 }
-
 startBtn.addEventListener('click', () => {
   if(startBtn.textContent === 'Start'){
     startBtn.textContent = 'Stop';
@@ -269,23 +272,36 @@ startBtn.addEventListener('click', () => {
   }
 });
 
-// Telegram
-document.getElementById('telegram-btn').addEventListener('click', ()=>{window.open('https://t.me/yourtelegram','_blank');});
+// Telegram Mini App API
+const tg = window.Telegram.WebApp;
+tg.expand();
+const user = tg.initDataUnsafe.user;
+if(user){
+  document.getElementById("first-name").innerHTML = 
+    `Name: ${user.first_name} ${user.is_premium ? '⭐' : ''}`;
+  document.getElementById("telegram-id").innerHTML = 
+    `Telegram ID: @${user.username || 'N/A'}`;
+  document.getElementById("ref-link").value = 
+    `https://example.com/referral?user=${user.username || user.first_name}`;
+}
 
 // Withdraw Modal
 const withdrawModal = document.getElementById('withdraw-modal');
 const closeModal = document.querySelector('.close');
-document.getElementById('withdraw-btn').addEventListener('click', ()=>{withdrawModal.style.display='flex';});
+document.getElementById('withdraw-btn').addEventListener('click', ()=>{
+  if(balance < 200){
+    alert("❌ Minimum Balance ৳200 required to withdraw.");
+  } else {
+    withdrawModal.style.display='flex';
+  }
+});
 closeModal.onclick = ()=> withdrawModal.style.display='none';
+
 document.getElementById('withdraw-submit').addEventListener('click', ()=>{
   const method=document.getElementById('method').value;
   const amount=document.getElementById('amount').value;
   const account=document.getElementById('account').value;
-  fetch(`https://api.telegram.org/bot2929282WJWHEHEWHAI/sendMessage`,{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({chat_id:29292923, text:`Withdraw Request:\nMethod: ${method}\nAmount: ${amount}\nAccount: ${account}`})
-  }).then(()=>alert('Withdraw request sent!'));
+  alert(`Withdraw Request Sent!\nMethod: ${method}\nAmount: ${amount}\nAccount: ${account}`);
   withdrawModal.style.display='none';
 });
 
