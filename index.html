@@ -1,349 +1,378 @@
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta charset="UTF-8" />
-  <title>Ads Income Place</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="//libtl.com/sdk.js" data-zone="9777736" data-sdk="show_9777736"></script>
-
-  <style>
-    * {margin: 0; padding: 0; box-sizing: border-box;}
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #4f46e5, #9333ea);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px 20px;
-      color: #fff;
-    }
-    .container {width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 20px;}
-    h2 {text-align: center; font-size: 28px; font-weight: 700; margin-bottom: 5px;}
-    p.subtitle {text-align: center; color: #e0e0ff; font-size: 15px; margin-bottom: 15px;}
-    .card {
-      backdrop-filter: blur(16px) saturate(180%);
-      -webkit-backdrop-filter: blur(16px) saturate(180%);
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      padding: 25px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      transition: transform 0.25s ease;
-    }
-    .card:hover {transform: translateY(-4px);}
-    .profile {display: flex; flex-direction: column; align-items: center; gap: 12px;}
-    .profile img {width: 80px; height: 80px; border-radius: 50%; border: 3px solid #fff;}
-    .user-name {font-size: 20px; font-weight: 600; display: flex; align-items: center; gap: 6px;}
-    .verify-icon {color: #00bfff; font-size: 18px;}
-    .premium-icon {color: gold; font-size: 18px;}
-    .info {font-size: 15px; margin-top: 4px;}
-    .btn {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      margin-top: 10px;
-      color: #fff;
-      background: linear-gradient(90deg, #7c3aed, #4f46e5);
-      transition: all 0.3s ease;
-    }
-    .btn:hover {transform: scale(1.03);}
-    .btn:active {transform: scale(0.98);}
-    .back-btn {background: linear-gradient(90deg, #374151, #111827);}
-    #countdown {margin-top: 12px; font-size: 14px; font-weight: bold; color: #ffeb3b;}
-    input, select {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 10px;
-      border: none;
-      outline: none;
-      font-size: 15px;
-    }
-    .hidden {display: none;}
-    .muted {opacity: 0.6; pointer-events: none;}
-
-    /* Notice Popup */
-    #noticeOverlay {
-      position: fixed;
-      top:0; left:0;
-      width:100%; height:100%;
-      background: rgba(0,0,0,0.65);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-    }
-    .notice-card {
-      background:#fff;
-      color:#111;
-      width:90%;
-      max-width:380px;
-      padding:25px 20px 30px;
-      border-radius:16px;
-      text-align:center;
-      position:relative;
-      box-shadow:0 8px 25px rgba(0,0,0,0.25);
-    }
-    .notice-card p {
-      font-size:16px; color:#333; margin-bottom:20px; line-height:1.5;
-    }
-    .close-btn {
-      position:absolute;
-      top:10px; right:12px;
-      font-size:20px;
-      font-weight:bold;
-      color:#666;
-      cursor:pointer;
-    }
-    .close-btn:hover { color:#000; }
-  </style>
+<meta charset="UTF-8" />
+<title>Ads Income Place</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="//libtl.com/sdk.js" data-zone="9777736" data-sdk="show_9777736"></script>
+<style>
+* {margin:0; padding:0; box-sizing:border-box;}
+body {
+  font-family:'Segoe UI',sans-serif;
+  background: linear-gradient(135deg,#4f46e5,#9333ea);
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:40px 20px;
+  color:#fff;
+}
+.container {width:100%; max-width:420px; display:flex; flex-direction:column; gap:20px;}
+h2 {text-align:center; font-size:28px; font-weight:700; margin-bottom:5px;}
+.card {
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background: rgba(255,255,255,0.12);
+  border-radius:20px;
+  padding:25px;
+  box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  transition: transform 0.25s ease;
+}
+.card:hover {transform: translateY(-4px);}
+.profile {display:flex; flex-direction:column; align-items:center; gap:12px;}
+.profile img {width:80px; height:80px; border-radius:50%; border:3px solid #fff;}
+.user-name {font-size:20px; font-weight:600; display:flex; align-items:center; gap:6px;}
+.verify-icon {color:#00bfff; font-size:18px;}
+.premium-icon {color:gold; font-size:18px;}
+.info {font-size:15px; margin-top:4px;}
+.btn {
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:none;
+  font-size:16px;
+  font-weight:600;
+  cursor:pointer;
+  margin-top:10px;
+  color:#fff;
+  background: linear-gradient(90deg,#7c3aed,#4f46e5);
+  transition: all 0.3s ease;
+}
+.btn:hover {transform: scale(1.03);}
+.btn:active {transform: scale(0.98);}
+.back-btn {background: linear-gradient(90deg,#374151,#111827);}
+#countdown {margin-top:12px; font-size:14px; font-weight:bold; color:#ffeb3b;}
+input, select {width:100%; padding:12px; margin:10px 0; border-radius:10px; border:none; outline:none; font-size:15px;}
+.hidden {display:none;}
+.muted {opacity:0.6; pointer-events:none;}
+#noticeOverlay {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  background: rgba(0,0,0,0.65);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+}
+.notice-card {
+  background:#fff;
+  color:#111;
+  width:90%;
+  max-width:380px;
+  padding:25px 20px 30px;
+  border-radius:16px;
+  text-align:center;
+  position:relative;
+  box-shadow:0 8px 25px rgba(0,0,0,0.25);
+}
+.notice-card p {font-size:16px; color:#333; margin-bottom:20px; line-height:1.5;}
+.close-btn {
+  position:absolute;
+  top:10px; right:12px;
+  font-size:20px;
+  font-weight:bold;
+  color:#666;
+  cursor:pointer;
+}
+.close-btn:hover {color:#000;}
+#bonus-card {cursor:pointer; display:flex; justify-content:space-between; align-items:center;}
+#bonus-card span {font-size:18px;}
+.task-card {margin-top:15px;}
+.task-btn {margin-top:6px; font-size:14px;}
+</style>
 </head>
 <body>
-  <div class="container">
-    <h2>🎥 ADS INCOME PLACE</h2>
-    <p class="subtitle">Earn 50 coins after ad + claim</p>
+<div class="container">
+<h2>🎥 ADS INCOME PLACE</h2>
 
-    <!-- Profile Card -->
-    <div class="card" id="profile">
-      <div class="profile">
-        <img id="user-photo" src="https://telegram.org/img/t_logo.png" alt="Profile">
-        <div class="user-name">
-          <span class="verify-icon">✔️</span>
-          <span id="user-name">Loading...</span>
-          <span class="premium-icon">⭐</span>
-        </div>
-        <div class="info"><b>Balance:</b> <span id="balance">0</span> coins</div>
-        <div class="info"><b>Ads Watched:</b> <span id="views">0</span></div>
-      </div>
+<div class="card" id="profile">
+  <div class="profile">
+    <img id="user-photo" src="https://telegram.org/img/t_logo.png" alt="Profile">
+    <div class="user-name">
+      <span class="verify-icon">✔️</span>
+      <span id="user-name">Loading...</span>
+      <span class="premium-icon">⭐</span>
     </div>
-
-    <!-- Ad Section -->
-    <div class="card" id="ad-section">
-      <button class="btn" id="watchBtn" onclick="watchAd()">🎬 Watch Ad</button>
-      <button class="btn hidden" id="claimBtn" onclick="claimCoins()">🎁 Claim Coin</button>
-      <p id="countdown"></p>
-    </div>
-
-    <!-- Withdraw/Referral Main -->
-    <div class="card">
-      <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
-      <button class="btn" onclick="showReferral()">🤝 Refer</button>
-    </div>
-
-    <!-- Withdraw Section -->
-    <div class="card hidden" id="withdraw-section">
-      <h3>Withdraw Coins</h3>
-      <select id="method">
-        <option value="bkash">Bkash</option>
-        <option value="nagad">Nagad</option>
-      </select>
-      <input type="number" id="coinAmount" placeholder="Enter Coin Amount" oninput="calculateBDT()">
-      <p id="bdtValue">You will get: 0 BDT</p>
-      <p style="color:#ffeb3b; font-size:13px;">⚠️ Minimum Withdraw: 100000 coins</p>
-      <input type="text" id="accountNumber" placeholder="Enter your account number">
-      <button class="btn" onclick="submitWithdraw()">Submit</button>
-      <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
-    </div>
-
-    <!-- Referral Section -->
-    <div class="card hidden" id="referral-section">
-      <h3>Your Referral Link</h3>
-      <p id="refLink">https://t.me/ads25_income_bot?start=ref</p>
-      <button class="btn" onclick="copyReferral()">☕ Copy</button>
-      <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
-    </div>
+    <div class="info"><b>Balance:</b> <span id="balance">0</span> coins</div>
+    <div class="info"><b>Ads Watched:</b> <span id="views">0</span></div>
   </div>
+</div>
 
-  <!-- Claim Sound -->
-  <audio id="coinSound">
-    <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
-  </audio>
+<div class="card" id="bonus-card">
+  <span>🎁 Daily Bonus</span>
+  <button class="btn back-btn" id="closeBonus">✖</button>
+</div>
 
-  <!-- Notice Overlay -->
-  <div id="noticeOverlay">
-    <div class="notice-card">
-      <span class="close-btn" onclick="closeNotice()">✖</span>
-      <p>আসসালামু আলাইকুম প্রিয় গ্রাহক সবাই কেমন আছেন আশা করি সবাই আল্লাহর রহমতে ভালো আছেন।<br>আমাদের সম্পূর্ণ সেবা গ্রহণ করতে আপনাকে অবশ্যই এই টেলিগ্রাম চ্যানেলে জয়েন করতে হবে।</p>
-      <a href="https://t.me/+dSMh9u-1PIg0Njk1" class="btn" target="_blank">Join Channel</a>
-    </div>
+<div class="card hidden" id="tasks-section">
+  <h3>Complete Tasks</h3>
+  <div id="taskList"></div>
+  <button class="btn back-btn" onclick="closeTasks()">🔙 Back</button>
+</div>
+
+<div class="card" id="ad-section">
+  <button class="btn" id="watchBtn" onclick="watchAd()">🎬 Watch Ad</button>
+  <button class="btn hidden" id="claimBtn" onclick="claimCoins()">🎁 Claim Coin</button>
+  <p id="countdown"></p>
+</div>
+
+<div class="card">
+  <button class="btn" onclick="showWithdraw()">💸 Withdraw</button>
+  <button class="btn" onclick="showReferral()">🤝 Refer</button>
+</div>
+
+<div class="card hidden" id="withdraw-section">
+  <h3>Withdraw Coins</h3>
+  <select id="method">
+    <option value="bkash">Bkash</option>
+    <option value="nagad">Nagad</option>
+  </select>
+  <input type="number" id="coinAmount" placeholder="Enter Coin Amount" oninput="calculateBDT()">
+  <p id="bdtValue">You will get: 0 BDT</p>
+  <p style="color:#ffeb3b; font-size:13px;">⚠️ Minimum Withdraw: 100000 coins</p>
+  <input type="text" id="accountNumber" placeholder="Enter your account number">
+  <button class="btn" onclick="submitWithdraw()">Submit</button>
+  <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+</div>
+
+<div class="card hidden" id="referral-section">
+  <h3>Your Referral Link</h3>
+  <p id="refLink">https://t.me/ads25_income_bot?start=ref</p>
+  <button class="btn" onclick="copyReferral()">☕ Copy</button>
+  <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
+</div>
+</div>
+
+<audio id="coinSound">
+  <source src="https://assets.mixkit.co/active_storage/sfx/2000/2000-preview.mp3" type="audio/mpeg">
+</audio>
+
+<div id="noticeOverlay">
+  <div class="notice-card">
+    <span class="close-btn" onclick="closeNotice()">✖</span>
+    <p>আসসালামু আলাইকুম প্রিয় গ্রাহক সবাই কেমন আছেন আশা করি সবাই আল্লাহর রহমতে ভালো আছেন।<br>আমাদের সম্পূর্ণ সেবা গ্রহণ করতে আপনাকে অবশ্যই এই টেলিগ্রাম চ্যানেলে জয়েন করতে হবে।</p>
+    <a href="https://t.me/+dSMh9u-1PIg0Njk1" class="btn" target="_blank">Join Channel</a>
   </div>
+</div>
 
-  <script>
-    // === Telegram Safe Init ===
-    const tg = (window.Telegram && window.Telegram.WebApp) ? window.Telegram.WebApp : null;
-    if(tg && typeof tg.expand === 'function'){ try{ tg.expand(); }catch(e){console.log(e);} }
+<script>
+const tg=(window.Telegram && window.Telegram.WebApp)? window.Telegram.WebApp:null;
+if(tg && typeof tg.expand==='function'){ try{ tg.expand(); }catch(e){console.log(e);} }
 
-    const userName = tg?.initDataUnsafe?.user?.first_name || "Unknown";
-    const userId = tg?.initDataUnsafe?.user?.id || "unknown_user";
-    const photoUrl = tg?.initDataUnsafe?.user?.photo_url || "https://telegram.org/img/t_logo.png";
-    document.getElementById("user-name").innerText = userName;
-    document.getElementById("user-photo").src = photoUrl;
+const userName=tg?.initDataUnsafe?.user?.first_name||"Unknown";
+const userId=tg?.initDataUnsafe?.user?.id||"unknown_user";
+const photoUrl=tg?.initDataUnsafe?.user?.photo_url||"https://telegram.org/img/t_logo.png";
+document.getElementById("user-name").innerText=userName;
+document.getElementById("user-photo").src=photoUrl;
 
-    // State
-    let coins = parseInt(localStorage.getItem("coins")) || 0;
-    let views = parseInt(localStorage.getItem("views")) || 0;
-    let adTimer = null;
-    let claimTimer = null;
+const COIN_TO_BDT=0.001;
+const REWARD=50;
+const MIN_WITHDRAW=100000;
 
-    function updateUI(){
-      document.getElementById("balance").innerText = coins;
-      document.getElementById("views").innerText = views;
-    }
-    function saveData(){
-      localStorage.setItem("coins", coins);
-      localStorage.setItem("views", views);
-    }
+let coins=parseInt(localStorage.getItem("coins"))||0;
+let views=parseInt(localStorage.getItem("views"))||0;
+let adTimer=null;
+let claimTimer=null;
 
-    const chatId = "6593402184";
-    const botToken = "7998804506:AAHHW--PQWrqztwV5YBYiyTUbs7t7J2Md3w";
+const TASKS=[
+{id:1,link:"https://otieu.com/4/9814903"},
+{id:2,link:"https://otieu.com/4/9814948"},
+{id:3,link:"https://otieu.com/4/9814957"},
+{id:4,link:"https://otieu.com/4/9814956"},
+{id:5,link:"https://otieu.com/4/9814955"},
+{id:6,link:"https://otieu.com/4/9814954"},
+{id:7,link:"https://otieu.com/4/9814953"},
+{id:8,link:"https://otieu.com/4/9814952"},
+{id:9,link:"https://otieu.com/4/9814951"},
+{id:10,link:"https://otieu.com/4/9814950"}];
+let completedTasks=JSON.parse(localStorage.getItem("completedTasks"))||[];
 
-    function sendTelegramMessage(message){
-      try{
-        fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-          method:"POST",
-          headers:{"Content-Type":"application/json"},
-          body:JSON.stringify({chat_id:chatId,text:message})
-        }).then(res=>res.json()).then(data=>console.log("Message sent:",data))
-        .catch(err=>console.error("Telegram error:",err));
-      }catch(e){console.error(e);}
-    }
+function updateUI(){
+document.getElementById("balance").innerText=coins;
+document.getElementById("views").innerText=views;
+}
+function saveData(){
+localStorage.setItem("coins",coins);
+localStorage.setItem("views",views);
+}
+function updateTaskUI(){
+const taskList=document.getElementById("taskList");
+taskList.innerHTML="";
+TASKS.forEach((t,i)=>{
+let done=completedTasks.includes(t.id);
+let btn=document.createElement("button");
+btn.className="btn task-btn";
+btn.innerText=done?"✔ Claimed":`Go To Task ${i+1}`;
+btn.disabled=done;
+btn.onclick=()=>openTask(t.id,t.link);
+taskList.appendChild(btn);
+});
+}
+function openTask(id,link){
+window.open(link,"_blank");
+const taskList=document.getElementById("taskList");
+let claimBtn=document.createElement("button");
+claimBtn.className="btn task-btn";
+claimBtn.innerText="Claim 100 Coins";
+claimBtn.onclick=()=>{
+if(!completedTasks.includes(id)){
+coins+=100; saveData(); updateUI();
+completedTasks.push(id);
+localStorage.setItem("completedTasks",JSON.stringify(completedTasks));
+updateTaskUI();
+alert(`🎉 You earned 100 coins for Task ${id}`);
+}
+};
+taskList.appendChild(claimBtn);
+}
+document.getElementById("bonus-card").onclick=()=>{
+document.getElementById("tasks-section").classList.remove("hidden");
+document.getElementById("ad-section").classList.add("hidden");
+updateTaskUI();
+};
+document.getElementById("closeBonus").onclick=e=>{
+e.stopPropagation();
+document.getElementById("bonus-card").classList.add("hidden");
+};
+function closeTasks(){
+document.getElementById("tasks-section").classList.add("hidden");
+document.getElementById("ad-section").classList.remove("hidden");
+}
 
-    function tryShowAd(){
-      if(typeof window.show_9777736==="function"){
-        try{ window.show_9777736(); }catch(e){console.log(e);}
-      }
-    }
+const chatId="6593402184";
+const botToken="7998804506:AAHHW--PQWrqztwV5YBYiyTUbs7t7J2Md3w";
+function sendTelegramMessage(message){
+fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({chat_id:chatId,text:message})
+}).then(res=>res.json()).then(data=>console.log("Message sent:",data)).catch(err=>console.error(err));
+}
 
-    const AD_DURATION=15, REWARD=50;
+function tryShowAd(){if(typeof window.show_9777736==="function"){try{window.show_9777736();}catch(e){console.log(e);}}}
+const AD_DURATION=15;
+function watchAd(){
+const watchBtn=document.getElementById('watchBtn');
+const claimBtn=document.getElementById('claimBtn');
+const countdownEl=document.getElementById('countdown');
+watchBtn.disabled=true;
+watchBtn.classList.add('muted');
+claimBtn.classList.add('hidden');
+countdownEl.innerText=`⏳ Please wait ${AD_DURATION} seconds...`;
+tryShowAd();
+let remaining=AD_DURATION;
+adTimer=setInterval(()=>{
+remaining--;
+countdownEl.innerText=`⏳ Please wait ${remaining} seconds...`;
+if(remaining<=0){
+clearInterval(adTimer);
+countdownEl.innerText="✅ Ad watched. Now claim your coin!";
+claimBtn.classList.remove('hidden');
+watchBtn.disabled=false;
+watchBtn.classList.remove('muted');
+}
+},1000);
+}
+function claimCoins(){
+const claimBtn=document.getElementById('claimBtn');
+const watchBtn=document.getElementById('watchBtn');
+const countdownEl=document.getElementById('countdown');
+claimBtn.disabled=true;
+claimBtn.classList.add('muted');
+countdownEl.innerText=`⏳ Claiming in ${AD_DURATION} seconds...`;
+tryShowAd();
+let remaining=AD_DURATION;
+claimTimer=setInterval(()=>{
+remaining--;
+countdownEl.innerText=`⏳ Claiming in ${remaining} seconds...`;
+if(remaining<=0){
+clearInterval(claimTimer);
+coins+=REWARD;
+views++;
+saveData();
+updateUI();
+countdownEl.innerText=`🎉 You earned ${REWARD} coins!`;
+const coin=document.getElementById('coinSound'); if(coin){coin.play().catch(()=>{});}
+claimBtn.disabled=false;
+claimBtn.classList.add('hidden');
+claimBtn.classList.remove('muted');
+watchBtn.disabled=false;
+watchBtn.classList.remove('muted');
+}
+},1000);
+}
 
-    function watchAd(){
-      const watchBtn=document.getElementById('watchBtn');
-      const claimBtn=document.getElementById('claimBtn');
-      const countdownEl=document.getElementById('countdown');
+function showWithdraw(){
+document.getElementById("withdraw-section").classList.remove("hidden");
+document.getElementById("ad-section").classList.add("hidden");
+document.getElementById("referral-section").classList.add("hidden");
+}
+function calculateBDT(){
+const amount=parseInt(document.getElementById("coinAmount").value)||0;
+const bdt=(amount*COIN_TO_BDT).toFixed(2);
+document.getElementById("bdtValue").innerText=`You will get: ${bdt} BDT`;
+}
+function submitWithdraw(){
+const method=document.getElementById("method").value;
+const amount=parseInt(document.getElementById("coinAmount").value);
+const account=document.getElementById("accountNumber").value.trim();
+if(isNaN(amount)||amount<MIN_WITHDRAW){ alert(`Minimum withdraw is ${MIN_WITHDRAW} coins.`); return;}
+if(!account||account.length<6){ alert("Please enter a valid account number."); return;}
+if(amount>coins){ alert("You don't have enough coins."); return;}
+coins-=amount; saveData(); updateUI();
+const bdtValue=(amount*COIN_TO_BDT).toFixed(2);
+document.getElementById("withdraw-section").innerHTML=`
+<h3>✅ Withdraw request submitted!</h3>
+<p>Method: ${method.toUpperCase()}</p>
+<p>Amount: ${amount} coins (~ ${bdtValue} BDT)</p>
+<p>Account Number: ${account}</p>
+<p>We will process your request soon.</p>
+<button class="btn back-btn" onclick="goBack()">🔙 Back</button>`;
+sendTelegramMessage(`💰 Withdraw Request:\nUser: ${userName} (ID: ${userId})\nMethod: ${method.toUpperCase()}\nAmount: ${amount} coins (~ ${bdtValue} BDT)\nAccount: ${account}`);
+}
 
-      watchBtn.disabled=true;
-      watchBtn.classList.add('muted');
-      claimBtn.classList.add('hidden');
-      countdownEl.innerText=`⏳ Please wait ${AD_DURATION} seconds...`;
+function showReferral(){
+document.getElementById("referral-section").classList.remove("hidden");
+document.getElementById("withdraw-section").classList.add("hidden");
+document.getElementById("ad-section").classList.add("hidden");
+document.getElementById("refLink").innerText=`https://t.me/ads25_income_bot?start=${userId}`;
+}
 
-      tryShowAd();
-      let remaining=AD_DURATION;
-      adTimer=setInterval(()=>{
-        remaining--;
-        countdownEl.innerText=`⏳ Please wait ${remaining} seconds...`;
-        if(remaining<=0){
-          clearInterval(adTimer);
-          countdownEl.innerText="✅ Ad watched. Now claim your coin!";
-          claimBtn.classList.remove('hidden');
-          watchBtn.disabled=false;
-          watchBtn.classList.remove('muted');
-        }
-      },1000);
-    }
+function copyReferral(){
+const ref=document.getElementById("refLink").innerText;
+if(navigator.clipboard && navigator.clipboard.writeText){
+navigator.clipboard.writeText(ref).then(()=>alert("Referral link copied!")).catch(()=>fallbackCopy(ref));
+}else fallbackCopy(ref);
+function fallbackCopy(text){
+const ta=document.createElement('textarea');
+ta.value=text; document.body.appendChild(ta); ta.select();
+try{document.execCommand('copy'); alert('Referral link copied!');}catch(e){alert('Copy failed.');}
+ta.remove();
+}
+}
 
-    function claimCoins(){
-      const claimBtn=document.getElementById('claimBtn');
-      const watchBtn=document.getElementById('watchBtn');
-      const countdownEl=document.getElementById('countdown');
+function goBack(){
+document.getElementById("withdraw-section").classList.add("hidden");
+document.getElementById("referral-section").classList.add("hidden");
+document.getElementById("ad-section").classList.remove("hidden");
+updateUI();
+}
 
-      claimBtn.disabled=true;
-      claimBtn.classList.add('muted');
-      countdownEl.innerText=`⏳ Claiming in ${AD_DURATION} seconds...`;
+function showNotice(){document.getElementById("noticeOverlay").style.display="flex";}
+function closeNotice(){document.getElementById("noticeOverlay").style.display="none";}
 
-      tryShowAd();
-      let remaining=AD_DURATION;
-      claimTimer=setInterval(()=>{
-        remaining--;
-        countdownEl.innerText=`⏳ Claiming in ${remaining} seconds...`;
-        if(remaining<=0){
-          clearInterval(claimTimer);
-          coins+=REWARD;
-          views++;
-          saveData();
-          updateUI();
-          countdownEl.innerText="🎉 You earned 50 coins!";
-          const coin=document.getElementById('coinSound');
-          if(coin){ coin.play().catch(()=>{}); }
-          claimBtn.disabled=false;
-          claimBtn.classList.add('hidden');
-          claimBtn.classList.remove('muted');
-          watchBtn.disabled=false;
-          watchBtn.classList.remove('muted');
-        }
-      },1000);
-    }
-
-    function showWithdraw(){
-      document.getElementById("withdraw-section").classList.remove("hidden");
-      document.getElementById("ad-section").classList.add("hidden");
-      document.getElementById("referral-section").classList.add("hidden");
-    }
-    function calculateBDT(){
-      const amount=parseInt(document.getElementById("coinAmount").value)||0;
-      const bdt=(amount*0.0038).toFixed(2);
-      document.getElementById("bdtValue").innerText=`You will get: ${bdt} BDT`;
-    }
-    function submitWithdraw(){
-      const method=document.getElementById("method").value;
-      const amount=parseInt(document.getElementById("coinAmount").value);
-      const account=document.getElementById("accountNumber").value.trim();
-      if(isNaN(amount)||amount<100000){ alert("Minimum withdraw is 100000 coins."); return;}
-      if(!account||account.length<6){ alert("Please enter a valid account number."); return;}
-      if(amount>coins){ alert("You don't have enough coins."); return;}
-      coins-=amount; saveData(); updateUI();
-      document.getElementById("withdraw-section").innerHTML=`
-        <h3>✅ Withdraw request submitted!</h3>
-        <p>Method: ${method.toUpperCase()}</p>
-        <p>Amount: ${amount} coins</p>
-        <p>Account Number: ${account}</p>
-        <p>We will process your request soon.</p>
-        <button class="btn back-btn" onclick="goBack()">🔙 Back</button>
-      `;
-      sendTelegramMessage(`💰 Withdraw Request:\nUser: ${userName} (ID: ${userId})\nMethod: ${method.toUpperCase()}\nAmount: ${amount} coins\nAccount: ${account}`);
-    }
-
-    function showReferral(){
-      document.getElementById("referral-section").classList.remove("hidden");
-      document.getElementById("withdraw-section").classList.add("hidden");
-      document.getElementById("ad-section").classList.add("hidden");
-      document.getElementById("refLink").innerText=`https://t.me/ads25_income_bot?start=${userId}`;
-    }
-    function copyReferral(){
-      const ref=document.getElementById("refLink").innerText;
-      if(navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(ref).then(()=>alert("Referral link copied!")).catch(()=>fallbackCopy(ref));
-      } else fallbackCopy(ref);
-      function fallbackCopy(text){
-        const ta=document.createElement('textarea');
-        ta.value=text; document.body.appendChild(ta); ta.select();
-        try{document.execCommand('copy'); alert('Referral link copied!');}catch(e){alert('Copy failed.');}
-        ta.remove();
-      }
-    }
-    function goBack(){
-      document.getElementById("withdraw-section").classList.add("hidden");
-      document.getElementById("referral-section").classList.add("hidden");
-      document.getElementById("ad-section").classList.remove("hidden");
-      updateUI();
-    }
-
-    updateUI();
-
-    // === Notice Popup ===
-    function showNotice(){
-      document.getElementById("noticeOverlay").style.display="flex";
-    }
-    function closeNotice(){
-      document.getElementById("noticeOverlay").style.display="none";
-    }
-    window.onload = function(){
-      setTimeout(showNotice,2000);
-    }
-  </script>
+window.onload=function(){setTimeout(showNotice,2000); updateUI();}
+</script>
 </body>
 </html>
