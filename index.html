@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Ads Income Place</title>
+<title>Ads Income Place — Updated</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <!-- Ad SDK (user provided) -->
 <script src="//libtl.com/sdk.js" data-zone="9777736" data-sdk="show_9777736"></script>
@@ -44,10 +44,11 @@
     margin-top:10px;
     color:#fff;
     background:linear-gradient(90deg,#7c3aed,#4f46e5);
-    transition: transform 0.18s ease;
+    transition: transform 0.18s ease, opacity .2s ease;
   }
-  .btn:active{transform: scale(0.99);}
-  .back-btn{background:linear-gradient(90deg,#374151,#111827);}
+  .btn:active{transform: scale(0.99);} 
+  .btn[disabled]{opacity:.6;cursor:not-allowed;}
+  .back-btn{background:linear-gradient(90deg,#374151,#111827);} 
   #countdown{margin-top:12px;font-size:14px;font-weight:bold;color:#ffeb3b;}
   input, select{width:100%;padding:12px;margin:10px 0;border-radius:10px;border:none;outline:none;font-size:15px;}
   .hidden{display:none;}
@@ -55,7 +56,7 @@
   .task-btn{flex:1;}
   .task-container{display:flex;flex-direction:column;gap:8px;margin-top:12px;}
   #noticeOverlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.65);display:none;justify-content:center;align-items:center;z-index:9999;}
-  .notice-card{background:#fff;color:#111;width:90%;max-width:420px;padding:20px;border-radius:12px;text-align:center;position:relative;box-shadow:0 8px 25px rgba(0,0,0,0.25);}
+  .notice-card{background:#fff;color:#111;width:90%;max-width:420px;padding:20px;border-radius:12px;text-align:center;position:relative;box-shadow:0 8px 25px rgba(0,0,0,0.25);} 
   .notice-card p{font-size:15px;color:#333;margin-bottom:16px;line-height:1.45;}
   .close-btn{position:absolute;top:10px;right:12px;font-size:16px;font-weight:bold;color:#666;cursor:pointer;}
   .close-btn:hover{color:#000;}
@@ -98,7 +99,7 @@
     cursor:pointer;
     z-index:10001;
   }
-  #bonusCloseSmall:active{transform: scale(0.95);}
+  #bonusCloseSmall:active{transform: scale(0.95);} 
   /* Responsive tweaks */
   @media (max-width:420px){
     .container{padding:12px;}
@@ -137,9 +138,9 @@
       <button class="btn" onclick="showReferral()">🤝 Refer</button>
     </div>
 
-    <!-- Tasks Section -->
+    <!-- Tasks Section (Bonus) -->
     <div class="card hidden" id="tasks-section">
-      <h3>📝 Complete Tasks</h3>
+      <h3>📝 Bonus Tasks (4)</h3>
       <div class="task-container" id="taskList"></div>
       <button class="btn back-btn" onclick="closeTasks()">🔙 Back</button>
     </div>
@@ -193,19 +194,15 @@
    Configuration / Defaults
    ------------------------- */
 const COIN_TO_BDT = 0.001;
-const REWARD = 50; // for watch+claim
+const REWARD = 50; // for watch+claim (ad)
 const MIN_WITHDRAW = 100000;
-const TASKS = [
+
+// ✅ Bonus: exactly 4 tasks as you requested
+const BONUS_TASKS = [
   {id:1, link:"https://otieu.com/4/9814903"},
   {id:2, link:"https://otieu.com/4/9814948"},
-  {id:3, link:"https://otieu.com/4/9814957"},
-  {id:4, link:"https://otieu.com/4/9814956"},
-  {id:5, link:"https://otieu.com/4/9814955"},
-  {id:6, link:"https://otieu.com/4/9814954"},
-  {id:7, link:"https://otieu.com/4/9814953"},
-  {id:8, link:"https://otieu.com/4/9814952"},
-  {id:9, link:"https://otieu.com/4/9814951"},
-  {id:10, link:"https://otieu.com/4/9814950"}
+  {id:3, link:"https://otieu.com/4/9814952"},
+  {id:4, link:"https://otieu.com/4/9814955"}
 ];
 
 // Telegram bot config (from user's code)
@@ -217,8 +214,14 @@ const botToken = "7998804506:AAHHW--PQWrqztwV5YBYiyTUbs7t7J2Md3w";
    ------------------------- */
 let coins = parseInt(localStorage.getItem("coins")) || 0;
 let views  = parseInt(localStorage.getItem("views")) || 0;
-let completedTasks = JSON.parse(localStorage.getItem("completedTasks") || "[]");
-let bonusClaimed = localStorage.getItem("bonusClaimed") === "true";
+// tasksState: { [id]: 'new' | 'claimable' | 'claimed' }
+let tasksState = JSON.parse(localStorage.getItem("tasksState") || "{}");
+let bonusCompleted = localStorage.getItem("bonusCompleted") === "true"; // permanently hide when all claimed
+// session-only hide when close × pressed (not persisted)
+let bonusHiddenSession = false;
+
+/* Ensure all 4 tasks exist in state */
+BONUS_TASKS.forEach(t=>{ if(!tasksState[t.id]) tasksState[t.id] = 'new'; });
 
 /* -------------------------
    Telegram WebApp init (if available)
@@ -238,17 +241,20 @@ document.getElementById("user-photo").src = photoUrl;
 function saveData(){
   localStorage.setItem("coins", coins);
   localStorage.setItem("views", views);
-  localStorage.setItem("completedTasks", JSON.stringify(completedTasks));
-  localStorage.setItem("bonusClaimed", bonusClaimed ? "true" : "false");
+  localStorage.setItem("tasksState", JSON.stringify(tasksState));
+  localStorage.setItem("bonusCompleted", bonusCompleted ? "true" : "false");
+}
+
+function allBonusClaimed(){
+  return BONUS_TASKS.every(t => tasksState[t.id] === 'claimed');
 }
 
 function updateUI(){
   document.getElementById("balance").innerText = coins;
   document.getElementById("views").innerText   = views;
 
-  // Bonus visibility logic: hide if claimed OR all tasks completed
   const bonusBtn = document.getElementById("bonusFloating");
-  if(bonusClaimed || completedTasks.length >= TASKS.length){
+  if (bonusHiddenSession || bonusCompleted || allBonusClaimed()) {
     bonusBtn.classList.add("hidden");
   } else {
     bonusBtn.classList.remove("hidden");
@@ -271,7 +277,6 @@ const AD_DURATION = 15;
 let adTimer = null, claimTimer = null;
 
 function tryShowAd(){
-  // show ad via provided SDK if available
   if(typeof window.show_9777736 === "function"){
     try{ window.show_9777736(); }catch(e){ console.warn(e); }
   }
@@ -374,8 +379,12 @@ function showReferral(){
   document.getElementById("refLink").innerText = `https://t.me/ads25_income_bot?start=${userId}`;
 }
 function copyReferral(){
+  const btnTextOrig = "☕ Copy";
   navigator.clipboard.writeText(document.getElementById("refLink").innerText)
-    .then(()=> alert("Referral link copied!"))
+    .then(()=>{
+      const buttons = document.querySelectorAll('#referral-section .btn');
+      if(buttons[0]){ buttons[0].innerText = 'Copied ✅'; setTimeout(()=>{buttons[0].innerText = btnTextOrig;}, 1200); }
+    })
     .catch(()=> alert("Copy failed"));
 }
 function goBack(){
@@ -386,44 +395,59 @@ function goBack(){
 }
 
 /* -------------------------
-   Tasks & Bonus logic
+   BONUS Tasks: Go ➜ Claim ➜ Claimed
    ------------------------- */
 function updateTaskUI(){
   const list = document.getElementById("taskList");
   list.innerHTML = "";
-  TASKS.forEach(t=>{
-    const done = completedTasks.includes(t.id);
-    const div = document.createElement("div");
-    div.style.display = "flex";
-    div.style.justifyContent = "space-between";
-    div.style.alignItems = "center";
-    const goBtn = document.createElement("button");
-    goBtn.className = "btn task-btn";
-    goBtn.innerText = done ? `✔ Task ${t.id} Claimed` : `Go To Task ${t.id}`;
-    goBtn.disabled = done;
-    goBtn.onclick = ()=>{
-      // open link and after short delay mark completed (client-side)
-      window.open(t.link, "_blank");
-      setTimeout(()=>{
-        if(!completedTasks.includes(t.id)){
-          coins += 100;
-          completedTasks.push(t.id);
+
+  BONUS_TASKS.forEach(t=>{
+    const state = tasksState[t.id];
+    const row = document.createElement('div');
+    row.style.display = 'flex';
+    row.style.gap = '10px';
+    row.style.alignItems = 'center';
+
+    const label = document.createElement('div');
+    label.textContent = `Task ${t.id}`;
+
+    const btn = document.createElement('button');
+    btn.className = 'btn task-btn';
+
+    if(state === 'new'){
+      btn.innerText = 'Go task';
+      btn.onclick = ()=>{
+        window.open(t.link, '_blank');
+        tasksState[t.id] = 'claimable';
+        saveData();
+        updateTaskUI();
+      };
+    } else if(state === 'claimable'){
+      btn.innerText = 'claim';
+      btn.onclick = ()=>{
+        coins += 100; // add 100 coins per your rule
+        tasksState[t.id] = 'claimed';
+        document.getElementById('coinSound').play().catch(()=>{});
+        saveData();
+        updateUI();
+        updateTaskUI();
+        // if all 4 claimed -> permanently hide bonus icon
+        if(allBonusClaimed()){
+          bonusCompleted = true;
           saveData();
           updateUI();
-          alert("🎉 100 Coins Added!");
-          updateTaskUI();
-          // if all tasks done -> mark bonus claimed (hide)
-          if(completedTasks.length >= TASKS.length){
-            bonusClaimed = true;
-            saveData();
-            updateUI();
-            closeTasks();
-          }
+          // optional: auto close tasks section
+          setTimeout(()=>{ closeTasks(); }, 400);
         }
-      }, 5000); // mimic user completion after 5s
-    };
-    div.appendChild(goBtn);
-    list.appendChild(div);
+      };
+    } else {
+      btn.innerText = '✔ Claimed';
+      btn.disabled = true;
+    }
+
+    row.appendChild(label);
+    row.appendChild(btn);
+    list.appendChild(row);
   });
 }
 
@@ -434,11 +458,10 @@ function closeTasks(){
 }
 
 /* Bonus floating click and close */
-document.getElementById("bonusFloating").addEventListener("click", function(e){
-  // If click on the small close button, it will be handled separately
-  if(e.target && e.target.id === "bonusCloseSmall") return;
-  if(bonusClaimed) return;
-  // open tasks
+const bonusBtnEl = document.getElementById("bonusFloating");
+bonusBtnEl.addEventListener("click", function(e){
+  if(e.target && e.target.id === "bonusCloseSmall") return; // handled below
+  if(bonusCompleted || allBonusClaimed()) return;
   document.getElementById("tasks-section").classList.remove("hidden");
   document.getElementById("ad-section").classList.add("hidden");
   updateTaskUI();
@@ -446,9 +469,8 @@ document.getElementById("bonusFloating").addEventListener("click", function(e){
 
 document.getElementById("bonusCloseSmall").addEventListener("click", function(e){
   e.stopPropagation();
-  // hide floating bonus for the session (and persist)
-  bonusClaimed = true;
-  saveData();
+  // Hide for current session only (until reload), as per your requirement
+  bonusHiddenSession = true;
   updateUI();
 });
 
@@ -465,10 +487,7 @@ document.getElementById("bonusCloseSmall").addEventListener("click", function(e)
     dragging = true;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    startX = clientX;
-    startY = clientY;
-    origX = btn.offsetLeft;
-    origY = btn.offsetTop;
+    startX = clientX; startY = clientY; origX = btn.offsetLeft; origY = btn.offsetTop;
     document.addEventListener(e.touches? 'touchmove' : 'mousemove', onPointerMove);
     document.addEventListener(e.touches? 'touchend'  : 'mouseup', onPointerUp);
   }
@@ -476,35 +495,19 @@ document.getElementById("bonusCloseSmall").addEventListener("click", function(e)
     if(!dragging) return;
     const clientX = e.touches ? e.touches[0].clientX : e.clientX;
     const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-    const dx = clientX - startX;
-    const dy = clientY - startY;
-    let nx = origX + dx;
-    let ny = origY + dy;
-    // constrain within viewport
-    const pad = 8;
-    const vw = window.innerWidth;
-    const vh = window.innerHeight;
-    const w = btn.offsetWidth;
-    const h = btn.offsetHeight;
-    if(nx < pad) nx = pad;
-    if(ny < pad) ny = pad;
-    if(nx > vw - w - pad) nx = vw - w - pad;
-    if(ny > vh - h - pad) ny = vh - h - pad;
-    btn.style.left = nx + "px";
-    btn.style.top = ny + "px";
-    btn.style.right = "auto";
-    btn.style.bottom = "auto";
-    btn.style.position = "fixed";
+    const dx = clientX - startX; const dy = clientY - startY;
+    let nx = origX + dx; let ny = origY + dy;
+    const pad = 8; const vw = window.innerWidth; const vh = window.innerHeight; const w = btn.offsetWidth; const h = btn.offsetHeight;
+    if(nx < pad) nx = pad; if(ny < pad) ny = pad; if(nx > vw - w - pad) nx = vw - w - pad; if(ny > vh - h - pad) ny = vh - h - pad;
+    btn.style.left = nx + "px"; btn.style.top = ny + "px"; btn.style.right = "auto"; btn.style.bottom = "auto"; btn.style.position = "fixed";
   }
-  function onPointerUp(e){
+  function onPointerUp(){
     dragging = false;
     document.removeEventListener('mousemove', onPointerMove);
     document.removeEventListener('mouseup', onPointerUp);
     document.removeEventListener('touchmove', onPointerMove);
     document.removeEventListener('touchend', onPointerUp);
-    // persist position optionally (not required). If you want to persist, save to localStorage here.
   }
-
   btn.addEventListener('mousedown', onPointerDown);
   btn.addEventListener('touchstart', onPointerDown, {passive:false});
 })();
@@ -518,30 +521,17 @@ function closeNotice(){
 document.getElementById("noticeOverlay").style.display = "flex";
 
 /* -------------------------
-   Init: update UI, task UI
+   Init
    ------------------------- */
 updateUI();
+updateTaskUI();
 
-/* make sure tasks UI up-to-date when tasks section opens first time */
-document.getElementById("tasks-section").addEventListener("transitionend", ()=> updateTaskUI());
-
-/* Close tasks if user has already completed all */
-if(completedTasks.length >= TASKS.length){
-  bonusClaimed = true;
-  saveData();
-  updateUI();
-}
-
-/* -------------------------
-   Prevent accidental long timers leftover on unload
-   ------------------------- */
+/* Prevent accidental long timers leftover on unload */
 window.addEventListener('beforeunload', ()=>{
   try{ clearInterval(adTimer); clearInterval(claimTimer); }catch(e){}
 });
 
-/* -------------------------
-   Expose a few functions globally for inline handlers
-   ------------------------- */
+/* Expose */
 window.watchAd = watchAd;
 window.claimCoins = claimCoins;
 window.showWithdraw = showWithdraw;
