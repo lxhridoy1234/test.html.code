@@ -1,271 +1,144 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="bn">
 <head>
-  <meta charset="UTF-8">
-  <title>Wi-Fi Hack Tools Maker Hridoy</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Captcha Job — Earn Money</title>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: radial-gradient(circle, #000000 0%, #0a0a0a 100%);
-      color: #00ff00;
-      font-family: 'Courier New', Courier, monospace;
-      overflow: hidden;
-    }
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{background:linear-gradient(135deg,#0ea5e9,#22d3ee);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+    .app{width:100%;max-width:430px;background:#fff;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,0.2);overflow:hidden;animation:fadeIn .6s ease}
+    header{background:linear-gradient(135deg,#0ea5e9,#22d3ee);padding:20px;color:#fff;text-align:center}
+    header h1{font-size:22px;font-weight:700}
+    .balance-card{margin:-40px 20px 10px;background:#fff;border-radius:15px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.1);text-align:center}
+    .balance-card h2{font-size:18px;color:#0ea5e9}
+    .balance-card p{font-size:28px;font-weight:700;margin-top:6px;color:#0f172a}
 
-    .hidden {
-      display: none;
-    }
+    .section{padding:20px}
+    .card{background:#f8fafc;border-radius:15px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
+    .card h3{font-size:18px;color:#0f172a;margin-bottom:12px}
 
-    .login-screen, .hacker-screen {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      padding: 30px;
-      box-sizing: border-box;
-      background: rgba(0, 0, 0, 0.95);
-    }
+    .captcha-box{display:flex;flex-direction:column;gap:12px;align-items:center}
+    .captcha-q{font-size:20px;font-weight:700;color:#0ea5e9}
+    .captcha-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:16px}
+    .captcha-box button{background:#0ea5e9;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:.3s}
+    .captcha-box button:hover{background:#0284c7}
 
-    .login-screen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+    .btn{display:block;width:100%;margin-top:10px;background:#22c55e;color:#fff;padding:12px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:.3s}
+    .btn:hover{background:#16a34a}
 
-    .login-screen input {
-      padding: 12px;
-      font-size: 18px;
-      background: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      width: 300px;
-      text-align: center;
-    }
+    .invite-box{display:flex;flex-direction:column;gap:10px}
+    .invite-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:14px}
+    .invite-box button{background:#0ea5e9;color:#fff;border:none;padding:10px;border-radius:10px;cursor:pointer;font-weight:600}
 
-    .login-screen button {
-      padding: 10px 20px;
-      background-color: #0f0;
-      border: none;
-      color: #000;
-      font-weight: bold;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+    .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;visibility:hidden;opacity:0;transition:.3s}
+    .modal.active{visibility:visible;opacity:1}
+    .modal-content{background:#fff;border-radius:15px;padding:20px;width:90%;max-width:400px;box-shadow:0 6px 20px rgba(0,0,0,0.2)}
+    .modal-content h3{margin-bottom:12px;color:#0ea5e9}
+    .modal-content input,.modal-content select{margin-bottom:10px;padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%}
+    .modal-content button{padding:10px;width:100%;border:none;border-radius:10px;font-weight:600;cursor:pointer}
+    .modal-content .submit{background:#22c55e;color:#fff;margin-top:5px}
+    .modal-content .close{background:#f1f5f9;color:#0f172a;margin-top:5px}
 
-    .login-screen button:hover {
-      background-color: #090;
-    }
-
-    .error {
-      color: red;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-
-    .title {
-      font-size: 28px;
-      text-align: center;
-      margin-bottom: 20px;
-      text-shadow: 0 0 10px #0f0;
-    }
-
-    .input-group {
-      max-width: 600px;
-      margin: 0 auto 20px auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .input-group input,
-    .input-group button {
-      padding: 12px;
-      font-size: 16px;
-      background: #111;
-      border: 1px solid #0f0;
-      color: #0f0;
-      border-radius: 5px;
-      margin-bottom: 15px;
-      transition: 0.3s;
-    }
-
-    .input-group input::placeholder {
-      color: #0f0;
-      opacity: 0.7;
-    }
-
-    .input-group input:focus {
-      outline: none;
-      box-shadow: 0 0 10px #0f0;
-      background-color: #000;
-    }
-
-    .input-group button:hover {
-      background-color: #0f0;
-      color: #000;
-      cursor: pointer;
-    }
-
-    #output {
-      white-space: pre-wrap;
-      background: #000;
-      padding: 20px;
-      border: 1px solid #0f0;
-      max-width: 600px;
-      height: 300px;
-      margin: 0 auto;
-      overflow-y: auto;
-      border-radius: 5px;
-      box-shadow: 0 0 20px #0f0;
-    }
-
-    .copy-btn {
-      background-color: #0f0;
-      color: #000;
-      font-weight: bold;
-      padding: 6px 12px;
-      margin-top: 10px;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-    }
-
-    .copy-btn:hover {
-      background-color: #090;
-    }
-
-    .log-line {
-      animation: type 0.6s steps(40, end);
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    @keyframes type {
-      from { width: 0; }
-      to { width: 100%; }
-    }
+    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
   </style>
 </head>
 <body>
+  <div class="app">
+    <header>
+      <h1>Captcha Job</h1>
+    </header>
 
-<!-- Login Screen -->
-<div class="login-screen" id="loginScreen">
-  <h2>🔐 Enter Access Password</h2>
-  <input type="password" id="accessPassword" placeholder="Enter password">
-  <button onclick="verifyPassword()">Unlock</button>
-  <div class="error" id="errorMsg"></div>
-</div>
+    <div class="balance-card">
+      <h2>আপনার ব্যালেন্স</h2>
+      <p id="balance">0 ৳</p>
+    </div>
 
-<!-- Hacker Interface -->
-<div class="hacker-screen hidden" id="hackerScreen">
-  <div class="title">💻 Wi-Fi Hack Tools Maker Hridoy</div>
+    <div class="section">
+      <div class="card">
+        <h3>Captcha System</h3>
+        <div class="captcha-box">
+          <div class="captcha-q" id="capQuestion">লোডিং...</div>
+          <input type="text" id="capAnswer" placeholder="আপনার উত্তর লিখুন" />
+          <button id="submitCap">Submit</button>
+        </div>
+      </div>
 
-  <div class="input-group">
-    <input type="text" id="wifiName" placeholder="Enter Wi-Fi name">
-    <input type="text" id="ipAddress" placeholder="Enter IP address">
-    <button onclick="startHack()">Launch Attack</button>
+      <button class="btn" id="withdrawBtn">Withdraw</button>
+
+      <div class="card">
+        <h3>Invite Friend</h3>
+        <div class="invite-box">
+          <input type="text" id="refLink" readonly />
+          <button id="copyRef">Copy Link</button>
+          <p style="font-size:13px;color:#475569">প্রতি রেফারে পাবেন ৫৳</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <div id="output"></div>
-</div>
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <h3>Withdraw</h3>
+      <select id="method">
+        <option value="bkash">Bkash</option>
+        <option value="nagad">Nagad</option>
+      </select>
+      <input type="number" id="wamount" placeholder="Amount (৳)" />
+      <input type="text" id="wacc" placeholder="Account Number" />
+      <button class="submit" id="sendWithdraw">Submit</button>
+      <button class="close" id="closeModal">Cancel</button>
+      <p style="font-size:13px;color:#64748b;margin-top:8px">Minimum Withdraw 200৳</p>
+    </div>
+  </div>
 
-<script>
-  const correctPassword = "018421";
+  <script>
+    const BALANCE_KEY = 'captcha_balance';
+    function getBalance(){return Number(localStorage.getItem(BALANCE_KEY) || 0)}
+    function setBalance(v){localStorage.setItem(BALANCE_KEY,v);renderBalance()}
+    function addBalance(v){setBalance(getBalance()+v)}
+    function renderBalance(){document.getElementById('balance').textContent = getBalance()+' ৳'}
+    renderBalance();
 
-  function verifyPassword() {
-    const input = document.getElementById("accessPassword").value;
-    const errorMsg = document.getElementById("errorMsg");
-
-    if (input === correctPassword) {
-      document.getElementById("loginScreen").classList.add("hidden");
-      document.getElementById("hackerScreen").classList.remove("hidden");
-      document.getElementById("wifiName").focus();
-    } else {
-      errorMsg.textContent = "❌ Wrong password!";
-    }
-  }
-
-  const passwords = {
-    "Hridoy Khan": "hridoykamal",
-    "Araf": "20252026",
-    "Monir Hossain": "Monir Hossain",
-    "Monir Boos": "Monir@Hossain"
-  };
-
-  function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-  }
-
-  async function startHack() {
-    const wifi = document.getElementById("wifiName").value.trim();
-    const ip = document.getElementById("ipAddress").value.trim();
-    const output = document.getElementById("output");
-    output.innerHTML = "";
-
-    if (!wifi || !ip) {
-      output.innerHTML = "<span class='log-line'>⚠️ Please enter both Wi-Fi name and IP address!</span>";
-      return;
+    function genCaptcha(){
+      const a=Math.floor(Math.random()*9)+1;
+      const b=Math.floor(Math.random()*9)+1;
+      const ops=['+','-','x'];
+      const op=ops[Math.floor(Math.random()*ops.length)];
+      let ans;
+      if(op==='+'){ans=a+b}
+      if(op==='-'){ans=a-b}
+      if(op==='x'){ans=a*b}
+      return {q:`${a} ${op} ${b}`,ans}
     }
 
-    const logs = [
-      "Bd71 Cyber Team Owner Is Hridoy Khan",
-      `Connecting to target IP: ${ip}...`,
-      "Initializing attack modules...",
-      "Pinging host...",
-      "Scanning open ports...",
-      "Port 21 - open | FTP detected",
-      "Port 80 - open | HTTP server found",
-      "Port 443 - open | SSL active",
-      "Injecting spoofed packets...",
-      "Intercepting handshake...",
-      "Extracting WPA2 key...",
-      "Running dictionary attack...",
-      "Brute-forcing password...",
-      "Bypassing router firewall...",
-      "Access granted to admin panel.",
-      "Decrypting stored credentials...",
-      "Uploading payload...",
-      "Dumping password hashes...",
-      "Matching Wi-Fi SSID...",
-      "Finalizing attack..."
-    ];
+    let current=genCaptcha();
+    function loadCaptcha(){current=genCaptcha();document.getElementById('capQuestion').textContent=current.q;document.getElementById('capAnswer').value=''}
+    loadCaptcha();
 
-    for (let line of logs) {
-      const log = document.createElement('div');
-      log.className = 'log-line';
-      log.textContent = line;
-      output.appendChild(log);
-      output.scrollTop = output.scrollHeight;
-      await sleep(400 + Math.random() * 200);
+    document.getElementById('submitCap').onclick=()=>{
+      let val=document.getElementById('capAnswer').value.trim();
+      if(Number(val)===current.ans){addBalance(2);alert('সঠিক! ২৳ যোগ হয়েছে');}
+      else{alert('ভুল উত্তর! আবার চেষ্টা করুন');}
+      loadCaptcha();
     }
 
-    const password = passwords[wifi];
-    if (password) {
-      const result = document.createElement('div');
-      result.innerHTML = `
-        📡 <strong>Wi-Fi Name:</strong> ${wifi}<br>
-        🔑 <strong>Password:</strong> <span id="pw">${password}</span>
-        <button class="copy-btn" onclick="copyPassword()">Copy</button>
-      `;
-      output.appendChild(result);
-    } else {
-      output.innerHTML += `\n❌ No password found for this network.`;
+    const modal=document.getElementById('modal');
+    document.getElementById('withdrawBtn').onclick=()=>{modal.classList.add('active')}
+    document.getElementById('closeModal').onclick=()=>{modal.classList.remove('active')}
+
+    document.getElementById('sendWithdraw').onclick=()=>{
+      const amount=Number(document.getElementById('wamount').value);
+      if(amount<200){alert('মিনিমাম ২০০৳ প্রয়োজন');return;}
+      if(getBalance()<amount){alert('পর্যাপ্ত ব্যালেন্স নেই');return;}
+      setBalance(getBalance()-amount);
+      alert('Withdraw সফল!');
+      modal.classList.remove('active');
     }
 
-    output.scrollTop = output.scrollHeight;
-  }
-
-  function copyPassword() {
-    const pw = document.getElementById("pw").innerText;
-    navigator.clipboard.writeText(pw).then(() => {
-      alert("🔐 Password copied to clipboard!");
-    });
-  }
-</script>
-
+    const refLink=`https://t.me/capturejob89kfree_bot?start=12345`;
+    document.getElementById('refLink').value=refLink;
+    document.getElementById('copyRef').onclick=()=>{navigator.clipboard.writeText(refLink);alert('Referral Link Copied!')}
+  </script>
 </body>
 </html>
