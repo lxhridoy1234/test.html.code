@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="bn">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -19,8 +19,8 @@
     .card h3{font-size:18px;color:#0f172a;margin-bottom:12px}
 
     .captcha-box{display:flex;flex-direction:column;gap:12px;align-items:center}
-    .captcha-q{font-size:20px;font-weight:700;color:#0ea5e9}
-    .captcha-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:16px}
+    .captcha-q{font-size:22px;font-weight:700;color:#0ea5e9;letter-spacing:3px}
+    .captcha-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:16px;text-align:center}
     .captcha-box button{background:#0ea5e9;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:.3s}
     .captcha-box button:hover{background:#0284c7}
 
@@ -50,7 +50,7 @@
     </header>
 
     <div class="balance-card">
-      <h2>আপনার ব্যালেন্স</h2>
+      <h2>Your Balance</h2>
       <p id="balance">0 ৳</p>
     </div>
 
@@ -58,8 +58,8 @@
       <div class="card">
         <h3>Captcha System</h3>
         <div class="captcha-box">
-          <div class="captcha-q" id="capQuestion">লোডিং...</div>
-          <input type="text" id="capAnswer" placeholder="আপনার উত্তর লিখুন" />
+          <div class="captcha-q" id="capQuestion">Loading...</div>
+          <input type="text" id="capAnswer" placeholder="Enter captcha" />
           <button id="submitCap">Submit</button>
         </div>
       </div>
@@ -71,7 +71,7 @@
         <div class="invite-box">
           <input type="text" id="refLink" readonly />
           <button id="copyRef">Copy Link</button>
-          <p style="font-size:13px;color:#475569">প্রতি রেফারে পাবেন ৫৳</p>
+          <p style="font-size:13px;color:#475569">You will get 5৳ for each referral</p>
         </div>
       </div>
     </div>
@@ -88,7 +88,7 @@
       <input type="text" id="wacc" placeholder="Account Number" />
       <button class="submit" id="sendWithdraw">Submit</button>
       <button class="close" id="closeModal">Cancel</button>
-      <p style="font-size:13px;color:#64748b;margin-top:8px">Minimum Withdraw 200৳</p>
+      <p style="font-size:13px;color:#64748b;margin-top:8px">Minimum Withdraw 500৳</p>
     </div>
   </div>
 
@@ -100,26 +100,19 @@
     function renderBalance(){document.getElementById('balance').textContent = getBalance()+' ৳'}
     renderBalance();
 
+    const words = ["cApTcHa","joB2025","EaRn","MoNeY","FrEe","InCoMe","WoRk","OnLiNe","TaSk","ReFeR"];
     function genCaptcha(){
-      const a=Math.floor(Math.random()*9)+1;
-      const b=Math.floor(Math.random()*9)+1;
-      const ops=['+','-','x'];
-      const op=ops[Math.floor(Math.random()*ops.length)];
-      let ans;
-      if(op==='+'){ans=a+b}
-      if(op==='-'){ans=a-b}
-      if(op==='x'){ans=a*b}
-      return {q:`${a} ${op} ${b}`,ans}
+      return words[Math.floor(Math.random()*words.length)];
     }
 
     let current=genCaptcha();
-    function loadCaptcha(){current=genCaptcha();document.getElementById('capQuestion').textContent=current.q;document.getElementById('capAnswer').value=''}
+    function loadCaptcha(){current=genCaptcha();document.getElementById('capQuestion').textContent=current;document.getElementById('capAnswer').value=''}
     loadCaptcha();
 
     document.getElementById('submitCap').onclick=()=>{
       let val=document.getElementById('capAnswer').value.trim();
-      if(Number(val)===current.ans){addBalance(2);alert('সঠিক! ২৳ যোগ হয়েছে');}
-      else{alert('ভুল উত্তর! আবার চেষ্টা করুন');}
+      if(val===current){addBalance(2);alert('Correct! +2৳ added');}
+      else{alert('Wrong! Try again');}
       loadCaptcha();
     }
 
@@ -129,14 +122,14 @@
 
     document.getElementById('sendWithdraw').onclick=()=>{
       const amount=Number(document.getElementById('wamount').value);
-      if(amount<200){alert('মিনিমাম ২০০৳ প্রয়োজন');return;}
-      if(getBalance()<amount){alert('পর্যাপ্ত ব্যালেন্স নেই');return;}
+      if(amount<500){alert('Minimum 500৳ required');return;}
+      if(getBalance()<amount){alert('Insufficient balance');return;}
       setBalance(getBalance()-amount);
-      alert('Withdraw সফল!');
+      alert('Withdraw Successful!');
       modal.classList.remove('active');
     }
 
-    const refLink=`https://t.me/capturejob89kfree_bot?start=12345`;
+    const refLink=`https://t.me/captchaj89kfree_bot?start=12345`;
     document.getElementById('refLink').value=refLink;
     document.getElementById('copyRef').onclick=()=>{navigator.clipboard.writeText(refLink);alert('Referral Link Copied!')}
   </script>
