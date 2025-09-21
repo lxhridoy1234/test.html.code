@@ -1,137 +1,257 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Captcha Job — Earn Money</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Secure PIN Locker</title>
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif}
-    body{background:linear-gradient(135deg,#0ea5e9,#22d3ee);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
-    .app{width:100%;max-width:430px;background:#fff;border-radius:20px;box-shadow:0 8px 25px rgba(0,0,0,0.2);overflow:hidden;animation:fadeIn .6s ease}
-    header{background:linear-gradient(135deg,#0ea5e9,#22d3ee);padding:20px;color:#fff;text-align:center}
-    header h1{font-size:22px;font-weight:700}
-    .balance-card{margin:-40px 20px 10px;background:#fff;border-radius:15px;padding:20px;box-shadow:0 4px 12px rgba(0,0,0,0.1);text-align:center}
-    .balance-card h2{font-size:18px;color:#0ea5e9}
-    .balance-card p{font-size:28px;font-weight:700;margin-top:6px;color:#0f172a}
-
-    .section{padding:20px}
-    .card{background:#f8fafc;border-radius:15px;padding:16px;margin-bottom:16px;box-shadow:0 2px 8px rgba(0,0,0,0.05)}
-    .card h3{font-size:18px;color:#0f172a;margin-bottom:12px}
-
-    .captcha-box{display:flex;flex-direction:column;gap:12px;align-items:center}
-    .captcha-q{font-size:22px;font-weight:700;color:#0ea5e9;letter-spacing:3px}
-    .captcha-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:16px;text-align:center}
-    .captcha-box button{background:#0ea5e9;color:#fff;border:none;padding:10px 20px;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer;transition:.3s}
-    .captcha-box button:hover{background:#0284c7}
-
-    .btn{display:block;width:100%;margin-top:10px;background:#22c55e;color:#fff;padding:12px;border:none;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;transition:.3s}
-    .btn:hover{background:#16a34a}
-
-    .invite-box{display:flex;flex-direction:column;gap:10px}
-    .invite-box input{padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%;font-size:14px}
-    .invite-box button{background:#0ea5e9;color:#fff;border:none;padding:10px;border-radius:10px;cursor:pointer;font-weight:600}
-
-    .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:flex;justify-content:center;align-items:center;visibility:hidden;opacity:0;transition:.3s}
-    .modal.active{visibility:visible;opacity:1}
-    .modal-content{background:#fff;border-radius:15px;padding:20px;width:90%;max-width:400px;box-shadow:0 6px 20px rgba(0,0,0,0.2)}
-    .modal-content h3{margin-bottom:12px;color:#0ea5e9}
-    .modal-content input,.modal-content select{margin-bottom:10px;padding:10px;border:2px solid #e2e8f0;border-radius:10px;width:100%}
-    .modal-content button{padding:10px;width:100%;border:none;border-radius:10px;font-weight:600;cursor:pointer}
-    .modal-content .submit{background:#22c55e;color:#fff;margin-top:5px}
-    .modal-content .close{background:#f1f5f9;color:#0f172a;margin-top:5px}
-
-    @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+    /* ==== Base Reset ==== */
+    * {margin:0;padding:0;box-sizing:border-box;}
+    body {
+      font-family:'Segoe UI',sans-serif;
+      height:100vh;
+      background:linear-gradient(-45deg,#1e3c72,#2a5298,#00c6ff,#0072ff);
+      background-size:400% 400%;
+      animation:gradientShift 12s ease infinite;
+      display:flex;justify-content:center;align-items:center;
+      overflow:hidden;
+    }
+    @keyframes gradientShift {
+      0%{background-position:0% 50%}
+      50%{background-position:100% 50%}
+      100%{background-position:0% 50%}
+    }
+    :root {
+      --accent:#4dd0e1;
+      --accent-2:#81d4fa;
+      --danger:#e57373;
+      --success:#81c784;
+    }
+    /* ==== Locker Container ==== */
+    .container {
+      background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(20px);
+      border-radius:20px;
+      box-shadow:0 22px 80px rgba(2,6,23,0.6);
+      width:320px;max-width:90%;
+      padding:2rem;
+      text-align:center;
+      color:white;
+      transition:all .3s ease;
+    }
+    .container:hover {
+      transform:translateY(-3px);
+      box-shadow:0 28px 90px rgba(2,6,23,0.75);
+    }
+    h1 {
+      font-size:1.4rem;
+      margin-bottom:1rem;
+      text-transform:uppercase;
+      letter-spacing:2px;
+      color:var(--accent-2);
+    }
+    .locker-icon {
+      width:60px;height:60px;
+      margin:0 auto 1.2rem;
+      border-radius:50%;
+      border:3px solid var(--accent);
+      position:relative;
+      animation:float 3s ease-in-out infinite, pulse 4s infinite;
+    }
+    .locker-icon::after {
+      content:"🔒";
+      font-size:28px;
+      position:absolute;top:50%;left:50%;
+      transform:translate(-50%,-50%);
+    }
+    @keyframes float {0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+    @keyframes pulse {
+      0%,100%{box-shadow:inset 0 -8px 30px rgba(0,0,0,0.35);}
+      50%{box-shadow:inset 0 -8px 40px rgba(77,208,225,0.3);}
+    }
+    /* ==== PIN display ==== */
+    .pin-display {
+      display:flex;justify-content:center;margin-bottom:1rem;
+    }
+    .dot {
+      width:14px;height:14px;
+      border-radius:50%;
+      border:2px solid var(--accent-2);
+      margin:0 6px;
+      transition:all .2s;
+    }
+    .dot.filled {background:var(--accent-2);}
+    .dot.error {border-color:var(--danger);background:var(--danger);}
+    /* ==== Keypad ==== */
+    .keypad {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+    .key {
+      background:rgba(255,255,255,0.12);
+      border:none;
+      border-radius:14px;
+      font-size:1.2rem;
+      padding:16px;
+      cursor:pointer;
+      color:white;
+      transition:all .2s;
+      user-select:none;
+    }
+    .key:hover {
+      box-shadow:0 0 18px var(--accent-2);
+      transform:scale(1.05);
+    }
+    .key:active {
+      transform:scale(0.95);
+      box-shadow:0 0 12px var(--accent-2),0 0 20px var(--accent);
+    }
+    .key.special {font-size:.9rem;background:rgba(255,255,255,0.08);}
+    .message {margin-top:1rem;font-size:.9rem;height:1.2rem;}
+    .error-msg {color:var(--danger);}
+    .success-msg {color:var(--success);}
+    /* ==== Success screen ==== */
+    .success-card {
+      display:none;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      background:rgba(255,255,255,0.1);
+      backdrop-filter:blur(20px);
+      border-radius:20px;
+      padding:2rem;
+      width:320px;
+      text-align:center;
+      animation:popIn .6s ease forwards, successGlow 3s infinite;
+    }
+    .success-card h2 {color:var(--success);margin-top:1rem;}
+    .success-card p {margin-top:.5rem;color:#eee;}
+    @keyframes popIn {from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
+    @keyframes successGlow {
+      0%,100%{box-shadow:0 22px 80px rgba(2,6,23,0.6),0 0 12px var(--success);}
+      50%{box-shadow:0 22px 80px rgba(2,6,23,0.6),0 0 28px var(--success);}
+    }
+    /* Shake error */
+    .shake {animation:shake .4s;}
+    @keyframes shake {
+      0%,100%{transform:translateX(0);}
+      20%{transform:translateX(-10px);}
+      40%{transform:translateX(10px);}
+      60%{transform:translateX(-10px);}
+      80%{transform:translateX(10px);}
+    }
   </style>
 </head>
 <body>
-  <div class="app">
-    <header>
-      <h1>Captcha Job</h1>
-    </header>
-
-    <div class="balance-card">
-      <h2>Your Balance</h2>
-      <p id="balance">0 ৳</p>
-    </div>
-
-    <div class="section">
-      <div class="card">
-        <h3>Captcha System</h3>
-        <div class="captcha-box">
-          <div class="captcha-q" id="capQuestion">Loading...</div>
-          <input type="text" id="capAnswer" placeholder="Enter captcha" />
-          <button id="submitCap">Submit</button>
-        </div>
-      </div>
-
-      <button class="btn" id="withdrawBtn">Withdraw</button>
-
-      <div class="card">
-        <h3>Invite Friend</h3>
-        <div class="invite-box">
-          <input type="text" id="refLink" readonly />
-          <button id="copyRef">Copy Link</button>
-          <p style="font-size:13px;color:#475569">You will get 5৳ for each referral</p>
-        </div>
-      </div>
-    </div>
+  <div class="container" id="lockerCard">
+    <div class="locker-icon"></div>
+    <h1>Enter PIN</h1>
+    <div class="pin-display" id="pinDisplay" aria-label="PIN input" role="group"></div>
+    <div class="keypad" id="keypad"></div>
+    <div class="message" id="message" aria-live="polite"></div>
   </div>
 
-  <div class="modal" id="modal">
-    <div class="modal-content">
-      <h3>Withdraw</h3>
-      <select id="method">
-        <option value="bkash">Bkash</option>
-        <option value="nagad">Nagad</option>
-      </select>
-      <input type="number" id="wamount" placeholder="Amount (৳)" />
-      <input type="text" id="wacc" placeholder="Account Number" />
-      <button class="submit" id="sendWithdraw">Submit</button>
-      <button class="close" id="closeModal">Cancel</button>
-      <p style="font-size:13px;color:#64748b;margin-top:8px">Minimum Withdraw 500৳</p>
-    </div>
+  <div class="success-card" id="success">
+    <div style="font-size:3rem;">✅</div>
+    <h2>Access Granted</h2>
+    <p>Welcome, Admin!</p>
   </div>
+
+  <!-- Tick sound -->
+  <audio id="tickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" preload="auto"></audio>
 
   <script>
-    const BALANCE_KEY = 'captcha_balance';
-    function getBalance(){return Number(localStorage.getItem(BALANCE_KEY) || 0)}
-    function setBalance(v){localStorage.setItem(BALANCE_KEY,v);renderBalance()}
-    function addBalance(v){setBalance(getBalance()+v)}
-    function renderBalance(){document.getElementById('balance').textContent = getBalance()+' ৳'}
-    renderBalance();
+    const PIN="018421456";
+    const MAXLEN=PIN.length;
+    let input="";
+    const keypad=document.getElementById('keypad');
+    const pinDisplay=document.getElementById('pinDisplay');
+    const message=document.getElementById('message');
+    const card=document.getElementById('lockerCard');
+    const success=document.getElementById('success');
+    const tick=document.getElementById('tickSound');
 
-    const words = ["cApTcHa","joB2025","EaRn","MoNeY","FrEe","InCoMe","WoRk","OnLiNe","TaSk","ReFeR"];
-    function genCaptcha(){
-      return words[Math.floor(Math.random()*words.length)];
+    function playTick(){ tick.currentTime=0; tick.play(); }
+
+    // Build placeholder dots
+    for(let i=0;i<MAXLEN;i++){
+      let d=document.createElement('div');
+      d.className='dot';
+      pinDisplay.appendChild(d);
     }
 
-    let current=genCaptcha();
-    function loadCaptcha(){current=genCaptcha();document.getElementById('capQuestion').textContent=current;document.getElementById('capAnswer').value=''}
-    loadCaptcha();
+    function updateDisplay(){
+      document.querySelectorAll('.dot').forEach((dot,i)=>{
+        dot.classList.toggle('filled',i<input.length);
+      });
+    }
+    function appendDigit(d){
+      if(input.length>=MAXLEN) return;
+      input+=d; updateDisplay(); playTick();
+      if(input.length===MAXLEN){checkPin();}
+    }
+    function backspace(){
+      input=input.slice(0,-1);
+      updateDisplay(); playTick();
+    }
+    function clearAll(){
+      input=""; updateDisplay(); playTick();
+    }
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        let j=Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+    function buildKeys(){
+      keypad.innerHTML="";
+      let nums=shuffle([...Array(10).keys()]);
+      nums.forEach(n=>{
+        let btn=document.createElement('button');
+        btn.className='key'; btn.textContent=n;
+        btn.onclick=()=>appendDigit(n);
+        keypad.appendChild(btn);
+      });
+      let clr=document.createElement('button');
+      clr.className='key special'; clr.textContent='Clear';
+      clr.onclick=clearAll;
+      keypad.appendChild(clr);
+      let back=document.createElement('button');
+      back.className='key special'; back.textContent='⌫';
+      back.onclick=backspace;
+      keypad.appendChild(back);
+      let shuf=document.createElement('button');
+      shuf.className='key special'; shuf.textContent='Shuffle';
+      shuf.onclick=()=>buildKeys();
+      keypad.appendChild(shuf);
+    }
+    buildKeys();
 
-    document.getElementById('submitCap').onclick=()=>{
-      let val=document.getElementById('capAnswer').value.trim();
-      if(val===current){addBalance(2);alert('Correct! +2৳ added');}
-      else{alert('Wrong! Try again');}
-      loadCaptcha();
+    function checkPin(){
+      if(input===PIN){
+        message.textContent="✔ Correct PIN"; message.className='message success-msg';
+        setTimeout(showSuccess,500);
+      }else{
+        message.textContent="✖ Wrong PIN"; message.className='message error-msg';
+        pinDisplay.classList.add('shake');
+        document.querySelectorAll('.dot').forEach(d=>d.classList.add('error'));
+        setTimeout(()=>{
+          pinDisplay.classList.remove('shake');
+          document.querySelectorAll('.dot').forEach(d=>d.classList.remove('error'));
+          clearAll();
+        },600);
+      }
+    }
+    function showSuccess(){
+      card.style.display='none';
+      success.style.display='flex';
     }
 
-    const modal=document.getElementById('modal');
-    document.getElementById('withdrawBtn').onclick=()=>{modal.classList.add('active')}
-    document.getElementById('closeModal').onclick=()=>{modal.classList.remove('active')}
-
-    document.getElementById('sendWithdraw').onclick=()=>{
-      const amount=Number(document.getElementById('wamount').value);
-      if(amount<500){alert('Minimum 500৳ required');return;}
-      if(getBalance()<amount){alert('Insufficient balance');return;}
-      setBalance(getBalance()-amount);
-      alert('Withdraw Successful!');
-      modal.classList.remove('active');
-    }
-
-    const refLink=`https://t.me/captchajob89kfree_bot?start=12345`;
-    document.getElementById('refLink').value=refLink;
-    document.getElementById('copyRef').onclick=()=>{navigator.clipboard.writeText(refLink);alert('Referral Link Copied!')}
+    // Disable keyboard input
+    window.addEventListener('keydown',e=>{if(!["Tab"].includes(e.key)) e.preventDefault();});
+    window.addEventListener('paste',e=>e.preventDefault());
   </script>
 </body>
 </html>
