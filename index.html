@@ -1,257 +1,340 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Secure PIN Locker</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Secure Locker — Professional</title>
+  <meta name="description" content="A clean, professional secret locker-style PIN interface (demo)." />
   <style>
-    /* ==== Base Reset ==== */
-    * {margin:0;padding:0;box-sizing:border-box;}
-    body {
-      font-family:'Segoe UI',sans-serif;
-      height:100vh;
-      background:linear-gradient(-45deg,#1e3c72,#2a5298,#00c6ff,#0072ff);
-      background-size:400% 400%;
-      animation:gradientShift 12s ease infinite;
-      display:flex;justify-content:center;align-items:center;
-      overflow:hidden;
-    }
-    @keyframes gradientShift {
-      0%{background-position:0% 50%}
-      50%{background-position:100% 50%}
-      100%{background-position:0% 50%}
-    }
-    :root {
+    :root{
+      --bg-1:#05070a;
+      --bg-2:#071826;
+      --card:#071424;
+      --muted:#9fb6c0;
       --accent:#4dd0e1;
-      --accent-2:#81d4fa;
-      --danger:#e57373;
-      --success:#81c784;
+      --accent-2:#00c6a2;
+      --glass: rgba(255,255,255,0.03);
+      --danger:#ef4444;
+      --success:#10b981;
+      --radius:14px;
     }
-    /* ==== Locker Container ==== */
-    .container {
-      background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(20px);
-      border-radius:20px;
-      box-shadow:0 22px 80px rgba(2,6,23,0.6);
-      width:320px;max-width:90%;
-      padding:2rem;
-      text-align:center;
-      color:white;
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans'}
+    html,body{height:100%;margin:0}
+    body{
+      display:flex;align-items:center;justify-content:center;padding:28px;
+      color:#e9fbff;-webkit-font-smoothing:antialiased;
+
+      /* Animated Gradient Background */
+      background: linear-gradient(270deg, #05070a, #071826, #012b36);
+      background-size: 600% 600%;
+      animation: bgMove 16s ease infinite;
+    }
+    @keyframes bgMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container{width:420px;max-width:96%;animation:fadeIn 1s ease}
+
+    @keyframes fadeIn {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+    .brand{display:flex;gap:12px;align-items:center;animation: slideIn 1.2s ease}
+    @keyframes slideIn {
+      from{transform:translateX(-40px);opacity:0;}
+      to{transform:translateX(0);opacity:1;}
+    }
+    .logo{
+      width:54px;height:54px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:flex;align-items:center;justify-content:center;
+      font-weight:800;color:#012026;font-size:18px;
+      box-shadow:0 8px 30px rgba(1,17,20,0.6);
+      position: relative;overflow:hidden;
+    }
+    /* Logo shimmer */
+    .logo::after {
+      content: "";
+      position: absolute;
+      top: 0; left: -100%;
+      width: 200%; height: 100%;
+      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shimmer 3s infinite;
+    }
+    @keyframes shimmer {
+      0% { left: -100%; }
+      100% { left: 100%; }
+    }
+
+    h1{font-size:18px;margin:0;color:#e8fff9}
+    p.lead{margin:0;color:var(--muted);font-size:13px}
+
+    .card{
+      background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
+      border-radius:var(--radius);padding:18px;
+      border:1px solid var(--glass);
+      box-shadow:0 14px 60px rgba(2,8,20,0.65);
+      animation:zoomIn 1s ease;
+    }
+    @keyframes zoomIn{
+      from{transform:scale(0.9);opacity:0;}
+      to{transform:scale(1);opacity:1;}
+    }
+
+    .locker-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+    .locker-icon{
+      width:72px;height:72px;border-radius:12px;
+      background:linear-gradient(180deg,#011922,#012b36);
+      display:flex;align-items:center;justify-content:center;flex-shrink:0;
+      box-shadow:inset 0 -8px 30px rgba(0,0,0,0.35);
+      animation: float 3s ease-in-out infinite;
+    }
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+    .locker-icon svg{width:36px;height:36px;fill:var(--accent-2)}
+
+    .display-wrap{flex:1}
+    .display-label{font-size:12px;color:var(--muted);margin-bottom:6px}
+    .display{
+      height:56px;border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+      border:1px solid rgba(255,255,255,0.03);
+      display:flex;align-items:center;justify-content:center;
+      padding:10px 14px;font-size:22px;letter-spacing:6px;color:#e8fbff;
       transition:all .3s ease;
     }
-    .container:hover {
-      transform:translateY(-3px);
-      box-shadow:0 28px 90px rgba(2,6,23,0.75);
+    .display .mask{font-size:22px;letter-spacing:10px}
+
+    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
+    .btn{
+      padding:10px 12px;border-radius:10px;background:transparent;
+      border:1px solid rgba(255,255,255,0.04);color:var(--muted);
+      font-weight:700;cursor:pointer;transition:all .2s ease
     }
-    h1 {
-      font-size:1.4rem;
-      margin-bottom:1rem;
-      text-transform:uppercase;
-      letter-spacing:2px;
-      color:var(--accent-2);
+    .btn:hover{background:rgba(255,255,255,0.04);transform:translateY(-2px)}
+    .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#012026;border:none}
+    .btn.icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center}
+
+    .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
+    .key{
+      height:64px;border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;font-weight:800;color:#eaffff;
+      cursor:pointer;border:1px solid rgba(255,255,255,0.03);
+      box-shadow:0 10px 32px rgba(2,8,20,0.5);
+      transition:transform .1s ease, box-shadow .1s ease, background .3s;
     }
-    .locker-icon {
-      width:60px;height:60px;
-      margin:0 auto 1.2rem;
-      border-radius:50%;
-      border:3px solid var(--accent);
-      position:relative;
-      animation:float 3s ease-in-out infinite, pulse 4s infinite;
-    }
-    .locker-icon::after {
-      content:"🔒";
-      font-size:28px;
-      position:absolute;top:50%;left:50%;
-      transform:translate(-50%,-50%);
-    }
-    @keyframes float {0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
-    @keyframes pulse {
-      0%,100%{box-shadow:inset 0 -8px 30px rgba(0,0,0,0.35);}
-      50%{box-shadow:inset 0 -8px 40px rgba(77,208,225,0.3);}
-    }
-    /* ==== PIN display ==== */
-    .pin-display {
-      display:flex;justify-content:center;margin-bottom:1rem;
-    }
-    .dot {
-      width:14px;height:14px;
-      border-radius:50%;
-      border:2px solid var(--accent-2);
-      margin:0 6px;
-      transition:all .2s;
-    }
-    .dot.filled {background:var(--accent-2);}
-    .dot.error {border-color:var(--danger);background:var(--danger);}
-    /* ==== Keypad ==== */
-    .keypad {
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:14px;
-    }
-    .key {
-      background:rgba(255,255,255,0.12);
-      border:none;
-      border-radius:14px;
-      font-size:1.2rem;
-      padding:16px;
-      cursor:pointer;
-      color:white;
-      transition:all .2s;
-      user-select:none;
-    }
-    .key:hover {
-      box-shadow:0 0 18px var(--accent-2);
-      transform:scale(1.05);
-    }
+    .key:hover{background:rgba(255,255,255,0.05)}
     .key:active {
-      transform:scale(0.95);
-      box-shadow:0 0 12px var(--accent-2),0 0 20px var(--accent);
+      transform: scale(0.95);
+      box-shadow: 0 0 16px var(--accent);
     }
-    .key.special {font-size:.9rem;background:rgba(255,255,255,0.08);}
-    .message {margin-top:1rem;font-size:.9rem;height:1.2rem;}
-    .error-msg {color:var(--danger);}
-    .success-msg {color:var(--success);}
-    /* ==== Success screen ==== */
-    .success-card {
-      display:none;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      background:rgba(255,255,255,0.1);
-      backdrop-filter:blur(20px);
-      border-radius:20px;
-      padding:2rem;
-      width:320px;
-      text-align:center;
-      animation:popIn .6s ease forwards, successGlow 3s infinite;
+    .key.secondary{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));color:var(--muted);font-weight:700}
+
+    .small{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
+
+    /* Alarm & success */
+    .card.alarm{position:relative}
+    .card.alarm.shake{animation:shake 420ms ease}
+    @keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(6px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}}
+
+    .success-screen{
+      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+      background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));
+      backdrop-filter: blur(5px);opacity:0;pointer-events:none;
+      transition:opacity .25s;z-index:60
     }
-    .success-card h2 {color:var(--success);margin-top:1rem;}
-    .success-card p {margin-top:.5rem;color:#eee;}
-    @keyframes popIn {from{transform:scale(0.5);opacity:0}to{transform:scale(1);opacity:1}}
-    @keyframes successGlow {
-      0%,100%{box-shadow:0 22px 80px rgba(2,6,23,0.6),0 0 12px var(--success);}
-      50%{box-shadow:0 22px 80px rgba(2,6,23,0.6),0 0 28px var(--success);}
+    .success-screen.show{opacity:1;pointer-events:auto}
+    .success-card{
+      max-width:540px;background:linear-gradient(180deg,#021726,#013042);
+      padding:26px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
+      text-align:center;box-shadow:0 22px 80px rgba(2,6,23,0.6);
+      transform: scale(0.8);opacity:0;
+      animation: popIn 0.6s ease forwards;
     }
-    /* Shake error */
-    .shake {animation:shake .4s;}
-    @keyframes shake {
-      0%,100%{transform:translateX(0);}
-      20%{transform:translateX(-10px);}
-      40%{transform:translateX(10px);}
-      60%{transform:translateX(-10px);}
-      80%{transform:translateX(10px);}
+    @keyframes popIn {
+      to { transform: scale(1); opacity: 1; }
     }
+    .success-card h2{margin:0 0 8px;font-size:20px;color:#dcfff9}
+    .success-card p{margin:0;color:#bfeef2}
+
+    @media (max-width:420px){.display{height:48px;font-size:20px}.key{height:54px}}
+
+    .key:focus{outline:2px solid rgba(77,208,225,0.12);outline-offset:4px}
   </style>
 </head>
 <body>
-  <div class="container" id="lockerCard">
-    <div class="locker-icon"></div>
-    <h1>Enter PIN</h1>
-    <div class="pin-display" id="pinDisplay" aria-label="PIN input" role="group"></div>
-    <div class="keypad" id="keypad"></div>
-    <div class="message" id="message" aria-live="polite"></div>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">SL</div>
+        <div>
+          <h1>Secure Locker</h1>
+          <p class="lead">Enter PIN to unlock your secure vault</p>
+        </div>
+      </div>
+      <div style="text-align:right;color:var(--muted);font-size:12px">v1.0 — Demo</div>
+    </header>
+
+    <main id="card" class="card alarm" aria-live="polite">
+      <div class="locker-top">
+        <div class="locker-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2C9.8 2 8 3.8 8 6v2H7c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V6c0-2.2-1.8-4-4-4zm-2 8V6c0-1.1.9-2 2-2s2 .9 2 2v4h-4z"/>
+          </svg>
+        </div>
+
+        <div class="display-wrap">
+          <div class="display-label">PIN</div>
+          <div id="display" class="display" role="status" aria-label="PIN display" tabindex="-1">
+            <span id="mask" class="mask">•••••••••</span>
+          </div>
+
+          <div class="controls">
+            <button id="toggleShow" class="btn icon" title="Show PIN" aria-pressed="false" aria-label="Toggle show PIN">👁️</button>
+            <button id="randomize" class="btn" title="Randomize keypad" aria-label="Randomize keypad">Shuffle Keys</button>
+            <button id="continue" class="btn primary" disabled aria-disabled="true">Unlock</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="pad" class="pad" aria-hidden="false"></div>
+      <div class="small">Use the on-screen keypad. Keyboard & paste are blocked for demo security.</div>
+    </main>
   </div>
 
-  <div class="success-card" id="success">
-    <div style="font-size:3rem;">✅</div>
-    <h2>Access Granted</h2>
-    <p>Welcome, Admin!</p>
+  <div id="success" class="success-screen" role="dialog" aria-hidden="true">
+    <div class="success-card">
+      <h2>Access Granted</h2>
+      <p>Welcome — the locker is now open.</p>
+    </div>
   </div>
-
-  <!-- Tick sound -->
-  <audio id="tickSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3" preload="auto"></audio>
 
   <script>
-    const PIN="018421456";
-    const MAXLEN=PIN.length;
-    let input="";
-    const keypad=document.getElementById('keypad');
-    const pinDisplay=document.getElementById('pinDisplay');
-    const message=document.getElementById('message');
-    const card=document.getElementById('lockerCard');
-    const success=document.getElementById('success');
-    const tick=document.getElementById('tickSound');
+    (function(){
+      const PIN = '018421456';
+      const MAXLEN = PIN.length;
 
-    function playTick(){ tick.currentTime=0; tick.play(); }
+      const display = document.getElementById('display');
+      const maskEl = document.getElementById('mask');
+      const pad = document.getElementById('pad');
+      const toggleShow = document.getElementById('toggleShow');
+      const randomizeBtn = document.getElementById('randomize');
+      const contBtn = document.getElementById('continue');
+      const success = document.getElementById('success');
+      const card = document.getElementById('card');
 
-    // Build placeholder dots
-    for(let i=0;i<MAXLEN;i++){
-      let d=document.createElement('div');
-      d.className='dot';
-      pinDisplay.appendChild(d);
-    }
+      // Sound effect
+      const clickSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
 
-    function updateDisplay(){
-      document.querySelectorAll('.dot').forEach((dot,i)=>{
-        dot.classList.toggle('filled',i<input.length);
-      });
-    }
-    function appendDigit(d){
-      if(input.length>=MAXLEN) return;
-      input+=d; updateDisplay(); playTick();
-      if(input.length===MAXLEN){checkPin();}
-    }
-    function backspace(){
-      input=input.slice(0,-1);
-      updateDisplay(); playTick();
-    }
-    function clearAll(){
-      input=""; updateDisplay(); playTick();
-    }
-    function shuffle(arr){
-      for(let i=arr.length-1;i>0;i--){
-        let j=Math.floor(Math.random()*(i+1));
-        [arr[i],arr[j]]=[arr[j],arr[i]];
+      let value = '';
+      let showDigits = false;
+
+      function playClick(){
+        clickSound.currentTime = 0;
+        clickSound.play();
       }
-      return arr;
-    }
-    function buildKeys(){
-      keypad.innerHTML="";
-      let nums=shuffle([...Array(10).keys()]);
-      nums.forEach(n=>{
-        let btn=document.createElement('button');
-        btn.className='key'; btn.textContent=n;
-        btn.onclick=()=>appendDigit(n);
-        keypad.appendChild(btn);
-      });
-      let clr=document.createElement('button');
-      clr.className='key special'; clr.textContent='Clear';
-      clr.onclick=clearAll;
-      keypad.appendChild(clr);
-      let back=document.createElement('button');
-      back.className='key special'; back.textContent='⌫';
-      back.onclick=backspace;
-      keypad.appendChild(back);
-      let shuf=document.createElement('button');
-      shuf.className='key special'; shuf.textContent='Shuffle';
-      shuf.onclick=()=>buildKeys();
-      keypad.appendChild(shuf);
-    }
-    buildKeys();
 
-    function checkPin(){
-      if(input===PIN){
-        message.textContent="✔ Correct PIN"; message.className='message success-msg';
-        setTimeout(showSuccess,500);
-      }else{
-        message.textContent="✖ Wrong PIN"; message.className='message error-msg';
-        pinDisplay.classList.add('shake');
-        document.querySelectorAll('.dot').forEach(d=>d.classList.add('error'));
-        setTimeout(()=>{
-          pinDisplay.classList.remove('shake');
-          document.querySelectorAll('.dot').forEach(d=>d.classList.remove('error'));
-          clearAll();
-        },600);
+      function rangeDigits(){ return ['0','1','2','3','4','5','6','7','8','9']; }
+      function shuffle(array){
+        const a = array.slice();
+        for(let i=a.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [a[i],a[j]] = [a[j],a[i]];
+        }
+        return a;
       }
-    }
-    function showSuccess(){
-      card.style.display='none';
-      success.style.display='flex';
-    }
+      function renderPad(order){
+        pad.innerHTML = '';
+        order.forEach(d => {
+          const el = document.createElement('button');
+          el.className = 'key';
+          el.type = 'button';
+          el.textContent = d;
+          el.setAttribute('aria-label', `Digit ${d}`);
+          el.addEventListener('click', ()=> {appendDigit(d); playClick();});
+          el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); appendDigit(d); playClick(); } });
+          pad.appendChild(el);
+        });
+        const back = document.createElement('button');
+        back.className = 'key secondary';
+        back.type = 'button';
+        back.textContent = 'Back';
+        back.setAttribute('aria-label','Backspace');
+        back.addEventListener('click', ()=>{backspace(); playClick();});
 
-    // Disable keyboard input
-    window.addEventListener('keydown',e=>{if(!["Tab"].includes(e.key)) e.preventDefault();});
-    window.addEventListener('paste',e=>e.preventDefault());
+        const clear = document.createElement('button');
+        clear.className = 'key secondary';
+        clear.type = 'button';
+        clear.textContent = 'Clear';
+        clear.setAttribute('aria-label','Clear PIN');
+        clear.addEventListener('click', ()=>{clearAll(); playClick();});
+
+        pad.appendChild(back);
+        pad.appendChild(clear);
+      }
+
+      function refreshDisplay(){
+        maskEl.textContent = showDigits ? (value || ' ') : (value ? '•'.repeat(value.length) : ' ');
+        contBtn.disabled = (value.length !== MAXLEN);
+        contBtn.setAttribute('aria-disabled', contBtn.disabled ? 'true' : 'false');
+      }
+      function appendDigit(d){ if(value.length >= MAXLEN) return; value += d; refreshDisplay(); }
+      function backspace(){ value = value.slice(0,-1); refreshDisplay(); }
+      function clearAll(){ value = ''; refreshDisplay(); }
+
+      function triggerAlarm(){
+        card.classList.add('shake');
+        display.style.transition = 'background .18s, color .18s';
+        const prev = display.style.background;
+        display.style.background = 'linear-gradient(180deg, rgba(239,68,68,0.06), rgba(255,255,255,0.004))';
+        display.style.color = '#ffdfe0';
+        setTimeout(()=>{ display.style.background = prev || ''; display.style.color = ''; }, 900);
+        setTimeout(()=> card.classList.remove('shake'), 600);
+      }
+      function showSuccess(){ card.style.display = 'none'; success.classList.add('show'); success.setAttribute('aria-hidden','false'); }
+
+      contBtn.addEventListener('click', ()=>{
+        playClick();
+        if(value.length !== MAXLEN) return;
+        if(value === PIN){ showSuccess(); } else { triggerAlarm(); }
+      });
+
+      toggleShow.addEventListener('click', ()=>{
+        playClick();
+        showDigits = !showDigits;
+        toggleShow.setAttribute('aria-pressed', String(showDigits));
+        toggleShow.title = showDigits ? 'Hide PIN' : 'Show PIN';
+        refreshDisplay();
+      });
+
+      function randomize(){ renderPad(shuffle(rangeDigits())); }
+      randomizeBtn.addEventListener('click', ()=> {randomize(); playClick();});
+
+      window.addEventListener('keydown', (e)=>{
+        const allowed = ['Tab','Shift','Control','Alt','Meta','ArrowLeft','ArrowRight','Escape'];
+        if(allowed.includes(e.key)) return;
+        e.preventDefault(); e.stopPropagation();
+      }, {capture:true});
+      window.addEventListener('paste', (e)=> e.preventDefault());
+
+      display.addEventListener('touchstart', (e)=> e.preventDefault(), {passive:false});
+      display.addEventListener('mousedown', (e)=> e.preventDefault());
+
+      randomize();
+      refreshDisplay();
+
+      contBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); contBtn.click(); } });
+      randomizeBtn.addEventListener('mousedown', ()=> {randomize(); playClick();});
+    })();
   </script>
 </body>
 </html>
+
