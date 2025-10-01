@@ -13,8 +13,18 @@
 body{margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb;position:relative}
 .wrap{max-width:980px;margin:auto;padding:16px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
-h1{margin:0;font-size:18px}
+.logo{display:none;} /* লোগো হাইড */
+h1{margin:0;font-size:18px;position:relative;overflow:hidden;}
+@keyframes text-slide {
+  0% {transform: translateY(100%); opacity:0;}
+  50% {transform: translateY(0); opacity:1;}
+  100% {transform: translateY(-100%); opacity:0;}
+}
+.animated-title{
+  font-size:24px; font-weight:800; color:var(--accent);
+  display:inline-block;
+  animation:text-slide 3s infinite;
+}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
 .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px;position:relative}
 canvas{width:100%;height:300px;border-radius:10px;display:block;background:#041026}
@@ -37,16 +47,17 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 .trade.win{background:rgba(22,163,74,0.05)}
 .trade.lose{background:rgba(239,68,68,0.05)}
 .small{font-size:12px;color:var(--muted)}
-.withdraw-form{display:none;flex-direction:column;gap:10px;margin-top:10px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
-.withdraw-form.active{display:flex;}
+.withdraw-form, .deposit-form{display:none;flex-direction:column;gap:10px;margin-top:10px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.withdraw-form.active, .deposit-form.active{display:flex;}
+.deposit-options{display:flex;gap:8px;margin-top:6px}
+.deposit-options button{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--muted);cursor:pointer;}
 @media(max-width:940px){.grid{grid-template-columns:1fr} canvas{height:240px}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
-    <div class="logo">TRADE</div>
-    <h1>Up / Down Trading</h1>
+    <div class="animated-title">Trading Master</div>
   </header>
   <div class="grid">
     <div class="card">
@@ -94,17 +105,27 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
         <div id="claim-msg" class="small" style="margin-top:6px"></div>
       </div>
 
-      <div style="margin-top:10px">
+      <div style="margin-top:10px; display:flex; gap:8px;">
         <button id="withdraw-toggle" class="btn-ghost">Withdraw</button>
-        <div id="withdraw-form" class="withdraw-form">
-          <label>Method</label>
-          <select id="withdraw-method"><option value="bKash">বিকাশ</option><option value="nagad">নগদ</option></select>
-          <label>Amount (≥500)</label>
-          <input id="withdraw-amount" type="number" min="500" />
-          <label>Account Number</label>
-          <input id="withdraw-account" type="text" />
-          <button id="withdraw-submit" class="btn-ghost">Submit Withdraw</button>
-          <div id="withdraw-msg" class="small"></div>
+        <button id="deposit-toggle" class="btn-ghost">Deposit</button>
+      </div>
+      
+      <div id="withdraw-form" class="withdraw-form">
+        <label>Method</label>
+        <select id="withdraw-method"><option value="bKash">বিকাশ</option><option value="nagad">নগদ</option></select>
+        <label>Amount (≥500)</label>
+        <input id="withdraw-amount" type="number" min="500" />
+        <label>Account Number</label>
+        <input id="withdraw-account" type="text" />
+        <button id="withdraw-submit" class="btn-ghost">Submit Withdraw</button>
+        <div id="withdraw-msg" class="small"></div>
+      </div>
+
+      <div id="deposit-form" class="deposit-form">
+        <div class="small">Choose Deposit Method</div>
+        <div class="deposit-options">
+          <button id="deposit-telegram">Telegram</button>
+          <button id="deposit-whatsapp">WhatsApp</button>
         </div>
       </div>
 
@@ -126,7 +147,7 @@ let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
 let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
 let openPositions=[];
 
-const VALID_CODES = { '199234': 100, 'WELCOME50': 50, 'BONUS20': 20 };
+const VALID_CODES = { '199234': 1000, 'WELCOME50': 50, 'BONUS20': 20 };
 
 const balanceEl=document.getElementById('balance');
 const priceEl=document.getElementById('price');
@@ -265,6 +286,17 @@ withdrawSubmit.onclick=()=>{
     withdrawMsg.textContent='Error sending request'; withdrawMsg.style.color='#f87171';
   });
 };
+
+// ===== Deposit =====
+const depositToggle=document.getElementById('deposit-toggle');
+const depositForm=document.getElementById('deposit-form');
+const depositTelegram=document.getElementById('deposit-telegram');
+const depositWhatsApp=document.getElementById('deposit-whatsapp');
+
+depositToggle.onclick=()=>depositForm.classList.toggle('active');
+
+depositTelegram.onclick=()=>window.open('https://t.me/trademaster12340','_blank');
+depositWhatsApp.onclick=()=>window.open('https://wa.me/8801842145643','_blank');
 
 // ===== Price Chart + UP/DOWN Candle =====
 const canvas=document.getElementById('chart');
