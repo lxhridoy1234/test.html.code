@@ -1,395 +1,224 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Up/Down Trading — Live Demo</title>
-  <style>
-    :root{
-      --bg:#071426; --card:#0b1220; --accent:#06b6d4; --accent2:#7c3aed;
-      --muted:#98a6b8; --win:#16a34a; --lose:#ef4444; --glass: rgba(255,255,255,0.03);
-    }
-    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Roboto,"Helvetica Neue",Arial}
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb}
-    .wrap{max-width:980px;margin:14px auto;padding:16px}
-    header{display:flex;gap:12px;align-items:center}
-    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
-    h1{margin:0;font-size:18px}
-    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
-
-    .grid{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:16px}
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
-    canvas#chart{width:100%;height:340px;border-radius:10px;display:block;background:#041026}
-    .info-row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
-    .stat{background:var(--glass);padding:8px;border-radius:8px;min-width:120px}
-    .stat .label{font-size:12px;color:var(--muted)}
-    .stat .value{font-size:16px;margin-top:4px}
-
-    .controls{display:flex;flex-direction:column;gap:10px}
-    .balance{display:flex;justify-content:space-between;align-items:center}
-    .big{font-size:20px;font-weight:800}
-    label{font-size:13px;color:var(--muted)}
-    input[type=number],input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
-    .btn-row{display:flex;gap:8px}
-    button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer;outline:none}
-    .btn-up{background:linear-gradient(180deg,#06b6d4,#0284c7);color:#012}
-    .btn-down{background:linear-gradient(180deg,#f97316,#ef4444);color:#111}
-    .log{max-height:300px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
-    .trade{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
-    .trade .type{font-weight:800}
-    .trade.win{background:linear-gradient(90deg,rgba(22,163,74,0.06),transparent)}
-    .trade.lose{background:linear-gradient(90deg,rgba(239,68,68,0.05),transparent)}
-    .small{font-size:12px;color:var(--muted)}
-    footer{margin-top:10px;color:var(--muted);font-size:13px}
-
-    /* header actions */
-    .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
-    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
-
-    @media(max-width:940px){
-      .grid{grid-template-columns:1fr}
-      canvas#chart{height:260px}
-    }
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Up/Down Trading</title>
+<style>
+:root{
+  --bg:#071426; --card:#0b1220; --accent:#06b6d4; --accent2:#7c3aed;
+  --muted:#98a6b8; --win:#16a34a; --lose:#ef4444; --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Roboto,Arial}
+body{margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb}
+.wrap{max-width:980px;margin:auto;padding:16px}
+header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+h1{margin:0;font-size:18px}
+.grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px}
+canvas{width:100%;height:300px;border-radius:10px;display:block;background:#041026}
+.info-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.stat{background:var(--glass);padding:8px;border-radius:8px;min-width:120px}
+.stat .label{font-size:12px;color:var(--muted)}
+.stat .value{font-size:16px;margin-top:4px}
+.controls{display:flex;flex-direction:column;gap:10px}
+.balance{display:flex;justify-content:space-between;align-items:center}
+.big{font-size:20px;font-weight:800}
+label{font-size:13px;color:var(--muted)}
+input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+.btn-row{display:flex;gap:8px}
+button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
+.btn-up{background:linear-gradient(180deg,#06b6d4,#0284c7);color:#012}
+.btn-down{background:linear-gradient(180deg,#f97316,#ef4444);color:#111}
+.btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
+.log{max-height:280px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
+.trade{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+.trade.win{background:rgba(22,163,74,0.05)}
+.trade.lose{background:rgba(239,68,68,0.05)}
+.small{font-size:12px;color:var(--muted)}
+@media(max-width:940px){.grid{grid-template-columns:1fr} canvas{height:240px}}
+</style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div class="logo">TRADE</div>
-      <div>
-        <h1>Up / Down Trading — Live Demo</h1>
-        <p class="lead">Place UP or DOWN trades. Balance is saved locally. Claim a bonus using a valid code.</p>
+<div class="wrap">
+  <header>
+    <div class="logo">TRADE</div>
+    <h1>Up / Down Trading</h1>
+  </header>
+  <div class="grid">
+    <!-- Chart -->
+    <div class="card">
+      <canvas id="chart"></canvas>
+      <div class="info-row">
+        <div class="stat"><div class="label">Price</div><div id="price" class="value">—</div></div>
+        <div class="stat"><div class="label">Change</div><div id="change" class="value">—</div></div>
+        <div class="stat"><div class="label">Open Trades</div><div id="open-positions" class="value">0</div></div>
       </div>
-      <div class="top-actions">
-        <button id="reset-btn" class="btn-ghost small">Reset Storage</button>
-      </div>
-    </header>
-
-    <div class="grid" role="main">
-      <!-- Chart & Info -->
-      <div class="card" aria-live="polite">
-        <canvas id="chart" aria-label="Price chart"></canvas>
-
-        <div class="info-row">
-          <div class="stat">
-            <div class="label">Live Price (BDT)</div>
-            <div id="price" class="value">—</div>
-          </div>
-          <div class="stat">
-            <div class="label">Recent Change</div>
-            <div id="change" class="value">—</div>
-          </div>
-          <div class="stat">
-            <div class="label">Open Positions</div>
-            <div id="open-positions" class="value">0</div>
-          </div>
-        </div>
-
-        <div style="margin-top:10px;color:var(--muted);font-size:13px">Note: This is a demo. Real money trading requires proper platforms and risk management.</div>
-      </div>
-
-      <!-- Controls -->
-      <aside class="controls card" aria-label="Controls">
-        <div class="balance">
-          <div>
-            <div class="small">Balance</div>
-            <div id="balance" class="big">৳1000.00</div>
-          </div>
-          <div style="text-align:right">
-            <div class="small">Payout</div>
-            <div class="big">1.9x</div>
-          </div>
-        </div>
-
-        <div>
-          <label>Stake (BDT)</label>
-          <input id="stake" type="number" min="1" step="1" value="50" />
-        </div>
-
-        <div>
-          <label>Trade Duration (seconds)</label>
-          <input id="duration" type="number" min="1" max="60" step="1" value="5" />
-        </div>
-
-        <div class="btn-row" style="margin-top:6px">
-          <button id="btn-up" class="btn-up">UP ▲</button>
-          <button id="btn-down" class="btn-down">DOWN ▼</button>
-        </div>
-
-        <div style="margin-top:10px">
-          <div class="small">Claim Bonus</div>
-          <div style="display:flex;gap:8px;margin-top:6px">
-            <input id="claim-code" type="text" placeholder="" autocomplete="off" />
-            <button id="btn-claim" class="btn-ghost">Claim</button>
-          </div>
-          <div id="claim-msg" class="small" style="margin-top:6px;color:var(--muted)"></div>
-        </div>
-
-        <div style="margin-top:10px" class="small">Recent Trades</div>
-        <div id="log" class="log" aria-live="polite"></div>
-
-        <footer>Demo system — not financial advice.</footer>
-      </aside>
     </div>
+
+    <!-- Controls -->
+    <aside class="controls card">
+      <div class="balance">
+        <div>
+          <div class="small">Balance</div>
+          <div id="balance" class="big">৳0.00</div>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Payout</div>
+          <div class="big">1.9x</div>
+        </div>
+      </div>
+
+      <div>
+        <label>Stake (৳)</label>
+        <input id="stake" type="number" min="1" step="1" value="50" />
+      </div>
+      <div>
+        <label>Duration (seconds)</label>
+        <input id="duration" type="number" min="1" max="60" value="5" />
+      </div>
+
+      <div class="btn-row">
+        <button id="btn-up" class="btn-up">UP ▲</button>
+        <button id="btn-down" class="btn-down">DOWN ▼</button>
+      </div>
+
+      <div>
+        <div class="small">Claim Bonus</div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input id="claim-code" type="text" autocomplete="off" />
+          <button id="btn-claim" class="btn-ghost">Claim</button>
+        </div>
+        <div id="claim-msg" class="small" style="margin-top:6px"></div>
+      </div>
+
+      <div class="small" style="margin-top:10px">Recent Trades</div>
+      <div id="log" class="log"></div>
+    </aside>
   </div>
+</div>
 
-  <script>
-    // ========== Configuration ==========
-    const LOCAL_BAL_KEY = 'trade_demo_balance_v1';
-    const LOCAL_LOG_KEY  = 'trade_demo_log_v1';
-    const LOCAL_CLAIMED  = 'trade_demo_claimed_v1';
+<script>
+const LOCAL_BAL='trade_balance';
+const LOCAL_LOG='trade_log';
+const LOCAL_CLAIMED='trade_claimed_codes';
+const PAYOUT=1.9;
 
-    const VALID_CLAIM_CODES = { '199234': 100 }; // only this code gives 100 BDT
-    const PAYOUT_MULTIPLIER = 1.9;
+let balance=Number(localStorage.getItem(LOCAL_BAL)||0);
+let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
+let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
+let openPositions=[];
 
-    // ========== State ==========
-    let balance = Number(localStorage.getItem(LOCAL_BAL_KEY) || 1000);
-    let tradesLog = JSON.parse(localStorage.getItem(LOCAL_LOG_KEY) || '[]');
-    let claimedCodes = JSON.parse(localStorage.getItem(LOCAL_CLAIMED) || '[]');
-    let openPositions = [];
+// You can add multiple codes here
+const VALID_CODES = { '199234': 100, 'WELCOME50': 50, 'BONUS20': 20 };
 
-    // ========== DOM ==========
-    const balanceEl = document.getElementById('balance');
-    const priceEl = document.getElementById('price');
-    const changeEl = document.getElementById('change');
-    const openPositionsEl = document.getElementById('open-positions');
-    const stakeEl = document.getElementById('stake');
-    const durationEl = document.getElementById('duration');
-    const logEl = document.getElementById('log');
-    const claimInput = document.getElementById('claim-code');
-    const claimBtn = document.getElementById('btn-claim');
-    const claimMsg = document.getElementById('claim-msg');
-    const resetBtn = document.getElementById('reset-btn');
+const balanceEl=document.getElementById('balance');
+const priceEl=document.getElementById('price');
+const changeEl=document.getElementById('change');
+const openPositionsEl=document.getElementById('open-positions');
+const stakeEl=document.getElementById('stake');
+const durationEl=document.getElementById('duration');
+const logEl=document.getElementById('log');
+const claimInput=document.getElementById('claim-code');
+const claimBtn=document.getElementById('btn-claim');
+const claimMsg=document.getElementById('claim-msg');
 
-    // ========== Price generator (momentum + noise) ==========
-    const canvas = document.getElementById('chart');
-    const ctx = canvas.getContext('2d');
-    let DPR = window.devicePixelRatio || 1;
+function saveState(){
+  localStorage.setItem(LOCAL_BAL, balance);
+  localStorage.setItem(LOCAL_LOG, JSON.stringify(tradesLog));
+  localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
+}
+function renderLogs(){
+  logEl.innerHTML='';
+  for(let i=tradesLog.length-1;i>=0;i--){
+    const t=tradesLog[i];
+    const div=document.createElement('div');
+    div.className='trade '+(t.result);
+    div.innerHTML=`<div>${t.side} ৳${t.stake}<div class="small">Start:৳${t.start.toFixed(2)} End:৳${t.end.toFixed(2)}</div></div>
+    <div style="text-align:right">${t.result==='win'?'+৳'+t.profit.toFixed(2):'-৳'+t.stake.toFixed(2)}</div>`;
+    logEl.appendChild(div);
+  }
+}
+function updateUI(){
+  balanceEl.textContent='৳'+balance.toFixed(2);
+  openPositionsEl.textContent=openPositions.length;
+  renderLogs();
+  // Disable trade buttons if balance is 0
+  const btns=[document.getElementById('btn-up'),document.getElementById('btn-down')];
+  btns.forEach(b=>b.disabled=balance<=0);
+}
+function addTradeLog(entry){tradesLog.push(entry);saveState();updateUI();}
+function placeTrade(side){
+  if(balance<=0){alert('Balance is 0. Please claim first.');return;}
+  const stake=Number(stakeEl.value)||1;
+  if(stake>balance){alert('Not enough balance');return;}
+  const dur=Math.max(1,Math.min(60,Number(durationEl.value)||5));
+  balance-=stake;
+  const start=price;
+  const pos={id:Date.now(),side,stake,start,expires:Date.now()+dur*1000};
+  openPositions.push(pos);
+  saveState();updateUI();
+  setTimeout(()=>{
+    const end=price;
+    let win=false;
+    if(side==='UP'&&end>start)win=true;
+    if(side==='DOWN'&&end<start)win=true;
+    if(win){const payout=stake*PAYOUT;balance+=payout;addTradeLog({side,stake,start,end,result:'win',profit:payout-stake});}
+    else addTradeLog({side,stake,start,end,result:'lose',profit:-stake});
+    openPositions=openPositions.filter(p=>p.id!==pos.id);
+    saveState();updateUI();
+  },dur*1000);
+}
+document.getElementById('btn-up').onclick=()=>placeTrade('UP');
+document.getElementById('btn-down').onclick=()=>placeTrade('DOWN');
 
-    function resizeCanvas(){
-      canvas.width = canvas.clientWidth * DPR;
-      canvas.height = canvas.clientHeight * DPR;
-      ctx.setTransform(DPR,0,0,DPR,0,0);
-      drawChart();
-    }
-    window.addEventListener('resize', resizeCanvas);
+// Claim logic with multiple single-use codes
+claimBtn.onclick=()=>{
+  const code=claimInput.value.trim();
+  if(!code){claimMsg.textContent='Enter a code.';claimMsg.style.color='#f87171';return;}
+  if(claimedCodes.includes(code)){claimMsg.textContent='Code already used.';claimMsg.style.color='#f87171';return;}
+  if(VALID_CODES.hasOwnProperty(code)){
+    const amount=VALID_CODES[code];
+    balance+=amount;
+    claimedCodes.push(code);
+    saveState();updateUI();
+    claimMsg.textContent=`৳${amount} added.`;claimMsg.style.color='#4ade80';claimInput.value='';
+  }else{
+    claimMsg.textContent='Invalid code.';claimMsg.style.color='#f87171';
+  }
+};
 
-    let prices = [];
-    let t = 0;
-    let price = 1500; // starting price in BDT
-    const MAX_POINTS = 200;
-    let momentum = 0;
+// ==== Price chart ====
+const canvas=document.getElementById('chart');
+const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
+function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+window.onresize=resize;resize();
+let price=1000;let prices=[{x:0,y:price}];let t=0;
+function step(){
+  price+= (Math.random()-0.5)*5;
+  if(price<1)price=1;
+  prices.push({x:t++,y:price});if(prices.length>200)prices.shift();
+}
+function draw(){
+  const W=canvas.clientWidth,H=canvas.clientHeight;
+  ctx.clearRect(0,0,W,H);
+  const minY=Math.min(...prices.map(p=>p.y)),maxY=Math.max(...prices.map(p=>p.y));
+  ctx.beginPath();
+  prices.forEach((p,i)=>{
+    const x=i/(prices.length-1)*W;const y=H-(p.y-minY)/(maxY-minY)*H;
+    if(i==0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+  });
+  ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.stroke();
+  priceEl.textContent='৳'+price.toFixed(2);
+  if(prices.length>2){
+    const change=((prices.at(-1).y-prices[0].y)/prices[0].y*100).toFixed(2);
+    changeEl.textContent=(change>=0?'+':'')+change+'%';
+  }
+}
+setInterval(()=>{step();draw();},500);
 
-    // initialize some history
-    for(let i=0;i<80;i++) priceStep();
-
-    function priceStep(){
-      // momentum persists and random shocks happen
-      const randomShock = (Math.random() - 0.5) * (0.8 + Math.abs(Math.sin(t/120))*1.2);
-      // mean reversion small pull to baseline
-      const baseline = 1500;
-      const reversion = (baseline - price) * 0.0005;
-      // update momentum slowly
-      momentum = momentum * 0.92 + randomShock * 0.18;
-      price = Math.max(1, price + momentum + reversion);
-      prices.push({x:t++, y:price});
-      if(prices.length > MAX_POINTS) prices.shift();
-    }
-
-    function drawChart(){
-      const W = canvas.clientWidth, H = canvas.clientHeight;
-      ctx.clearRect(0,0,W,H);
-      ctx.fillStyle = '#041028';
-      ctx.fillRect(0,0,W,H);
-
-      if(prices.length > 1){
-        const ys = prices.map(p=>p.y);
-        const minY = Math.min(...ys) * 0.998;
-        const maxY = Math.max(...ys) * 1.002;
-        const pad = 18;
-        const plotW = W - pad*2;
-        const plotH = H - pad*2;
-
-        // draw grid lines
-        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
-        ctx.lineWidth = 1;
-        for(let i=0;i<4;i++){
-          const y = pad + (i/4)*plotH;
-          ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
-        }
-
-        // path
-        ctx.beginPath();
-        prices.forEach((p,i)=>{
-          const x = pad + (i/(MAX_POINTS-1))*plotW;
-          const y = pad + (1 - (p.y - minY)/(maxY - minY)) * plotH;
-          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-        });
-        const last = prices[prices.length-1].y;
-        const prev = prices[prices.length-2].y;
-        ctx.lineWidth = 2.4;
-        ctx.strokeStyle = last >= prev ? '#06b6d4' : '#ef4444';
-        ctx.stroke();
-
-        // area fill
-        ctx.lineTo(W-pad, H-pad);
-        ctx.lineTo(pad, H-pad);
-        ctx.closePath();
-        const grad = ctx.createLinearGradient(0,pad,0,H);
-        grad.addColorStop(0, 'rgba(6,182,212,0.06)');
-        grad.addColorStop(1, 'rgba(239,68,68,0.02)');
-        ctx.fillStyle = grad;
-        ctx.fill();
-
-        // last point
-        ctx.beginPath();
-        const lx = pad + ((prices.length-1)/(MAX_POINTS-1))*plotW;
-        const ly = pad + (1 - (last - minY)/(maxY - minY)) * plotH;
-        ctx.arc(lx, ly, 4, 0, Math.PI*2);
-        ctx.fillStyle = '#fff'; ctx.fill();
-        ctx.lineWidth = 2; ctx.strokeStyle = last >= prev ? '#06b6d4' : '#ef4444'; ctx.stroke();
-      }
-
-      priceEl.textContent = '৳' + price.toFixed(2);
-      // change over last N points
-      const N = Math.min(prices.length, 24);
-      if(N > 1){
-        const change = ((prices[prices.length-1].y - prices[prices.length-N].y) / prices[prices.length-N].y) * 100;
-        changeEl.textContent = (change>=0?'+':'') + change.toFixed(2) + '%';
-        changeEl.style.color = change>=0 ? '#86efac' : '#fb7185';
-      }
-    }
-
-    // run price update
-    setInterval(()=>{ priceStep(); drawChart(); }, 300);
-
-    // ========== Trading logic ==========
-    function saveState(){
-      localStorage.setItem(LOCAL_BAL_KEY, String(balance));
-      localStorage.setItem(LOCAL_LOG_KEY, JSON.stringify(tradesLog.slice(-200)));
-      localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
-    }
-
-    function renderLogs(){
-      logEl.innerHTML = '';
-      for(let i=tradesLog.length-1;i>=0;i--){
-        const t = tradesLog[i];
-        const node = document.createElement('div');
-        node.className = 'trade ' + (t.result === 'win' ? 'win' : 'lose');
-        node.innerHTML = `<div><div class="type">${t.side} — ৳${t.stake}</div><div class="small">Start: ৳${t.startPrice.toFixed(2)} • End: ৳${t.endPrice.toFixed(2)}</div></div>
-                          <div style="text-align:right"><div style="font-weight:800">${t.result==='win'?'+৳'+t.profit.toFixed(2):'-৳'+t.stake.toFixed(2)}</div><div class="small">${new Date(t.ts).toLocaleString()}</div></div>`;
-        logEl.appendChild(node);
-      }
-    }
-
-    function updateUI(){
-      balanceEl.textContent = '৳' + balance.toFixed(2);
-      openPositionsEl.textContent = openPositions.length;
-      renderLogs();
-    }
-
-    function addTradeLog(entry){
-      tradesLog.push(entry);
-      if(tradesLog.length > 500) tradesLog.shift();
-      saveState();
-      updateUI();
-    }
-
-    function placeTrade(side){
-      const stake = Math.max(1, Number(stakeEl.value) || 1);
-      const dur = Math.max(1, Math.min(60, Number(durationEl.value) || 5));
-      if(stake > balance){
-        alert('Insufficient balance.');
-        return;
-      }
-
-      // Reserve stake immediately
-      balance -= stake;
-      const startPrice = price;
-      const expiresAt = Date.now() + dur*1000;
-      const pos = { id: Date.now() + Math.random(), side, stake, startPrice, expiresAt, ts: Date.now() };
-      openPositions.push(pos);
-      saveState();
-      updateUI();
-
-      // Resolve using the live current price at expiry
-      setTimeout(()=>{
-        const endPrice = price; // live price
-        // My chosen logic: require strict move (not equal). Ties = loss.
-        let win = false;
-        if(side === 'UP' && endPrice > startPrice) win = true;
-        if(side === 'DOWN' && endPrice < startPrice) win = true;
-
-        if(win){
-          const payout = stake * PAYOUT_MULTIPLIER;
-          const profit = payout - stake;
-          balance += payout;
-          addTradeLog({ side, stake, startPrice, endPrice, result:'win', profit, ts: Date.now() });
-        } else {
-          // stake already deducted -> lost
-          addTradeLog({ side, stake, startPrice, endPrice, result:'lose', profit:-stake, ts: Date.now() });
-        }
-        openPositions = openPositions.filter(p => p.id !== pos.id);
-        saveState();
-        updateUI();
-      }, dur*1000);
-    }
-
-    document.getElementById('btn-up').addEventListener('click', ()=>placeTrade('UP'));
-    document.getElementById('btn-down').addEventListener('click', ()=>placeTrade('DOWN'));
-
-    // ========== Claim code ==========
-    claimBtn.addEventListener('click', ()=>{
-      const code = (claimInput.value || '').trim();
-      claimMsg.style.color = 'var(--muted)';
-      if(!code){
-        claimMsg.textContent = 'Please enter a code.';
-        return;
-      }
-      if(claimedCodes.includes(code)){
-        claimMsg.style.color = '#fca5a5';
-        claimMsg.textContent = 'This code has already been used.';
-        return;
-      }
-      if(VALID_CLAIM_CODES.hasOwnProperty(code)){
-        const amount = VALID_CLAIM_CODES[code];
-        balance += amount;
-        claimedCodes.push(code);
-        saveState();
-        updateUI();
-        claimMsg.style.color = '#86efac';
-        claimMsg.textContent = `Success — ৳${amount} added to your account.`;
-        claimInput.value = '';
-      } else {
-        claimMsg.style.color = '#fca5a5';
-        claimMsg.textContent = 'Invalid code.';
-      }
-    });
-
-    // Reset storage (for testing)
-    resetBtn.addEventListener('click', ()=>{
-      if(confirm('Reset local storage? This will clear balance and logs.')){
-        localStorage.removeItem(LOCAL_BAL_KEY);
-        localStorage.removeItem(LOCAL_LOG_KEY);
-        localStorage.removeItem(LOCAL_CLAIMED);
-        location.reload();
-      }
-    });
-
-    // initial render
-    updateUI();
-    resizeCanvas();
-
-    // periodic save (safety)
-    setInterval(saveState, 2000);
-
-    // expose for debugging in console if needed
-    window.TRADE_DEMO = {
-      get balance(){ return balance },
-      set balance(v){ balance = Number(v); saveState(); updateUI(); },
-      get logs(){ return tradesLog.slice() },
-      get claimed(){ return claimedCodes.slice() }
-    };
-  </script>
+updateUI();
+</script>
 </body>
 </html>
