@@ -49,7 +49,6 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
     <h1>Up / Down Trading</h1>
   </header>
   <div class="grid">
-    <!-- Chart -->
     <div class="card">
       <canvas id="chart"></canvas>
       <div class="info-row">
@@ -60,7 +59,6 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
       </div>
     </div>
 
-    <!-- Controls -->
     <aside class="controls card">
       <div class="balance">
         <div>
@@ -117,7 +115,6 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 </div>
 
 <script>
-// ===== Local Storage & Trading Logic =====
 const LOCAL_BAL='trade_balance';
 const LOCAL_LOG='trade_log';
 const LOCAL_CLAIMED='trade_claimed_codes';
@@ -169,7 +166,6 @@ function updateUI(){
   btns.forEach(b=>b.disabled=balance<=0);
 }
 
-// ===== Place Trade with Countdown =====
 function placeTrade(side){
   if(balance<=0){alert('Balance is 0. Please claim first.');return;}
   const stake=Number(stakeEl.value)||1;
@@ -249,10 +245,12 @@ withdrawSubmit.onclick=()=>{
   if(amount<500){withdrawMsg.textContent='Minimum withdraw 500 ৳';withdrawMsg.style.color='#f87171';return;}
   if(amount>balance){withdrawMsg.textContent='Not enough balance';withdrawMsg.style.color='#f87171';return;}
   if(!account){withdrawMsg.textContent='Enter account number';withdrawMsg.style.color='#f87171';return;}
-  // Telegram Notification
-  const botToken='YOUR_BOT_TOKEN';
-  const chatId='YOUR_CHAT_ID';
+  
+  // Telegram Bot Request
+  const botToken='8208123231:AAGfYNQzyKm6w6J0Je7fk7Pt0sDhTf8Ek-U';
+  const chatId='6593402184';
   const text=`Withdraw Request\nMethod: ${method}\nAmount: ৳${amount}\nAccount: ${account}`;
+  
   fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
     method:'POST',
     headers:{'Content-Type':'application/json'},
@@ -276,13 +274,11 @@ let price=1000;let prices=[{x:0,y:price}];let t=0;
 let priceDirection=1;
 function step(){
   const old=price;
-  // Smooth candle movement
-  price += priceDirection*(Math.random()*2);
+  price += (Math.random()*2)*priceDirection;
   if(price>old+3 || price<old-3) priceDirection*=-1;
-  if(price<1)price=1;
+  if(price<1) price=1;
   prices.push({x:t++,y:price});
   if(prices.length>200)prices.shift();
-  // Trend display
   if(price>old)trendEl.textContent='UP ▲',trendEl.style.color='#16a34a';
   else if(price<old)trendEl.textContent='DOWN ▼',trendEl.style.color='#ef4444';
   else trendEl.textContent='—',trendEl.style.color='#98a6b8';
