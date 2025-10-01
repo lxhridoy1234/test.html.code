@@ -10,13 +10,13 @@
   --muted:#98a6b8; --win:#16a34a; --lose:#ef4444; --glass: rgba(255,255,255,0.03);
 }
 *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Roboto,Arial}
-body{margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb}
+body{margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb;position:relative}
 .wrap{max-width:980px;margin:auto;padding:16px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
 .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
 h1{margin:0;font-size:18px}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
-.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px}
+.card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px;position:relative}
 canvas{width:100%;height:300px;border-radius:10px;display:block;background:#041026}
 .info-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
 .stat{background:var(--glass);padding:8px;border-radius:8px;min-width:120px}
@@ -128,8 +128,7 @@ let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
 let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
 let openPositions=[];
 
-// Valid codes & bonuses
-const VALID_CODES = { '1992': 1000, 'WELCOME50': 50, 'BONUS20': 20 };
+const VALID_CODES = { '199234': 100, 'WELCOME50': 50, 'BONUS20': 20 };
 
 const balanceEl=document.getElementById('balance');
 const priceEl=document.getElementById('price');
@@ -148,17 +147,20 @@ function saveState(){
   localStorage.setItem(LOCAL_LOG, JSON.stringify(tradesLog));
   localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
 }
+
 function renderLogs(){
   logEl.innerHTML='';
   for(let i=tradesLog.length-1;i>=0;i--){
     const t=tradesLog[i];
     const div=document.createElement('div');
-    div.className='trade '+(t.result);
-    div.innerHTML=`<div>${t.side} ৳${t.stake}<div class="small">Start:৳${t.start.toFixed(2)} End:৳${t.end.toFixed(2)}</div></div>
-    <div style="text-align:right">${t.result==='win'?'+৳'+t.profit.toFixed(2):'-৳'+t.stake.toFixed(2)}</div>`;
+    div.className='trade '+(t.result || '');
+    let countdownText = t.remaining!==undefined ? ` (${t.remaining}s left)` : '';
+    div.innerHTML=`<div>${t.side} ৳${t.stake}${countdownText}<div class="small">Start:৳${t.start.toFixed(2)} End:৳${t.end?.toFixed(2)||'—'}</div></div>
+    <div style="text-align:right">${t.result==='win'?'+৳'+t.profit.toFixed(2):(t.result==='lose'?'-৳'+t.stake.toFixed(2):'-')}</div>`;
     logEl.appendChild(div);
   }
 }
+
 function updateUI(){
   balanceEl.textContent='৳'+balance.toFixed(2);
   openPositionsEl.textContent=openPositions.length;
@@ -166,32 +168,57 @@ function updateUI(){
   const btns=[document.getElementById('btn-up'),document.getElementById('btn-down')];
   btns.forEach(b=>b.disabled=balance<=0);
 }
-function addTradeLog(entry){tradesLog.push(entry);saveState();updateUI();}
+
+// ===== Place Trade with Countdown =====
 function placeTrade(side){
   if(balance<=0){alert('Balance is 0. Please claim first.');return;}
   const stake=Number(stakeEl.value)||1;
   if(stake>balance){alert('Not enough balance');return;}
   const dur=Math.max(1,Math.min(60,Number(durationEl.value)||5));
+  
   balance-=stake;
   const start=price;
-  const pos={id:Date.now(),side,stake,start,expires:Date.now()+dur*1000};
+  const pos={id:Date.now(),side,stake,start,expires:Date.now()+dur*1000,duration:dur,remaining:dur};
   openPositions.push(pos);
-  saveState();updateUI();
-  setTimeout(()=>{
-    const end=price;
-    let win=false;
-    if(side==='UP'&&end>start)win=true;
-    if(side==='DOWN'&&end<start)win=true;
-    if(win){const payout=stake*PAYOUT;balance+=payout;addTradeLog({side,stake,start,end,result:'win',profit:payout-stake});}
-    else addTradeLog({side,stake,start,end,result:'lose',profit:-stake});
-    openPositions=openPositions.filter(p=>p.id!==pos.id);
-    saveState();updateUI();
-  },dur*1000);
+  tradesLog.push(pos);
+  saveState(); updateUI();
+
+  pos.interval = setInterval(()=>{
+    pos.remaining--;
+    updateUI();
+    if(pos.remaining<=0){
+      clearInterval(pos.interval);
+      resolveTrade(pos);
+    }
+  },1000);
 }
+
+function resolveTrade(pos){
+  const end=price;
+  let win=false;
+  if(pos.side==='UP'&&end>pos.start) win=true;
+  if(pos.side==='DOWN'&&end<pos.start) win=true;
+
+  pos.end = end;
+
+  if(win){
+    const payout=pos.stake*PAYOUT;
+    balance+=payout;
+    pos.result='win';
+    pos.profit=payout-pos.stake;
+  } else {
+    pos.result='lose';
+    pos.profit=-pos.stake;
+  }
+
+  openPositions=openPositions.filter(p=>p.id!==pos.id);
+  saveState(); updateUI();
+}
+
 document.getElementById('btn-up').onclick=()=>placeTrade('UP');
 document.getElementById('btn-down').onclick=()=>placeTrade('DOWN');
 
-// Claim logic
+// Claim Logic
 claimBtn.onclick=()=>{
   const code=claimInput.value.trim();
   if(!code){claimMsg.textContent='Enter a code.';claimMsg.style.color='#f87171';return;}
@@ -200,14 +227,14 @@ claimBtn.onclick=()=>{
     const amount=VALID_CODES[code];
     balance+=amount;
     claimedCodes.push(code);
-    saveState();updateUI();
+    saveState(); updateUI();
     claimMsg.textContent=`৳${amount} added.`;claimMsg.style.color='#4ade80';claimInput.value='';
   }else{
     claimMsg.textContent='Invalid code.';claimMsg.style.color='#f87171';
   }
 };
 
-// ===== Withdraw Form =====
+// Withdraw
 const withdrawToggle=document.getElementById('withdraw-toggle');
 const withdrawForm=document.getElementById('withdraw-form');
 const withdrawSubmit=document.getElementById('withdraw-submit');
@@ -222,9 +249,9 @@ withdrawSubmit.onclick=()=>{
   if(amount<500){withdrawMsg.textContent='Minimum withdraw 500 ৳';withdrawMsg.style.color='#f87171';return;}
   if(amount>balance){withdrawMsg.textContent='Not enough balance';withdrawMsg.style.color='#f87171';return;}
   if(!account){withdrawMsg.textContent='Enter account number';withdrawMsg.style.color='#f87171';return;}
-  // Send Telegram message
-  const botToken='8208123231:AAGfYNQzyKm6w6J0Je7fk7Pt0sDhTf8Ek-U';
-  const chatId='6593402184';
+  // Telegram Notification
+  const botToken='YOUR_BOT_TOKEN';
+  const chatId='YOUR_CHAT_ID';
   const text=`Withdraw Request\nMethod: ${method}\nAmount: ৳${amount}\nAccount: ${account}`;
   fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
     method:'POST',
@@ -240,15 +267,18 @@ withdrawSubmit.onclick=()=>{
   });
 };
 
-// ===== Price Chart + Trend =====
+// Price Chart + Trend
 const canvas=document.getElementById('chart');
 const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
 function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 window.onresize=resize;resize();
 let price=1000;let prices=[{x:0,y:price}];let t=0;
+let priceDirection=1;
 function step(){
   const old=price;
-  price+= (Math.random()-0.5)*5;
+  // Smooth candle movement
+  price += priceDirection*(Math.random()*2);
+  if(price>old+3 || price<old-3) priceDirection*=-1;
   if(price<1)price=1;
   prices.push({x:t++,y:price});
   if(prices.length>200)prices.shift();
