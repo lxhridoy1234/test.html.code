@@ -26,7 +26,7 @@ canvas{width:100%;height:300px;border-radius:10px;display:block;background:#0410
 .balance{display:flex;justify-content:space-between;align-items:center}
 .big{font-size:20px;font-weight:800}
 label{font-size:13px;color:var(--muted)}
-input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+input,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
 .btn-row{display:flex;gap:8px}
 button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer}
 .btn-up{background:linear-gradient(180deg,#06b6d4,#0284c7);color:#012}
@@ -37,6 +37,8 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 .trade.win{background:rgba(22,163,74,0.05)}
 .trade.lose{background:rgba(239,68,68,0.05)}
 .small{font-size:12px;color:var(--muted)}
+.withdraw-form{display:none;flex-direction:column;gap:10px;margin-top:10px;background:rgba(255,255,255,0.02);padding:10px;border-radius:10px}
+.withdraw-form.active{display:flex;}
 @media(max-width:940px){.grid{grid-template-columns:1fr} canvas{height:240px}}
 </style>
 </head>
@@ -53,6 +55,7 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
       <div class="info-row">
         <div class="stat"><div class="label">Price</div><div id="price" class="value">—</div></div>
         <div class="stat"><div class="label">Change</div><div id="change" class="value">—</div></div>
+        <div class="stat"><div class="label">Trend</div><div id="trend" class="value">—</div></div>
         <div class="stat"><div class="label">Open Trades</div><div id="open-positions" class="value">0</div></div>
       </div>
     </div>
@@ -93,6 +96,20 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
         <div id="claim-msg" class="small" style="margin-top:6px"></div>
       </div>
 
+      <div style="margin-top:10px">
+        <button id="withdraw-toggle" class="btn-ghost">Withdraw</button>
+        <div id="withdraw-form" class="withdraw-form">
+          <label>Method</label>
+          <select id="withdraw-method"><option value="bKash">বিকাশ</option><option value="nagad">নগদ</option></select>
+          <label>Amount (≥500)</label>
+          <input id="withdraw-amount" type="number" min="500" />
+          <label>Account Number</label>
+          <input id="withdraw-account" type="text" />
+          <button id="withdraw-submit" class="btn-ghost">Submit Withdraw</button>
+          <div id="withdraw-msg" class="small"></div>
+        </div>
+      </div>
+
       <div class="small" style="margin-top:10px">Recent Trades</div>
       <div id="log" class="log"></div>
     </aside>
@@ -100,6 +117,7 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 </div>
 
 <script>
+// ===== Local Storage & Trading Logic =====
 const LOCAL_BAL='trade_balance';
 const LOCAL_LOG='trade_log';
 const LOCAL_CLAIMED='trade_claimed_codes';
@@ -110,12 +128,13 @@ let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
 let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
 let openPositions=[];
 
-// You can add multiple codes here
-const VALID_CODES = { '1992': 200, 'WELCOME50': 50, 'BONUS20': 20 };
+// Valid codes & bonuses
+const VALID_CODES = { '199234': 100, 'WELCOME50': 50, 'BONUS20': 20 };
 
 const balanceEl=document.getElementById('balance');
 const priceEl=document.getElementById('price');
 const changeEl=document.getElementById('change');
+const trendEl=document.getElementById('trend');
 const openPositionsEl=document.getElementById('open-positions');
 const stakeEl=document.getElementById('stake');
 const durationEl=document.getElementById('duration');
@@ -144,7 +163,6 @@ function updateUI(){
   balanceEl.textContent='৳'+balance.toFixed(2);
   openPositionsEl.textContent=openPositions.length;
   renderLogs();
-  // Disable trade buttons if balance is 0
   const btns=[document.getElementById('btn-up'),document.getElementById('btn-down')];
   btns.forEach(b=>b.disabled=balance<=0);
 }
@@ -173,7 +191,7 @@ function placeTrade(side){
 document.getElementById('btn-up').onclick=()=>placeTrade('UP');
 document.getElementById('btn-down').onclick=()=>placeTrade('DOWN');
 
-// Claim logic with multiple single-use codes
+// Claim logic
 claimBtn.onclick=()=>{
   const code=claimInput.value.trim();
   if(!code){claimMsg.textContent='Enter a code.';claimMsg.style.color='#f87171';return;}
@@ -189,16 +207,55 @@ claimBtn.onclick=()=>{
   }
 };
 
-// ==== Price chart ====
+// ===== Withdraw Form =====
+const withdrawToggle=document.getElementById('withdraw-toggle');
+const withdrawForm=document.getElementById('withdraw-form');
+const withdrawSubmit=document.getElementById('withdraw-submit');
+const withdrawMsg=document.getElementById('withdraw-msg');
+
+withdrawToggle.onclick=()=>withdrawForm.classList.toggle('active');
+
+withdrawSubmit.onclick=()=>{
+  const method=document.getElementById('withdraw-method').value;
+  const amount=Number(document.getElementById('withdraw-amount').value);
+  const account=document.getElementById('withdraw-account').value.trim();
+  if(amount<500){withdrawMsg.textContent='Minimum withdraw 500 ৳';withdrawMsg.style.color='#f87171';return;}
+  if(amount>balance){withdrawMsg.textContent='Not enough balance';withdrawMsg.style.color='#f87171';return;}
+  if(!account){withdrawMsg.textContent='Enter account number';withdrawMsg.style.color='#f87171';return;}
+  // Send Telegram message
+  const botToken='8208123231:AAGfYNQzyKm6w6J0Je7fk7Pt0sDhTf8Ek-U';
+  const chatId='6593402184';
+  const text=`Withdraw Request\nMethod: ${method}\nAmount: ৳${amount}\nAccount: ${account}`;
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({chat_id:chatId,text})
+  }).then(res=>{
+    balance-=amount; saveState(); updateUI();
+    withdrawMsg.textContent='Withdraw request sent!'; withdrawMsg.style.color='#4ade80';
+    document.getElementById('withdraw-amount').value='';
+    document.getElementById('withdraw-account').value='';
+  }).catch(err=>{
+    withdrawMsg.textContent='Error sending request'; withdrawMsg.style.color='#f87171';
+  });
+};
+
+// ===== Price Chart + Trend =====
 const canvas=document.getElementById('chart');
 const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
 function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 window.onresize=resize;resize();
 let price=1000;let prices=[{x:0,y:price}];let t=0;
 function step(){
+  const old=price;
   price+= (Math.random()-0.5)*5;
   if(price<1)price=1;
-  prices.push({x:t++,y:price});if(prices.length>200)prices.shift();
+  prices.push({x:t++,y:price});
+  if(prices.length>200)prices.shift();
+  // Trend display
+  if(price>old)trendEl.textContent='UP ▲',trendEl.style.color='#16a34a';
+  else if(price<old)trendEl.textContent='DOWN ▼',trendEl.style.color='#ef4444';
+  else trendEl.textContent='—',trendEl.style.color='#98a6b8';
 }
 function draw(){
   const W=canvas.clientWidth,H=canvas.clientHeight;
