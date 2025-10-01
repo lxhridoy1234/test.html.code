@@ -3,338 +3,393 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <title>Secure Locker — Professional</title>
-  <meta name="description" content="A clean, professional secret locker-style PIN interface (demo)." />
+  <title>Up/Down Trading — Live Demo</title>
   <style>
     :root{
-      --bg-1:#05070a;
-      --bg-2:#071826;
-      --card:#071424;
-      --muted:#9fb6c0;
-      --accent:#4dd0e1;
-      --accent-2:#00c6a2;
-      --glass: rgba(255,255,255,0.03);
-      --danger:#ef4444;
-      --success:#10b981;
-      --radius:14px;
+      --bg:#071426; --card:#0b1220; --accent:#06b6d4; --accent2:#7c3aed;
+      --muted:#98a6b8; --win:#16a34a; --lose:#ef4444; --glass: rgba(255,255,255,0.03);
     }
-    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,'Noto Sans'}
-    html,body{height:100%;margin:0}
-    body{
-      display:flex;align-items:center;justify-content:center;padding:28px;
-      color:#e9fbff;-webkit-font-smoothing:antialiased;
+    *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Roboto,"Helvetica Neue",Arial}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb}
+    .wrap{max-width:980px;margin:14px auto;padding:16px}
+    header{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:800}
+    h1{margin:0;font-size:18px}
+    p.lead{margin:6px 0 0;color:var(--muted);font-size:13px}
 
-      /* Animated Gradient Background */
-      background: linear-gradient(270deg, #05070a, #071826, #012b36);
-      background-size: 600% 600%;
-      animation: bgMove 16s ease infinite;
-    }
-    @keyframes bgMove {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
+    .grid{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:16px}
+    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px;box-shadow:0 8px 30px rgba(2,6,23,0.6)}
+    canvas#chart{width:100%;height:340px;border-radius:10px;display:block;background:#041026}
+    .info-row{display:flex;gap:10px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    .stat{background:var(--glass);padding:8px;border-radius:8px;min-width:120px}
+    .stat .label{font-size:12px;color:var(--muted)}
+    .stat .value{font-size:16px;margin-top:4px}
 
-    .container{width:420px;max-width:96%;animation:fadeIn 1s ease}
+    .controls{display:flex;flex-direction:column;gap:10px}
+    .balance{display:flex;justify-content:space-between;align-items:center}
+    .big{font-size:20px;font-weight:800}
+    label{font-size:13px;color:var(--muted)}
+    input[type=number],input[type=text]{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    .btn-row{display:flex;gap:8px}
+    button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:pointer;outline:none}
+    .btn-up{background:linear-gradient(180deg,#06b6d4,#0284c7);color:#012}
+    .btn-down{background:linear-gradient(180deg,#f97316,#ef4444);color:#111}
+    .log{max-height:300px;overflow:auto;padding:8px;background:rgba(255,255,255,0.01);border-radius:8px}
+    .trade{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02)}
+    .trade .type{font-weight:800}
+    .trade.win{background:linear-gradient(90deg,rgba(22,163,74,0.06),transparent)}
+    .trade.lose{background:linear-gradient(90deg,rgba(239,68,68,0.05),transparent)}
+    .small{font-size:12px;color:var(--muted)}
+    footer{margin-top:10px;color:var(--muted);font-size:13px}
 
-    @keyframes fadeIn {
-      from {opacity:0; transform:translateY(20px);}
-      to {opacity:1; transform:translateY(0);}
-    }
+    /* header actions */
+    .top-actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+    .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:8px;border-radius:8px;color:var(--muted);cursor:pointer}
 
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
-    .brand{display:flex;gap:12px;align-items:center;animation: slideIn 1.2s ease}
-    @keyframes slideIn {
-      from{transform:translateX(-40px);opacity:0;}
-      to{transform:translateX(0);opacity:1;}
+    @media(max-width:940px){
+      .grid{grid-template-columns:1fr}
+      canvas#chart{height:260px}
     }
-    .logo{
-      width:54px;height:54px;border-radius:12px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      display:flex;align-items:center;justify-content:center;
-      font-weight:800;color:#012026;font-size:18px;
-      box-shadow:0 8px 30px rgba(1,17,20,0.6);
-      position: relative;overflow:hidden;
-    }
-    /* Logo shimmer */
-    .logo::after {
-      content: "";
-      position: absolute;
-      top: 0; left: -100%;
-      width: 200%; height: 100%;
-      background: linear-gradient(120deg, transparent, rgba(255,255,255,0.4), transparent);
-      animation: shimmer 3s infinite;
-    }
-    @keyframes shimmer {
-      0% { left: -100%; }
-      100% { left: 100%; }
-    }
-
-    h1{font-size:18px;margin:0;color:#e8fff9}
-    p.lead{margin:0;color:var(--muted);font-size:13px}
-
-    .card{
-      background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));
-      border-radius:var(--radius);padding:18px;
-      border:1px solid var(--glass);
-      box-shadow:0 14px 60px rgba(2,8,20,0.65);
-      animation:zoomIn 1s ease;
-    }
-    @keyframes zoomIn{
-      from{transform:scale(0.9);opacity:0;}
-      to{transform:scale(1);opacity:1;}
-    }
-
-    .locker-top{display:flex;align-items:center;gap:12px;margin-bottom:12px}
-    .locker-icon{
-      width:72px;height:72px;border-radius:12px;
-      background:linear-gradient(180deg,#011922,#012b36);
-      display:flex;align-items:center;justify-content:center;flex-shrink:0;
-      box-shadow:inset 0 -8px 30px rgba(0,0,0,0.35);
-      animation: float 3s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
-    }
-    .locker-icon svg{width:36px;height:36px;fill:var(--accent-2)}
-
-    .display-wrap{flex:1}
-    .display-label{font-size:12px;color:var(--muted);margin-bottom:6px}
-    .display{
-      height:56px;border-radius:12px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
-      border:1px solid rgba(255,255,255,0.03);
-      display:flex;align-items:center;justify-content:center;
-      padding:10px 14px;font-size:22px;letter-spacing:6px;color:#e8fbff;
-      transition:all .3s ease;
-    }
-    .display .mask{font-size:22px;letter-spacing:10px}
-
-    .controls{display:flex;gap:8px;margin-top:10px;align-items:center}
-    .btn{
-      padding:10px 12px;border-radius:10px;background:transparent;
-      border:1px solid rgba(255,255,255,0.04);color:var(--muted);
-      font-weight:700;cursor:pointer;transition:all .2s ease
-    }
-    .btn:hover{background:rgba(255,255,255,0.04);transform:translateY(-2px)}
-    .btn.primary{background:linear-gradient(180deg,var(--accent),var(--accent-2));color:#012026;border:none}
-    .btn.icon{width:44px;height:44px;display:inline-flex;align-items:center;justify-content:center}
-
-    .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px}
-    .key{
-      height:64px;border-radius:12px;
-      background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));
-      display:flex;align-items:center;justify-content:center;
-      font-size:20px;font-weight:800;color:#eaffff;
-      cursor:pointer;border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 10px 32px rgba(2,8,20,0.5);
-      transition:transform .1s ease, box-shadow .1s ease, background .3s;
-    }
-    .key:hover{background:rgba(255,255,255,0.05)}
-    .key:active {
-      transform: scale(0.95);
-      box-shadow: 0 0 16px var(--accent);
-    }
-    .key.secondary{background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.006));color:var(--muted);font-weight:700}
-
-    .small{font-size:12px;color:var(--muted);text-align:center;margin-top:12px}
-
-    /* Alarm & success */
-    .card.alarm{position:relative}
-    .card.alarm.shake{animation:shake 420ms ease}
-    @keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(6px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}}
-
-    .success-screen{
-      position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-      background:linear-gradient(180deg, rgba(2,6,23,0.6), rgba(2,6,23,0.85));
-      backdrop-filter: blur(5px);opacity:0;pointer-events:none;
-      transition:opacity .25s;z-index:60
-    }
-    .success-screen.show{opacity:1;pointer-events:auto}
-    .success-card{
-      max-width:540px;background:linear-gradient(180deg,#021726,#013042);
-      padding:26px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);
-      text-align:center;box-shadow:0 22px 80px rgba(2,6,23,0.6);
-      transform: scale(0.8);opacity:0;
-      animation: popIn 0.6s ease forwards;
-    }
-    @keyframes popIn {
-      to { transform: scale(1); opacity: 1; }
-    }
-    .success-card h2{margin:0 0 8px;font-size:20px;color:#dcfff9}
-    .success-card p{margin:0;color:#bfeef2}
-
-    @media (max-width:420px){.display{height:48px;font-size:20px}.key{height:54px}}
-
-    .key:focus{outline:2px solid rgba(77,208,225,0.12);outline-offset:4px}
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrap">
     <header>
-      <div class="brand">
-        <div class="logo">SL</div>
-        <div>
-          <h1>Secure Locker</h1>
-          <p class="lead">Enter PIN to unlock your secure vault</p>
-        </div>
+      <div class="logo">TRADE</div>
+      <div>
+        <h1>Up / Down Trading — Live Demo</h1>
+        <p class="lead">Place UP or DOWN trades. Balance is saved locally. Claim a bonus using a valid code.</p>
       </div>
-      <div style="text-align:right;color:var(--muted);font-size:12px">v1.0 — Demo</div>
+      <div class="top-actions">
+        <button id="reset-btn" class="btn-ghost small">Reset Storage</button>
+      </div>
     </header>
 
-    <main id="card" class="card alarm" aria-live="polite">
-      <div class="locker-top">
-        <div class="locker-icon" aria-hidden="true">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2C9.8 2 8 3.8 8 6v2H7c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2v-8c0-1.1-.9-2-2-2h-1V6c0-2.2-1.8-4-4-4zm-2 8V6c0-1.1.9-2 2-2s2 .9 2 2v4h-4z"/>
-          </svg>
+    <div class="grid" role="main">
+      <!-- Chart & Info -->
+      <div class="card" aria-live="polite">
+        <canvas id="chart" aria-label="Price chart"></canvas>
+
+        <div class="info-row">
+          <div class="stat">
+            <div class="label">Live Price (BDT)</div>
+            <div id="price" class="value">—</div>
+          </div>
+          <div class="stat">
+            <div class="label">Recent Change</div>
+            <div id="change" class="value">—</div>
+          </div>
+          <div class="stat">
+            <div class="label">Open Positions</div>
+            <div id="open-positions" class="value">0</div>
+          </div>
         </div>
 
-        <div class="display-wrap">
-          <div class="display-label">PIN</div>
-          <div id="display" class="display" role="status" aria-label="PIN display" tabindex="-1">
-            <span id="mask" class="mask">•••••••••</span>
-          </div>
-
-          <div class="controls">
-            <button id="toggleShow" class="btn icon" title="Show PIN" aria-pressed="false" aria-label="Toggle show PIN">👁️</button>
-            <button id="randomize" class="btn" title="Randomize keypad" aria-label="Randomize keypad">Shuffle Keys</button>
-            <button id="continue" class="btn primary" disabled aria-disabled="true">Unlock</button>
-          </div>
-        </div>
+        <div style="margin-top:10px;color:var(--muted);font-size:13px">Note: This is a demo. Real money trading requires proper platforms and risk management.</div>
       </div>
 
-      <div id="pad" class="pad" aria-hidden="false"></div>
-      <div class="small">Use the on-screen keypad. Keyboard & paste are blocked for demo security.</div>
-    </main>
-  </div>
+      <!-- Controls -->
+      <aside class="controls card" aria-label="Controls">
+        <div class="balance">
+          <div>
+            <div class="small">Balance</div>
+            <div id="balance" class="big">৳1000.00</div>
+          </div>
+          <div style="text-align:right">
+            <div class="small">Payout</div>
+            <div class="big">1.9x</div>
+          </div>
+        </div>
 
-  <div id="success" class="success-screen" role="dialog" aria-hidden="true">
-    <div class="success-card">
-      <h2>Access Granted</h2>
-      <p>Welcome — the locker is now open.</p>
+        <div>
+          <label>Stake (BDT)</label>
+          <input id="stake" type="number" min="1" step="1" value="50" />
+        </div>
+
+        <div>
+          <label>Trade Duration (seconds)</label>
+          <input id="duration" type="number" min="1" max="60" step="1" value="5" />
+        </div>
+
+        <div class="btn-row" style="margin-top:6px">
+          <button id="btn-up" class="btn-up">UP ▲</button>
+          <button id="btn-down" class="btn-down">DOWN ▼</button>
+        </div>
+
+        <div style="margin-top:10px">
+          <div class="small">Claim Bonus</div>
+          <div style="display:flex;gap:8px;margin-top:6px">
+            <input id="claim-code" type="text" placeholder="" autocomplete="off" />
+            <button id="btn-claim" class="btn-ghost">Claim</button>
+          </div>
+          <div id="claim-msg" class="small" style="margin-top:6px;color:var(--muted)"></div>
+        </div>
+
+        <div style="margin-top:10px" class="small">Recent Trades</div>
+        <div id="log" class="log" aria-live="polite"></div>
+
+        <footer>Demo system — not financial advice.</footer>
+      </aside>
     </div>
   </div>
 
   <script>
-    (function(){
-      const PIN = '018421456';
-      const MAXLEN = PIN.length;
+    // ========== Configuration ==========
+    const LOCAL_BAL_KEY = 'trade_demo_balance_v1';
+    const LOCAL_LOG_KEY  = 'trade_demo_log_v1';
+    const LOCAL_CLAIMED  = 'trade_demo_claimed_v1';
 
-      const display = document.getElementById('display');
-      const maskEl = document.getElementById('mask');
-      const pad = document.getElementById('pad');
-      const toggleShow = document.getElementById('toggleShow');
-      const randomizeBtn = document.getElementById('randomize');
-      const contBtn = document.getElementById('continue');
-      const success = document.getElementById('success');
-      const card = document.getElementById('card');
+    const VALID_CLAIM_CODES = { '199234': 100 }; // only this code gives 100 BDT
+    const PAYOUT_MULTIPLIER = 1.9;
 
-      // Sound effect
-      const clickSound = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
+    // ========== State ==========
+    let balance = Number(localStorage.getItem(LOCAL_BAL_KEY) || 1000);
+    let tradesLog = JSON.parse(localStorage.getItem(LOCAL_LOG_KEY) || '[]');
+    let claimedCodes = JSON.parse(localStorage.getItem(LOCAL_CLAIMED) || '[]');
+    let openPositions = [];
 
-      let value = '';
-      let showDigits = false;
+    // ========== DOM ==========
+    const balanceEl = document.getElementById('balance');
+    const priceEl = document.getElementById('price');
+    const changeEl = document.getElementById('change');
+    const openPositionsEl = document.getElementById('open-positions');
+    const stakeEl = document.getElementById('stake');
+    const durationEl = document.getElementById('duration');
+    const logEl = document.getElementById('log');
+    const claimInput = document.getElementById('claim-code');
+    const claimBtn = document.getElementById('btn-claim');
+    const claimMsg = document.getElementById('claim-msg');
+    const resetBtn = document.getElementById('reset-btn');
 
-      function playClick(){
-        clickSound.currentTime = 0;
-        clickSound.play();
-      }
+    // ========== Price generator (momentum + noise) ==========
+    const canvas = document.getElementById('chart');
+    const ctx = canvas.getContext('2d');
+    let DPR = window.devicePixelRatio || 1;
 
-      function rangeDigits(){ return ['0','1','2','3','4','5','6','7','8','9']; }
-      function shuffle(array){
-        const a = array.slice();
-        for(let i=a.length-1;i>0;i--){
-          const j = Math.floor(Math.random()*(i+1));
-          [a[i],a[j]] = [a[j],a[i]];
+    function resizeCanvas(){
+      canvas.width = canvas.clientWidth * DPR;
+      canvas.height = canvas.clientHeight * DPR;
+      ctx.setTransform(DPR,0,0,DPR,0,0);
+      drawChart();
+    }
+    window.addEventListener('resize', resizeCanvas);
+
+    let prices = [];
+    let t = 0;
+    let price = 1500; // starting price in BDT
+    const MAX_POINTS = 200;
+    let momentum = 0;
+
+    // initialize some history
+    for(let i=0;i<80;i++) priceStep();
+
+    function priceStep(){
+      // momentum persists and random shocks happen
+      const randomShock = (Math.random() - 0.5) * (0.8 + Math.abs(Math.sin(t/120))*1.2);
+      // mean reversion small pull to baseline
+      const baseline = 1500;
+      const reversion = (baseline - price) * 0.0005;
+      // update momentum slowly
+      momentum = momentum * 0.92 + randomShock * 0.18;
+      price = Math.max(1, price + momentum + reversion);
+      prices.push({x:t++, y:price});
+      if(prices.length > MAX_POINTS) prices.shift();
+    }
+
+    function drawChart(){
+      const W = canvas.clientWidth, H = canvas.clientHeight;
+      ctx.clearRect(0,0,W,H);
+      ctx.fillStyle = '#041028';
+      ctx.fillRect(0,0,W,H);
+
+      if(prices.length > 1){
+        const ys = prices.map(p=>p.y);
+        const minY = Math.min(...ys) * 0.998;
+        const maxY = Math.max(...ys) * 1.002;
+        const pad = 18;
+        const plotW = W - pad*2;
+        const plotH = H - pad*2;
+
+        // draw grid lines
+        ctx.strokeStyle = 'rgba(255,255,255,0.03)';
+        ctx.lineWidth = 1;
+        for(let i=0;i<4;i++){
+          const y = pad + (i/4)*plotH;
+          ctx.beginPath(); ctx.moveTo(pad,y); ctx.lineTo(W-pad,y); ctx.stroke();
         }
-        return a;
-      }
-      function renderPad(order){
-        pad.innerHTML = '';
-        order.forEach(d => {
-          const el = document.createElement('button');
-          el.className = 'key';
-          el.type = 'button';
-          el.textContent = d;
-          el.setAttribute('aria-label', `Digit ${d}`);
-          el.addEventListener('click', ()=> {appendDigit(d); playClick();});
-          el.addEventListener('keydown', (e)=>{ if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); appendDigit(d); playClick(); } });
-          pad.appendChild(el);
+
+        // path
+        ctx.beginPath();
+        prices.forEach((p,i)=>{
+          const x = pad + (i/(MAX_POINTS-1))*plotW;
+          const y = pad + (1 - (p.y - minY)/(maxY - minY)) * plotH;
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
         });
-        const back = document.createElement('button');
-        back.className = 'key secondary';
-        back.type = 'button';
-        back.textContent = 'Back';
-        back.setAttribute('aria-label','Backspace');
-        back.addEventListener('click', ()=>{backspace(); playClick();});
+        const last = prices[prices.length-1].y;
+        const prev = prices[prices.length-2].y;
+        ctx.lineWidth = 2.4;
+        ctx.strokeStyle = last >= prev ? '#06b6d4' : '#ef4444';
+        ctx.stroke();
 
-        const clear = document.createElement('button');
-        clear.className = 'key secondary';
-        clear.type = 'button';
-        clear.textContent = 'Clear';
-        clear.setAttribute('aria-label','Clear PIN');
-        clear.addEventListener('click', ()=>{clearAll(); playClick();});
+        // area fill
+        ctx.lineTo(W-pad, H-pad);
+        ctx.lineTo(pad, H-pad);
+        ctx.closePath();
+        const grad = ctx.createLinearGradient(0,pad,0,H);
+        grad.addColorStop(0, 'rgba(6,182,212,0.06)');
+        grad.addColorStop(1, 'rgba(239,68,68,0.02)');
+        ctx.fillStyle = grad;
+        ctx.fill();
 
-        pad.appendChild(back);
-        pad.appendChild(clear);
+        // last point
+        ctx.beginPath();
+        const lx = pad + ((prices.length-1)/(MAX_POINTS-1))*plotW;
+        const ly = pad + (1 - (last - minY)/(maxY - minY)) * plotH;
+        ctx.arc(lx, ly, 4, 0, Math.PI*2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = last >= prev ? '#06b6d4' : '#ef4444'; ctx.stroke();
       }
 
-      function refreshDisplay(){
-        maskEl.textContent = showDigits ? (value || ' ') : (value ? '•'.repeat(value.length) : ' ');
-        contBtn.disabled = (value.length !== MAXLEN);
-        contBtn.setAttribute('aria-disabled', contBtn.disabled ? 'true' : 'false');
+      priceEl.textContent = '৳' + price.toFixed(2);
+      // change over last N points
+      const N = Math.min(prices.length, 24);
+      if(N > 1){
+        const change = ((prices[prices.length-1].y - prices[prices.length-N].y) / prices[prices.length-N].y) * 100;
+        changeEl.textContent = (change>=0?'+':'') + change.toFixed(2) + '%';
+        changeEl.style.color = change>=0 ? '#86efac' : '#fb7185';
       }
-      function appendDigit(d){ if(value.length >= MAXLEN) return; value += d; refreshDisplay(); }
-      function backspace(){ value = value.slice(0,-1); refreshDisplay(); }
-      function clearAll(){ value = ''; refreshDisplay(); }
+    }
 
-      function triggerAlarm(){
-        card.classList.add('shake');
-        display.style.transition = 'background .18s, color .18s';
-        const prev = display.style.background;
-        display.style.background = 'linear-gradient(180deg, rgba(239,68,68,0.06), rgba(255,255,255,0.004))';
-        display.style.color = '#ffdfe0';
-        setTimeout(()=>{ display.style.background = prev || ''; display.style.color = ''; }, 900);
-        setTimeout(()=> card.classList.remove('shake'), 600);
+    // run price update
+    setInterval(()=>{ priceStep(); drawChart(); }, 300);
+
+    // ========== Trading logic ==========
+    function saveState(){
+      localStorage.setItem(LOCAL_BAL_KEY, String(balance));
+      localStorage.setItem(LOCAL_LOG_KEY, JSON.stringify(tradesLog.slice(-200)));
+      localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
+    }
+
+    function renderLogs(){
+      logEl.innerHTML = '';
+      for(let i=tradesLog.length-1;i>=0;i--){
+        const t = tradesLog[i];
+        const node = document.createElement('div');
+        node.className = 'trade ' + (t.result === 'win' ? 'win' : 'lose');
+        node.innerHTML = `<div><div class="type">${t.side} — ৳${t.stake}</div><div class="small">Start: ৳${t.startPrice.toFixed(2)} • End: ৳${t.endPrice.toFixed(2)}</div></div>
+                          <div style="text-align:right"><div style="font-weight:800">${t.result==='win'?'+৳'+t.profit.toFixed(2):'-৳'+t.stake.toFixed(2)}</div><div class="small">${new Date(t.ts).toLocaleString()}</div></div>`;
+        logEl.appendChild(node);
       }
-      function showSuccess(){ card.style.display = 'none'; success.classList.add('show'); success.setAttribute('aria-hidden','false'); }
+    }
 
-      contBtn.addEventListener('click', ()=>{
-        playClick();
-        if(value.length !== MAXLEN) return;
-        if(value === PIN){ showSuccess(); } else { triggerAlarm(); }
-      });
+    function updateUI(){
+      balanceEl.textContent = '৳' + balance.toFixed(2);
+      openPositionsEl.textContent = openPositions.length;
+      renderLogs();
+    }
 
-      toggleShow.addEventListener('click', ()=>{
-        playClick();
-        showDigits = !showDigits;
-        toggleShow.setAttribute('aria-pressed', String(showDigits));
-        toggleShow.title = showDigits ? 'Hide PIN' : 'Show PIN';
-        refreshDisplay();
-      });
+    function addTradeLog(entry){
+      tradesLog.push(entry);
+      if(tradesLog.length > 500) tradesLog.shift();
+      saveState();
+      updateUI();
+    }
 
-      function randomize(){ renderPad(shuffle(rangeDigits())); }
-      randomizeBtn.addEventListener('click', ()=> {randomize(); playClick();});
+    function placeTrade(side){
+      const stake = Math.max(1, Number(stakeEl.value) || 1);
+      const dur = Math.max(1, Math.min(60, Number(durationEl.value) || 5));
+      if(stake > balance){
+        alert('Insufficient balance.');
+        return;
+      }
 
-      window.addEventListener('keydown', (e)=>{
-        const allowed = ['Tab','Shift','Control','Alt','Meta','ArrowLeft','ArrowRight','Escape'];
-        if(allowed.includes(e.key)) return;
-        e.preventDefault(); e.stopPropagation();
-      }, {capture:true});
-      window.addEventListener('paste', (e)=> e.preventDefault());
+      // Reserve stake immediately
+      balance -= stake;
+      const startPrice = price;
+      const expiresAt = Date.now() + dur*1000;
+      const pos = { id: Date.now() + Math.random(), side, stake, startPrice, expiresAt, ts: Date.now() };
+      openPositions.push(pos);
+      saveState();
+      updateUI();
 
-      display.addEventListener('touchstart', (e)=> e.preventDefault(), {passive:false});
-      display.addEventListener('mousedown', (e)=> e.preventDefault());
+      // Resolve using the live current price at expiry
+      setTimeout(()=>{
+        const endPrice = price; // live price
+        // My chosen logic: require strict move (not equal). Ties = loss.
+        let win = false;
+        if(side === 'UP' && endPrice > startPrice) win = true;
+        if(side === 'DOWN' && endPrice < startPrice) win = true;
 
-      randomize();
-      refreshDisplay();
+        if(win){
+          const payout = stake * PAYOUT_MULTIPLIER;
+          const profit = payout - stake;
+          balance += payout;
+          addTradeLog({ side, stake, startPrice, endPrice, result:'win', profit, ts: Date.now() });
+        } else {
+          // stake already deducted -> lost
+          addTradeLog({ side, stake, startPrice, endPrice, result:'lose', profit:-stake, ts: Date.now() });
+        }
+        openPositions = openPositions.filter(p => p.id !== pos.id);
+        saveState();
+        updateUI();
+      }, dur*1000);
+    }
 
-      contBtn.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' ') { e.preventDefault(); contBtn.click(); } });
-      randomizeBtn.addEventListener('mousedown', ()=> {randomize(); playClick();});
-    })();
+    document.getElementById('btn-up').addEventListener('click', ()=>placeTrade('UP'));
+    document.getElementById('btn-down').addEventListener('click', ()=>placeTrade('DOWN'));
+
+    // ========== Claim code ==========
+    claimBtn.addEventListener('click', ()=>{
+      const code = (claimInput.value || '').trim();
+      claimMsg.style.color = 'var(--muted)';
+      if(!code){
+        claimMsg.textContent = 'Please enter a code.';
+        return;
+      }
+      if(claimedCodes.includes(code)){
+        claimMsg.style.color = '#fca5a5';
+        claimMsg.textContent = 'This code has already been used.';
+        return;
+      }
+      if(VALID_CLAIM_CODES.hasOwnProperty(code)){
+        const amount = VALID_CLAIM_CODES[code];
+        balance += amount;
+        claimedCodes.push(code);
+        saveState();
+        updateUI();
+        claimMsg.style.color = '#86efac';
+        claimMsg.textContent = `Success — ৳${amount} added to your account.`;
+        claimInput.value = '';
+      } else {
+        claimMsg.style.color = '#fca5a5';
+        claimMsg.textContent = 'Invalid code.';
+      }
+    });
+
+    // Reset storage (for testing)
+    resetBtn.addEventListener('click', ()=>{
+      if(confirm('Reset local storage? This will clear balance and logs.')){
+        localStorage.removeItem(LOCAL_BAL_KEY);
+        localStorage.removeItem(LOCAL_LOG_KEY);
+        localStorage.removeItem(LOCAL_CLAIMED);
+        location.reload();
+      }
+    });
+
+    // initial render
+    updateUI();
+    resizeCanvas();
+
+    // periodic save (safety)
+    setInterval(saveState, 2000);
+
+    // expose for debugging in console if needed
+    window.TRADE_DEMO = {
+      get balance(){ return balance },
+      set balance(v){ balance = Number(v); saveState(); updateUI(); },
+      get logs(){ return tradesLog.slice() },
+      get claimed(){ return claimedCodes.slice() }
+    };
   </script>
 </body>
 </html>
-
