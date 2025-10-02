@@ -13,9 +13,18 @@
 body{margin:0;background:linear-gradient(180deg,#031027,#071426);color:#e8f0fb;position:relative}
 .wrap{max-width:980px;margin:auto;padding:16px}
 header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
-.logo{display:none;}
+.logo{display:none;} /* লোগো হাইড */
 h1{margin:0;font-size:18px;position:relative;overflow:hidden;}
-.animated-title{font-size:24px;font-weight:800;color:var(--accent);display:inline-block;}
+@keyframes text-slide {
+  0% {transform: translateY(100%); opacity:0;}
+  50% {transform: translateY(0); opacity:1;}
+  100% {transform: translateY(-100%); opacity:0;}
+}
+.animated-title{
+  font-size:24px; font-weight:800; color:var(--accent);
+  display:inline-block;
+  animation:text-slide 3s infinite;
+}
 .grid{display:grid;grid-template-columns:1fr 360px;gap:14px}
 .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:12px;border-radius:12px;position:relative}
 canvas{width:100%;height:300px;border-radius:10px;display:block;background:#041026}
@@ -47,7 +56,9 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 </head>
 <body>
 <div class="wrap">
-  <header><div class="animated-title">Trading Master</div></header>
+  <header>
+    <div class="animated-title">Trading Master</div>
+  </header>
   <div class="grid">
     <div class="card">
       <canvas id="chart"></canvas>
@@ -58,14 +69,66 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
         <div class="stat"><div class="label">Open Trades</div><div id="open-positions" class="value">0</div></div>
       </div>
     </div>
+
     <aside class="controls card">
       <div class="balance">
-        <div><div class="small">Balance</div><div id="balance" class="big">৳0.00</div></div>
-        <div style="text-align:right"><div class="small">Payout</div><div class="big">1.9x</div></div>
+        <div>
+          <div class="small">Balance</div>
+          <div id="balance" class="big">৳0.00</div>
+        </div>
+        <div style="text-align:right">
+          <div class="small">Payout</div>
+          <div class="big">1.9x</div>
+        </div>
       </div>
-      <div><label>Stake (৳)</label><input id="stake" type="number" min="1" step="1" value="50" /></div>
-      <div><label>Duration (seconds)</label><input id="duration" type="number" min="1" max="60" value="5" /></div>
-      <div class="btn-row"><button id="btn-up" class="btn-up">UP ▲</button><button id="btn-down" class="btn-down">DOWN ▼</button></div>
+
+      <div>
+        <label>Stake (৳)</label>
+        <input id="stake" type="number" min="1" step="1" value="50" />
+      </div>
+      <div>
+        <label>Duration (seconds)</label>
+        <input id="duration" type="number" min="1" max="60" value="5" />
+      </div>
+
+      <div class="btn-row">
+        <button id="btn-up" class="btn-up">UP ▲</button>
+        <button id="btn-down" class="btn-down">DOWN ▼</button>
+      </div>
+
+      <div>
+        <div class="small">Claim Bonus</div>
+        <div style="display:flex;gap:8px;margin-top:6px">
+          <input id="claim-code" type="text" autocomplete="off" />
+          <button id="btn-claim" class="btn-ghost">Claim</button>
+        </div>
+        <div id="claim-msg" class="small" style="margin-top:6px"></div>
+      </div>
+
+      <div style="margin-top:10px; display:flex; gap:8px;">
+        <button id="withdraw-toggle" class="btn-ghost">Withdraw</button>
+        <button id="deposit-toggle" class="btn-ghost">Deposit</button>
+      </div>
+      
+      <div id="withdraw-form" class="withdraw-form">
+        <label>Method</label>
+        <select id="withdraw-method"><option value="bKash">বিকাশ</option><option value="nagad">নগদ</option></select>
+        <label>Amount (≥500)</label>
+        <input id="withdraw-amount" type="number" min="500" />
+        <label>Account Number</label>
+        <input id="withdraw-account" type="text" />
+        <button id="withdraw-submit" class="btn-ghost">Submit Withdraw</button>
+        <div id="withdraw-msg" class="small"></div>
+      </div>
+
+      <div id="deposit-form" class="deposit-form">
+        <div class="small">Choose Deposit Method</div>
+        <div class="deposit-options">
+          <button id="deposit-telegram">Telegram</button>
+          <button id="deposit-whatsapp">WhatsApp</button>
+        </div>
+      </div>
+
       <div class="small" style="margin-top:10px">Recent Trades</div>
       <div id="log" class="log"></div>
     </aside>
@@ -73,15 +136,19 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 </div>
 
 <script>
-// === Trading Variables ===
+// ===== Local Storage & Trading Logic =====
 const LOCAL_BAL='trade_balance';
 const LOCAL_LOG='trade_log';
+const LOCAL_CLAIMED='trade_claimed_codes';
 const PAYOUT=1.9;
+
 let balance=Number(localStorage.getItem(LOCAL_BAL)||0);
 let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
+let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
 let openPositions=[];
 
-// === UI Refs ===
+const VALID_CODES = { '199234': 1000, 'WELCOME50': 50, 'BONUS20': 20 };
+
 const balanceEl=document.getElementById('balance');
 const priceEl=document.getElementById('price');
 const changeEl=document.getElementById('change');
@@ -90,92 +157,257 @@ const openPositionsEl=document.getElementById('open-positions');
 const stakeEl=document.getElementById('stake');
 const durationEl=document.getElementById('duration');
 const logEl=document.getElementById('log');
+const claimInput=document.getElementById('claim-code');
+const claimBtn=document.getElementById('btn-claim');
+const claimMsg=document.getElementById('claim-msg');
 
-function saveState(){ localStorage.setItem(LOCAL_BAL,balance); localStorage.setItem(LOCAL_LOG,JSON.stringify(tradesLog)); }
+function saveState(){
+  localStorage.setItem(LOCAL_BAL, balance);
+  localStorage.setItem(LOCAL_LOG, JSON.stringify(tradesLog));
+  localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
+}
+
 function renderLogs(){
   logEl.innerHTML='';
   for(let i=tradesLog.length-1;i>=0;i--){
     const t=tradesLog[i];
     const div=document.createElement('div');
     div.className='trade '+(t.result||'');
-    div.innerHTML=`<div>${t.side} ৳${t.stake}<div class="small">Open:${t.start.toFixed(2)} Close:${t.end?.toFixed(2)||'—'}</div></div>
+    let countdownText = t.remaining!==undefined ? ` (${t.remaining}s left)` : '';
+    div.innerHTML=`<div>${t.side} ৳${t.stake}${countdownText}<div class="small">Start:৳${t.start.toFixed(2)} End:৳${t.end?.toFixed(2)||'—'}</div></div>
     <div style="text-align:right">${t.result==='win'?'+৳'+t.profit.toFixed(2):(t.result==='lose'?'-৳'+t.stake.toFixed(2):'-')}</div>`;
     logEl.appendChild(div);
   }
 }
-function updateUI(){ balanceEl.textContent='৳'+balance.toFixed(2); openPositionsEl.textContent=openPositions.length; renderLogs(); }
 
-// === Trading Logic ===
+function updateUI(){
+  balanceEl.textContent='৳'+balance.toFixed(2);
+  openPositionsEl.textContent=openPositions.length;
+  renderLogs();
+  const btns=[document.getElementById('btn-up'),document.getElementById('btn-down')];
+  btns.forEach(b=>b.disabled=balance<=0);
+}
+
+// ===== Place Trade =====
 function placeTrade(side){
+  if(balance<=0){alert('Balance is 0. Please claim first.');return;}
   const stake=Number(stakeEl.value)||1;
-  const dur=Math.max(1,Math.min(60,Number(durationEl.value)||5));
   if(stake>balance){alert('Not enough balance');return;}
+  const dur=Math.max(1,Math.min(60,Number(durationEl.value)||5));
+  
   balance-=stake;
-  const start=candles.at(-1).open;
-  const pos={id:Date.now(),side,stake,start,duration:dur,expires:Date.now()+dur*1000};
-  openPositions.push(pos); tradesLog.push(pos);
+  const start=price;
+  const pos={id:Date.now(),side,stake,start,expires:Date.now()+dur*1000,duration:dur,remaining:dur};
+  openPositions.push(pos);
+  tradesLog.push(pos);
   saveState(); updateUI();
-  setTimeout(()=>resolveTrade(pos),dur*1000);
+
+  pos.interval = setInterval(()=>{
+    pos.remaining--;
+    updateUI();
+    if(pos.remaining<=0){
+      clearInterval(pos.interval);
+      resolveTrade(pos);
+    }
+  },1000);
 }
+
 function resolveTrade(pos){
-  const end=candles.at(-1).close;
-  pos.end=end;
+  const end=price;
   let win=false;
-  if(pos.side==='UP' && end>pos.start) win=true;
-  if(pos.side==='DOWN' && end<pos.start) win=true;
-  if(win){ const payout=pos.stake*PAYOUT; balance+=payout; pos.result='win'; pos.profit=payout-pos.stake; }
-  else { pos.result='lose'; pos.profit=-pos.stake; }
-  openPositions=openPositions.filter(p=>p.id!==pos.id); saveState(); updateUI();
+  if(pos.side==='UP'&&end>pos.start) win=true;
+  if(pos.side==='DOWN'&&end<pos.start) win=true;
+
+  pos.end = end;
+
+  if(win){
+    const payout=pos.stake*PAYOUT;
+    balance+=payout;
+    pos.result='win';
+    pos.profit=payout-pos.stake;
+  } else {
+    pos.result='lose';
+    pos.profit=-pos.stake;
+  }
+
+  openPositions=openPositions.filter(p=>p.id!==pos.id);
+  saveState(); updateUI();
 }
+
 document.getElementById('btn-up').onclick=()=>placeTrade('UP');
 document.getElementById('btn-down').onclick=()=>placeTrade('DOWN');
 
-// === Candle Chart ===
-const canvas=document.getElementById('chart'); const ctx=canvas.getContext('2d');
-let DPR=window.devicePixelRatio||1;
+// ===== Claim Bonus =====
+claimBtn.onclick=()=>{
+  const code=claimInput.value.trim();
+  if(!code){claimMsg.textContent='Enter a code.';claimMsg.style.color='#f87171';return;}
+  if(claimedCodes.includes(code)){claimMsg.textContent='Code already used.';claimMsg.style.color='#f87171';return;}
+  if(VALID_CODES.hasOwnProperty(code)){
+    const amount=VALID_CODES[code];
+    balance+=amount;
+    claimedCodes.push(code);
+    saveState(); updateUI();
+    claimMsg.textContent=`৳${amount} added.`;claimMsg.style.color='#4ade80';claimInput.value='';
+  }else{
+    claimMsg.textContent='Invalid code.';claimMsg.style.color='#f87171';
+  }
+};
+
+// ===== Withdraw =====
+const withdrawToggle=document.getElementById('withdraw-toggle');
+const withdrawForm=document.getElementById('withdraw-form');
+const withdrawSubmit=document.getElementById('withdraw-submit');
+const withdrawMsg=document.getElementById('withdraw-msg');
+
+withdrawToggle.onclick=()=>withdrawForm.classList.toggle('active');
+
+withdrawSubmit.onclick=()=>{
+  const method=document.getElementById('withdraw-method').value;
+  const amount=Number(document.getElementById('withdraw-amount').value);
+  const account=document.getElementById('withdraw-account').value.trim();
+  if(amount<500){withdrawMsg.textContent='Minimum withdraw 500 ৳';withdrawMsg.style.color='#f87171';return;}
+  if(amount>balance){withdrawMsg.textContent='Not enough balance';withdrawMsg.style.color='#f87171';return;}
+  if(!account){withdrawMsg.textContent='Enter account number';withdrawMsg.style.color='#f87171';return;}
+  
+  const botToken='8208123231:AAGfYNQzyKm6w6J0Je7fk7Pt0sDhTf8Ek-U';
+  const chatId='6593402184';
+  const text=`Withdraw Request\nMethod: ${method}\nAmount: ৳${amount}\nAccount: ${account}`;
+  
+  fetch(`https://api.telegram.org/bot${botToken}/sendMessage`,{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({chat_id:chatId,text})
+  }).then(res=>{
+    balance-=amount; saveState(); updateUI();
+    withdrawMsg.textContent='Withdraw request sent!'; withdrawMsg.style.color='#4ade80';
+    document.getElementById('withdraw-amount').value='';
+    document.getElementById('withdraw-account').value='';
+  }).catch(err=>{
+    withdrawMsg.textContent='Error sending request'; withdrawMsg.style.color='#f87171';
+  });
+};
+
+// ===== Deposit =====
+const depositToggle=document.getElementById('deposit-toggle');
+const depositForm=document.getElementById('deposit-form');
+const depositTelegram=document.getElementById('deposit-telegram');
+const depositWhatsApp=document.getElementById('deposit-whatsapp');
+
+depositToggle.onclick=()=>depositForm.classList.toggle('active');
+
+depositTelegram.onclick=()=>window.open('https://t.me/trademaster12340','_blank');
+depositWhatsApp.onclick=()=>window.open('https://wa.me/8801842145643','_blank');
+
+// ===== Candle Chart (replaced line chart with up/down candles) =====
+const canvas=document.getElementById('chart');
+const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
 function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 window.onresize=resize;resize();
 
-let price=1000;
-let candles=[{open:price,high:price,low:price,close:price}];
-let tick=0; let tickPerCandle=10; // প্রতি 10 টিক এ 1 ক্যান্ডেল
+let price=1000; // current price (used by trades)
+let candles=[]; // {open,close,high,low}
+const MAX_CANDLES = 100;
+let candleWidth = 8; // pixels per candle (on canvas CSS pixels)
 
-function step(){
-  const last=candles[candles.length-1];
-  let move=(Math.random()*3+1)*(Math.random()<0.5?-1:1);
-  price=Math.max(1,price+move);
-  last.high=Math.max(last.high,price);
-  last.low=Math.min(last.low,price);
-  last.close=price;
-  tick++;
-  if(tick>=tickPerCandle){ // নতুন ক্যান্ডেল
-    candles.push({open:price,high:price,low:price,close:price});
-    if(candles.length>60) candles.shift();
-    tick=0;
+function generateCandle(){
+  // create a new candle based on current price
+  const open = price;
+  // random close delta -3 .. +3
+  const delta = (Math.random() * 6) - 3;
+  let close = open + delta;
+  if(close < 1) close = 1;
+  // random wiggle for high/low
+  const high = Math.max(open, close) + Math.random() * 2;
+  const low = Math.min(open, close) - Math.random() * 2;
+  const candle = { open, close, high, low, time: Date.now() };
+  candles.push(candle);
+  price = close; // update global price
+  if(candles.length > MAX_CANDLES) candles.shift();
+}
+
+function drawCandle(c, x, w, H, min, max){
+  const scale = (H - 10) / (max - min || 1);
+  const openY = H - (c.open - min) * scale;
+  const closeY = H - (c.close - min) * scale;
+  const highY = H - (c.high - min) * scale;
+  const lowY = H - (c.low - min) * scale;
+
+  const isUp = c.close >= c.open;
+  const color = isUp ? '#16a34a' : '#ef4444';
+
+  // Wick
+  ctx.beginPath();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = Math.max(1, DPR * 0.6);
+  ctx.moveTo(x + w/2, highY);
+  ctx.lineTo(x + w/2, lowY);
+  ctx.stroke();
+
+  // Body
+  const bodyTop = Math.min(openY, closeY);
+  const bodyHeight = Math.max(1, Math.abs(closeY - openY));
+  ctx.fillStyle = color;
+  ctx.fillRect(x, bodyTop, w, bodyHeight);
+}
+
+function drawChart(){
+  // clear (use CSS size to draw)
+  const W = canvas.clientWidth;
+  const H = canvas.clientHeight;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  if(candles.length === 0){
+    priceEl.textContent = '৳' + price.toFixed(2);
+    changeEl.textContent = '—';
+    trendEl.textContent = '—';
+    return;
   }
-  priceEl.textContent='৳'+price.toFixed(2);
-  trendEl.textContent=move>0?'UP ▲':(move<0?'DOWN ▼':'—');
-  trendEl.style.color=move>0?'#16a34a':(move<0?'#ef4444':'#98a6b8');
-  if(candles.length>2){ const change=((candles.at(-1).close-candles[0].open)/candles[0].open*100).toFixed(2);
-    changeEl.textContent=(change>=0?'+':'')+change+'%'; }
-}
-function draw(){
-  const W=canvas.clientWidth,H=canvas.clientHeight;
-  ctx.clearRect(0,0,W,H);
-  const minY=Math.min(...candles.map(c=>c.low)), maxY=Math.max(...candles.map(c=>c.high));
-  const candleW=W/candles.length-2;
-  candles.forEach((c,i)=>{
-    const x=i*(candleW+2)+2;
-    const yOpen=H-(c.open-minY)/(maxY-minY)*H;
-    const yClose=H-(c.close-minY)/(maxY-minY)*H;
-    const yHigh=H-(c.high-minY)/(maxY-minY)*H;
-    const yLow=H-(c.low-minY)/(maxY-minY)*H;
-    const color=c.close>=c.open?'#16a34a':'#ef4444';
-    ctx.strokeStyle=color; ctx.beginPath(); ctx.moveTo(x+candleW/2,yHigh); ctx.lineTo(x+candleW/2,yLow); ctx.stroke();
-    ctx.fillStyle=color; ctx.fillRect(x,Math.min(yOpen,yClose),candleW,Math.abs(yClose-yOpen)||2);
+
+  // compute min/max across visible candles
+  const min = Math.min(...candles.map(c=>c.low));
+  const max = Math.max(...candles.map(c=>c.high));
+
+  // adapt candle width to available space if needed
+  const availWidth = W;
+  const desiredWidth = Math.floor(availWidth / candles.length);
+  const drawWidth = Math.max(3, Math.min(candleWidth, desiredWidth));
+  const gap = 2;
+
+  // draw candles left-to-right
+  candles.forEach((c, i) => {
+    const x = i * (drawWidth + gap) + 6; // small left padding
+    drawCandle(c, x, drawWidth, H, min, max);
   });
+
+  // update price/change/trend UI
+  priceEl.textContent = '৳' + price.toFixed(2);
+  if(candles.length > 1){
+    const first = candles[0].open;
+    const last = candles[candles.length-1].close;
+    const changePerc = ((last - first) / first * 100).toFixed(2);
+    changeEl.textContent = (changePerc >= 0 ? '+' : '') + changePerc + '%';
+    const prevClose = candles[candles.length-2].close;
+    if(last > prevClose){
+      trendEl.textContent = 'UP ▲'; trendEl.style.color = '#16a34a';
+    } else if (last < prevClose){
+      trendEl.textContent = 'DOWN ▼'; trendEl.style.color = '#ef4444';
+    } else {
+      trendEl.textContent = '—'; trendEl.style.color = '#98a6b8';
+    }
+  }
 }
-setInterval(()=>{step();draw();},500);
+
+// run generation + draw periodically (keeps original rhythm)
+setInterval(()=>{
+  generateCandle();
+  drawChart();
+}, 500);
+
+// initial fill so chart isn't empty
+for(let i=0;i<20;i++){ generateCandle(); }
+drawChart();
+
+// ensure UI updated
 updateUI();
 </script>
 </body>
