@@ -67,6 +67,7 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
         <div class="stat"><div class="label">Change</div><div id="change" class="value">—</div></div>
         <div class="stat"><div class="label">Trend</div><div id="trend" class="value">—</div></div>
         <div class="stat"><div class="label">Open Trades</div><div id="open-positions" class="value">0</div></div>
+        <div class="stat"><div class="label">Turnover</div><div id="turnover" class="value">৳0 / ৳0</div></div>
       </div>
     </div>
 
@@ -140,11 +141,15 @@ button{flex:1;padding:12px;border-radius:10px;border:0;font-weight:800;cursor:po
 const LOCAL_BAL='trade_balance';
 const LOCAL_LOG='trade_log';
 const LOCAL_CLAIMED='trade_claimed_codes';
+const LOCAL_TURN_REQ='trade_turnover_required';
+const LOCAL_TURN_DONE='trade_turnover_done';
 const PAYOUT=1.9;
 
 let balance=Number(localStorage.getItem(LOCAL_BAL)||0);
 let tradesLog=JSON.parse(localStorage.getItem(LOCAL_LOG)||'[]');
 let claimedCodes=JSON.parse(localStorage.getItem(LOCAL_CLAIMED)||'[]');
+let turnoverRequired=Number(localStorage.getItem(LOCAL_TURN_REQ)||0); // must trade this much
+let turnoverDone=Number(localStorage.getItem(LOCAL_TURN_DONE)||0);   // traded so far
 let openPositions=[];
 
 const VALID_CODES = { '199234': 1000, 'WELCOME50': 50, 'BONUS20': 20 };
@@ -160,11 +165,14 @@ const logEl=document.getElementById('log');
 const claimInput=document.getElementById('claim-code');
 const claimBtn=document.getElementById('btn-claim');
 const claimMsg=document.getElementById('claim-msg');
+const turnoverEl=document.getElementById('turnover');
 
 function saveState(){
   localStorage.setItem(LOCAL_BAL, balance);
   localStorage.setItem(LOCAL_LOG, JSON.stringify(tradesLog));
   localStorage.setItem(LOCAL_CLAIMED, JSON.stringify(claimedCodes));
+  localStorage.setItem(LOCAL_TURN_REQ, turnoverRequired);
+  localStorage.setItem(LOCAL_TURN_DONE, turnoverDone);
 }
 
 function renderLogs(){
@@ -183,6 +191,7 @@ function renderLogs(){
 function updateUI(){
   balanceEl.textContent='৳'+balance.toFixed(2);
   openPositionsEl.textContent=openPositions.length;
+  turnoverEl.textContent=`৳${turnoverDone.toFixed(0)} / ৳${turnoverRequired.toFixed(0)}`;
   renderLogs();
   const btns=[document.getElementById('btn-up'),document.getElementById('btn-down')];
   btns.forEach(b=>b.disabled=balance<=0);
@@ -192,10 +201,12 @@ function updateUI(){
 function placeTrade(side){
   if(balance<=0){alert('Balance is 0. Please claim first.');return;}
   const stake=Number(stakeEl.value)||1;
+  if(stake<1){alert('Minimum stake 1');return;}
   if(stake>balance){alert('Not enough balance');return;}
   const dur=Math.max(1,Math.min(60,Number(durationEl.value)||5));
   
   balance-=stake;
+  turnoverDone += stake; // add to turnover done
   const start=price;
   const pos={id:Date.now(),side,stake,start,expires:Date.now()+dur*1000,duration:dur,remaining:dur};
   openPositions.push(pos);
@@ -246,8 +257,12 @@ claimBtn.onclick=()=>{
     const amount=VALID_CODES[code];
     balance+=amount;
     claimedCodes.push(code);
+
+    // increase turnover requirement by claimed amount
+    turnoverRequired += amount;
+
     saveState(); updateUI();
-    claimMsg.textContent=`৳${amount} added.`;claimMsg.style.color='#4ade80';claimInput.value='';
+    claimMsg.textContent=`৳${amount} added. Turnover required +৳${amount}`;claimMsg.style.color='#4ade80';claimInput.value='';
   }else{
     claimMsg.textContent='Invalid code.';claimMsg.style.color='#f87171';
   }
@@ -262,6 +277,13 @@ const withdrawMsg=document.getElementById('withdraw-msg');
 withdrawToggle.onclick=()=>withdrawForm.classList.toggle('active');
 
 withdrawSubmit.onclick=()=>{
+  // check turnover: only allow withdraw if user has traded at least turnoverRequired
+  if(turnoverDone < turnoverRequired){
+    withdrawMsg.textContent=`You must complete turnover ৳${turnoverRequired} (done ৳${turnoverDone}).`;
+    withdrawMsg.style.color='#f87171';
+    return;
+  }
+
   const method=document.getElementById('withdraw-method').value;
   const amount=Number(document.getElementById('withdraw-amount').value);
   const account=document.getElementById('withdraw-account').value.trim();
@@ -278,7 +300,10 @@ withdrawSubmit.onclick=()=>{
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({chat_id:chatId,text})
   }).then(res=>{
-    balance-=amount; saveState(); updateUI();
+    balance-=amount; 
+    // If withdraw completes, optionally reduce turnoverRequired (policy decision).
+    // Here we leave turnoverRequired as-is; turnoverDone remains recorded.
+    saveState(); updateUI();
     withdrawMsg.textContent='Withdraw request sent!'; withdrawMsg.style.color='#4ade80';
     document.getElementById('withdraw-amount').value='';
     document.getElementById('withdraw-account').value='';
@@ -298,7 +323,7 @@ depositToggle.onclick=()=>depositForm.classList.toggle('active');
 depositTelegram.onclick=()=>window.open('https://t.me/trademaster12340','_blank');
 depositWhatsApp.onclick=()=>window.open('https://wa.me/8801842145643','_blank');
 
-// ===== Candle Chart (replaced line chart with up/down candles) =====
+// ===== Candle Chart with automatic up/down phases =====
 const canvas=document.getElementById('chart');
 const ctx=canvas.getContext('2d');let DPR=window.devicePixelRatio||1;
 function resize(){canvas.width=canvas.clientWidth*DPR;canvas.height=canvas.clientHeight*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
@@ -309,20 +334,35 @@ let candles=[]; // {open,close,high,low}
 const MAX_CANDLES = 100;
 let candleWidth = 8; // pixels per candle (on canvas CSS pixels)
 
+// automatic phase system: some candles biased UP, then some biased DOWN
+let phaseDirection = 1; // 1 => bias up, -1 => bias down
+let phaseCounter = 0;
+const PHASE_LENGTH = 12; // number of candles per phase (changeable)
+
 function generateCandle(){
-  // create a new candle based on current price
+  // create a new candle based on current price with phase bias
   const open = price;
-  // random close delta -3 .. +3
-  const delta = (Math.random() * 6) - 3;
+  // base random delta -3 .. +3
+  let delta = (Math.random() * 6) - 3;
+  // add small phase bias so during UP phase positives slightly more likely
+  delta += phaseDirection * (Math.random() * 1.8); // bias strength
+  // small smoothing to avoid huge jumps
+  delta = Math.max(Math.min(delta, 6), -6);
   let close = open + delta;
   if(close < 1) close = 1;
-  // random wiggle for high/low
   const high = Math.max(open, close) + Math.random() * 2;
   const low = Math.min(open, close) - Math.random() * 2;
   const candle = { open, close, high, low, time: Date.now() };
   candles.push(candle);
   price = close; // update global price
   if(candles.length > MAX_CANDLES) candles.shift();
+
+  // advance phase
+  phaseCounter++;
+  if(phaseCounter >= PHASE_LENGTH){
+    phaseCounter = 0;
+    phaseDirection *= -1; // flip up/down
+  }
 }
 
 function drawCandle(c, x, w, H, min, max){
@@ -397,7 +437,7 @@ function drawChart(){
   }
 }
 
-// run generation + draw periodically (keeps original rhythm)
+// run generation + draw periodically
 setInterval(()=>{
   generateCandle();
   drawChart();
