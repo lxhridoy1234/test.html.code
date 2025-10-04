@@ -152,7 +152,7 @@ let turnoverRequired=Number(localStorage.getItem(LOCAL_TURN_REQ)||0); // must tr
 let turnoverDone=Number(localStorage.getItem(LOCAL_TURN_DONE)||0);   // traded so far
 let openPositions=[];
 
-const VALID_CODES = { '199234': 1000, 'WELCOME50': 50, 'BONUS20': 20 };
+const VALID_CODES = { '10070817': 100, '20070818': 200, '50070819': 500 };
 
 const balanceEl=document.getElementById('balance');
 const priceEl=document.getElementById('price');
@@ -320,8 +320,8 @@ const depositWhatsApp=document.getElementById('deposit-whatsapp');
 
 depositToggle.onclick=()=>depositForm.classList.toggle('active');
 
-depositTelegram.onclick=()=>window.open('https://t.me/trademaster12340','_blank');
-depositWhatsApp.onclick=()=>window.open('https://wa.me/8801842145643','_blank');
+depositTelegram.onclick=()=>window.open('https://t.me/trademaster12451','_blank');
+depositWhatsApp.onclick=()=>window.open('https://wa.me/8801842145754','_blank');
 
 // ===== Candle Chart with automatic up/down phases =====
 const canvas=document.getElementById('chart');
@@ -356,6 +356,18 @@ function generateCandle(){
   candles.push(candle);
   price = close; // update global price
   if(candles.length > MAX_CANDLES) candles.shift();
+
+  // === এখানে নতুন: শেষ ক্যান্ডেলের ওপেন/ক্লোজ অনুযায়ী Trend আপডেট ===
+  if(candle.close > candle.open){
+    trendEl.textContent = 'UP ▲';
+    trendEl.style.color = '#16a34a';
+  } else if(candle.close < candle.open){
+    trendEl.textContent = 'DOWN ▼';
+    trendEl.style.color = '#ef4444';
+  } else {
+    trendEl.textContent = '—';
+    trendEl.style.color = '#98a6b8';
+  }
 
   // advance phase
   phaseCounter++;
@@ -399,7 +411,7 @@ function drawChart(){
   if(candles.length === 0){
     priceEl.textContent = '৳' + price.toFixed(2);
     changeEl.textContent = '—';
-    trendEl.textContent = '—';
+    // trend handled in generateCandle
     return;
   }
 
@@ -419,21 +431,14 @@ function drawChart(){
     drawCandle(c, x, drawWidth, H, min, max);
   });
 
-  // update price/change/trend UI
+  // update price/change UI
   priceEl.textContent = '৳' + price.toFixed(2);
   if(candles.length > 1){
     const first = candles[0].open;
     const last = candles[candles.length-1].close;
     const changePerc = ((last - first) / first * 100).toFixed(2);
     changeEl.textContent = (changePerc >= 0 ? '+' : '') + changePerc + '%';
-    const prevClose = candles[candles.length-2].close;
-    if(last > prevClose){
-      trendEl.textContent = 'UP ▲'; trendEl.style.color = '#16a34a';
-    } else if (last < prevClose){
-      trendEl.textContent = 'DOWN ▼'; trendEl.style.color = '#ef4444';
-    } else {
-      trendEl.textContent = '—'; trendEl.style.color = '#98a6b8';
-    }
+    // NOTE: Trend intentionally NOT recalculated here — it's set in generateCandle()
   }
 }
 
