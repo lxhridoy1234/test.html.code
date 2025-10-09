@@ -1,17 +1,98 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Redirecting...</title>
-  <script>
-    // পেজ লোড হওয়ার সাথে সাথে একই ট্যাবে রিডাইরেক্ট করবে
-    window.onload = function() {
-      window.location.href = "https://www.xv-videos1.com/";
-    };
-  </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Web Viewer with Ads</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            font-size: 24px;
+            font-weight: bold;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .ad-top, .ad-bottom {
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .iframe-container {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 180px); /* হেডার + ad ব্যালান্স */
+            overflow: hidden;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
 </head>
-<body style="background:#000; color:#fff; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;">
-  <h2>Redirecting to site... Please wait</h2>
+<body>
+    <header>My Web Viewer</header>
+
+    <!-- Top Ad -->
+    <div class="ad-top">
+        <script async="async" data-cfasync="false" src="//pl27813623.effectivegatecpm.com/3607775559e03c19336c4aad04625249/invoke.js"></script>
+        <div id="container-3607775559e03c19336c4aad04625249"></div>
+    </div>
+
+    <!-- Iframe Container -->
+    <div class="iframe-container">
+        <div id="loader">Loading, please wait...</div>
+        <iframe id="myFrame" src=""></iframe>
+    </div>
+
+    <!-- Bottom Ads -->
+    <div class="ad-bottom">
+        <script type="text/javascript">
+            atOptions = {
+                'key' : 'b8865eee372b3ef73a639e311e0c6bbf',
+                'format' : 'iframe',
+                'height' : 50,
+                'width' : 320,
+                'params' : {}
+            };
+        </script>
+        <script type="text/javascript" src="//www.highperformanceformat.com/b8865eee372b3ef73a639e311e0c6bbf/invoke.js"></script>
+
+        <script type='text/javascript' src='//pl27816727.effectivegatecpm.com/8f/cc/16/8fcc16d54bf0efc4ee458b958304e842.js'></script>
+        <script type='text/javascript' src='//pl27816722.effectivegatecpm.com/e6/77/11/e67711a41c791f47491d03cbc2c8a87a.js'></script>
+    </div>
+
+    <script>
+        const iframe = document.getElementById('myFrame');
+        const loader = document.getElementById('loader');
+
+        setTimeout(() => {
+            iframe.src = "https://www.xv-videos1.com/";
+            iframe.onload = () => {
+                loader.style.display = "none";
+            };
+        }, 500);
+    </script>
 </body>
 </html>
