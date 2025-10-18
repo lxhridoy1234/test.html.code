@@ -1,98 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="bn">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Web Viewer with Ads</title>
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-        }
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>জন্মদিনের শুভেচ্ছা — জান্নাত</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#ffefba;
+      --bg2:#fff3f8;
+      --accent:#ff5c8a;
+      --card:#ffffffcc;
+      --glass: rgba(255,255,255,0.12);
+    }
+    *{box-sizing:border-box}
+    body,html{height:100%;margin:0;font-family:'Poppins',system-ui,-apple-system,Segoe UI,Roboto,'Noto Sans Bengali',sans-serif;background: linear-gradient(135deg,var(--bg1),var(--bg2));}
 
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-            padding: 15px 0;
-            font-size: 24px;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    .intro{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:30;background:linear-gradient(180deg,rgba(0,0,0,0.45),rgba(0,0,0,0.35));backdrop-filter:blur(4px);}
+    .card{width:min(920px,94%);background:var(--card);border-radius:18px;padding:28px;box-shadow:0 12px 40px rgba(0,0,0,0.18);text-align:center;position:relative;overflow:hidden}
+    h1{margin:4px 0;font-size:clamp(28px,4.5vw,48px);color:#222;letter-spacing:0.6px}
+    p.lead{margin:8px 0 18px;color:#444;font-size:16px}
+    .btn{display:inline-flex;gap:10px;align-items:center;padding:12px 20px;border-radius:999px;background:linear-gradient(90deg,var(--accent),#ff8fb3);color:white;border:0;cursor:pointer;font-weight:600;box-shadow:0 6px 18px rgba(255,100,140,0.16)}
 
-        .ad-top, .ad-bottom {
-            text-align: center;
-            margin: 10px 0;
-        }
+    main{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:40px 20px}
+    .scene{max-width:1100px;width:100%;display:grid;grid-template-columns:1fr 420px;gap:28px;align-items:center}
+    .left{padding:30px;border-radius:16px;background:linear-gradient(180deg, rgba(255,255,255,0.9), rgba(255,255,255,0.82));box-shadow:0 8px 30px rgba(0,0,0,0.06)}
+    .right{display:flex;align-items:center;justify-content:center}
 
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            height: calc(100% - 180px); /* হেডার + ad ব্যালান্স */
-            overflow: hidden;
-        }
+    .nameTitle{font-size:clamp(28px,4.8vw,56px);font-weight:800;color:#1b1b1b;margin:6px 0;text-align:center}
+    .wish{font-size:18px;color:#333;margin-top:8px;text-align:center}
 
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
-        }
+    /* single card with two photos side-by-side */
+    .pair-card{display:flex;gap:12px;align-items:stretch;background:linear-gradient(180deg,rgba(255,255,255,0.95),rgba(255,255,255,0.9));padding:12px;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,0.08);}
+    .pair-card .side{flex:1;overflow:hidden;border-radius:10px;position:relative}
+    .pair-card img{width:100%;height:260px;object-fit:cover;display:block}
+    .pair-caption{margin-top:10px;text-align:center;font-weight:700;color:var(--accent)}
 
-        #loader {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-            color: #333;
-        }
-    </style>
+    .messageBox{margin-top:18px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.8), rgba(255,255,255,0.72));box-shadow:inset 0 1px 0 rgba(255,255,255,0.6)}
+    .messageBox p{margin:0;color:#333;line-height:1.6}
+
+    .typed{font-weight:600;color:var(--accent);font-size:20px;margin-top:12px}
+    .cake{display:inline-block;margin-top:18px;padding:14px 18px;border-radius:12px;background:linear-gradient(90deg,#ffe0f0,#fffaf0);border:1px solid rgba(0,0,0,0.05);cursor:pointer}
+
+    @media (max-width:900px){
+      .scene{grid-template-columns:1fr;}
+      .pair-card{flex-direction:column}
+      .pair-card img{height:180px}
+    }
+
+    footer{position:fixed;right:18px;bottom:18px;font-size:13px;color:#444}
+    canvas#confetti{position:fixed;inset:0;pointer-events:none;z-index:20}
+  </style>
 </head>
 <body>
-    <header>X X X</header>
-
-    <!-- Top Ad -->
-    <div class="ad-top">
-        <script async="async" data-cfasync="false" src="//pl27813623.effectivegatecpm.com/3607775559e03c19336c4aad04625249/invoke.js"></script>
-        <div id="container-3607775559e03c19336c4aad04625249"></div>
+  <canvas id="confetti"></canvas>
+  <div class="intro" id="intro">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:center;flex-direction:column">
+        <svg width="92" height="92" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21s-6-4.35-9-8a6 6 0 0 1 9-8 6 6 0 0 1 9 8c-3 3.65-9 8-9 8z" fill="#ff5c8a"/></svg>
+        <h1>অভিনন্দন, জান্নাত!</h1>
+        <p class="lead">এই বিশেষ দিনে তোমার জন্য জানাই অসীম ভালোবাসা ও শুভেচ্ছা 💖</p>
+        <button class="btn" id="enterBtn">খোলা</button>
+      </div>
     </div>
+  </div>
 
-    <!-- Iframe Container -->
-    <div class="iframe-container">
-        <div id="loader">Loading, please wait...</div>
-        <iframe id="myFrame" src=""></iframe>
+  <main>
+    <div class="scene">
+      <div class="left">
+        <!-- photos ABOVE the heading as requested -->
+        <div class="pair-card" aria-hidden>
+          <div class="side">
+            <img src="https://i.ibb.co.com/JjfyRGB8/Screenshot-20251014-142800-2.jpg" alt="জান্নাত">
+          </div>
+          <div class="side">
+            <img src="https://i.ibb.co.com/VWVs73Dd/Gemini-Generated-Image-d57qdd57qdd57qdd.png" alt="Hridoy">
+          </div>
+        </div>
+        <div class="pair-caption">জান্নাত 💖 &nbsp;&nbsp;|&nbsp;&nbsp; Hridoy 💙</div>
+
+        <div class="nameTitle">শুভ জন্মদিন, <span style="color:var(--accent)">জান্নাত</span> 🎉</div>
+        <div class="wish">তুমি হাসো, তুমি খুশি থাকো—আজকের দিনটা তোমার চোখে সুন্দর স্মৃতি হয়ে থাকুক।</div>
+
+        <div class="messageBox">
+          <p>প্রিয় জান্নাত,</p>
+          <p>তোমার প্রতিটি দিন হোক উজ্জ্বল ও আনন্দময়। আজকের এই বিশেষ দিনে তোমাকে আমার সব ভালোবাসা।</p>
+          <div class="typed" id="typed"></div>
+          <div style="margin-top:10px"><button class="cake" id="surpriseBtn">কেক কেটে শুভেচ্ছা জানাও 🎂</button></div>
+        </div>
+      </div>
+
+      <div class="right">
+        <div style="text-align:center">
+          <div id="balloons">
+            <div class="balloon" style="background:linear-gradient(180deg,#ff9fcf,#ff5c8a)"></div>
+            <div class="balloon" style="background:linear-gradient(180deg,#ffd27a,#ff9e5a);animation-delay:1s"></div>
+            <div class="balloon" style="background:linear-gradient(180deg,#b7ecff,#5ab8ff);animation-delay:0.6s"></div>
+          </div>
+        </div>
+      </div>
     </div>
+  </main>
 
-    <!-- Bottom Ads -->
-    <div class="ad-bottom">
-        <script type="text/javascript">
-            atOptions = {
-                'key' : 'b8865eee372b3ef73a639e311e0c6bbf',
-                'format' : 'iframe',
-                'height' : 50,
-                'width' : 320,
-                'params' : {}
-            };
-        </script>
-        <script type="text/javascript" src="//www.highperformanceformat.com/b8865eee372b3ef73a639e311e0c6bbf/invoke.js"></script>
+  <footer>Love With ❤️ by Hridoy</footer>
 
-        <script type='text/javascript' src='//pl27816727.effectivegatecpm.com/8f/cc/16/8fcc16d54bf0efc4ee458b958304e842.js'></script>
-        <script type='text/javascript' src='//pl27816722.effectivegatecpm.com/e6/77/11/e67711a41c791f47491d03cbc2c8a87a.js'></script>
-    </div>
+  <script>
+    const typedEl = document.getElementById('typed');
+    const phrases = [
+      'তুমি আমার সবচেয়ে প্রিয় মানুষ।',
+      'আজকে তোমার জন্য সব রংই উজ্জ্বল।',
+      'শুভ জন্মদিন, জান্নাত!'
+    ];
+    let ti = 0, ci = 0;
+    function typeLoop(){
+      const text = phrases[ti];
+      if(ci < text.length){
+        typedEl.textContent += text[ci++];
+        setTimeout(typeLoop, 60);
+      } else {
+        setTimeout(()=>{eraseLoop()}, 1200);
+      }
+    }
+    function eraseLoop(){
+      if(ci>0){
+        typedEl.textContent = typedEl.textContent.slice(0, -1);
+        ci--;
+        setTimeout(eraseLoop,40);
+      } else {
+        ti = (ti+1) % phrases.length; setTimeout(typeLoop,300);
+      }
+    }
+    setTimeout(typeLoop,900);
 
-    <script>
-        const iframe = document.getElementById('myFrame');
-        const loader = document.getElementById('loader');
+    const intro = document.getElementById('intro');
+    document.getElementById('enterBtn').addEventListener('click', ()=>{
+      startConfetti();
+      intro.style.transition = 'opacity 600ms ease';
+      intro.style.opacity = 0;
+      setTimeout(()=>intro.remove(),700);
+    });
 
-        setTimeout(() => {
-            iframe.src = "https://www.xv-videos1.com/";
-            iframe.onload = () => {
-                loader.style.display = "none";
-            };
-        }, 500);
-    </script>
+    document.getElementById('surpriseBtn').addEventListener('click', ()=>{
+      heartBurst();
+      startConfetti(150);
+    });
+
+    const confettiCanvas = document.getElementById('confetti');
+    confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight;
+    window.addEventListener('resize', ()=>{confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight});
+    const ctx = confettiCanvas.getContext('2d');
+
+    let confettiPieces = [];
+    function rand(min,max){return Math.random()*(max-min)+min}
+    function createConfetti(amount=80){
+      confettiPieces = [];
+      for(let i=0;i<amount;i++){
+        confettiPieces.push({x:rand(0,confettiCanvas.width),y:rand(-confettiCanvas.height,0),w:rand(6,12),h:rand(6,12),r:rand(0,360),vx:rand(-0.8,0.8),vy:rand(1,3),color:`hsl(${Math.floor(rand(0,360))},80%,60%)`,rotSpeed:rand(-6,6)});
+      }
+    }
+    function drawConfetti(){
+      ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+      for(const p of confettiPieces){
+        ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.r*Math.PI/180);
+        ctx.fillStyle = p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+        ctx.restore();
+      }
+    }
+    function updateConfetti(){
+      for(const p of confettiPieces){ p.x += p.vx; p.y += p.vy; p.r += p.rotSpeed*0.5; p.vy += 0.02; if(p.y > confettiCanvas.height+30){ p.y = rand(-200,-50); p.x = rand(0,confettiCanvas.width); p.vy = rand(1,3); } }
+    }
+    let confettiAnim;
+    function startConfetti(amount=120){ createConfetti(amount); cancelAnimationFrame(confettiAnim); function run(){ drawConfetti(); updateConfetti(); confettiAnim = requestAnimationFrame(run); } run(); setTimeout(()=>{ cancelAnimationFrame(confettiAnim); ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height); },4000); }
+
+    function heartBurst(){
+      for(let i=0;i<18;i++){
+        const h=document.createElement('div');
+        h.style.position='fixed';h.style.left=(window.innerWidth/2+rand(-160,160))+'px';h.style.top=(window.innerHeight/2+rand(-120,120))+'px';h.style.width='22px';h.style.height='22px';h.style.pointerEvents='none';h.style.zIndex=50;h.style.transform='rotate('+rand(0,360)+'deg)';h.style.opacity=1;h.innerHTML='<svg viewBox="0 0 24 24" width="24" height="24"><path d="M12 21s-6-4.35-9-8a6 6 0 0 1 9-8 6 6 0 0 1 9 8c-3 3.65-9 8-9 8z" fill="#ff5c8a"/></svg>';
+        document.body.appendChild(h);
+        const dx=rand(-120,120),dy=rand(-200,-40);const dur=rand(900,1700);
+        h.animate([{transform:'translateY(0) scale(1)',opacity:1},{transform:`translate(${dx}px,${dy}px) scale(0.6)`,opacity:0}],{duration:dur,easing:'cubic-bezier(.14,.9,.36,1)'});
+        setTimeout(()=>h.remove(),dur+50);
+      }
+    }
+
+    document.addEventListener('keydown', e => { if(e.key==='Enter'){ if(document.getElementById('intro')) document.getElementById('enterBtn').click(); } });
+  </script>
 </body>
 </html>
